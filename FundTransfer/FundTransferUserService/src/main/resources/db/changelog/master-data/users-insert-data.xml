@@ -1,0 +1,80 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+       http://www.liquibase.org/xml/ns/dbchangelog
+       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="users-insert-0001" author="mdpolashossein">
+        <insert tableName="users" schemaName="bank">
+            <column name="id" valueNumeric="1"/>
+            <column name="first_name" value="System"/>
+            <column name="last_name" value="Admin"/>
+            <column name="phone" value="01710000001"/>
+            <column name="email" value="admin@gmail.com"/>
+            <column name="gender" value="Male"/>
+            <column name="date_of_birth" value="1999-03-05"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="users" schemaName="bank">
+            <column name="id" valueNumeric="2"/>
+            <column name="first_name" value="Polas"/>
+            <column name="last_name" value="Hossain"/>
+            <column name="phone" value="01710000002"/>
+            <column name="email" value="polas@gmail.com"/>
+            <column name="gender" value="Male"/>
+            <column name="date_of_birth" value="1999-03-05"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="logins" schemaName="bank">
+            <column name="id" valueNumeric="1"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="1234"/>
+            <column name="is_pwd_reset" valueBoolean="false"/>
+            <column name="two_factor_enabled" valueBoolean="false"/>
+            <column name="login_attempts" valueNumeric="0"/>
+            <column name="last_login_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="login_time" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="access_token" value=""/>
+            <column name="refresh_token" value=""/>
+            <column name="device" value="Initial"/>
+            <column name="ip_address" value="127.0.0.1"/>
+            <column name="location" value="Localhost"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="logins" schemaName="bank">
+            <column name="id" valueNumeric="2"/>
+            <column name="user_id" valueNumeric="2"/>
+            <column name="username" value="polas"/>
+            <column name="password" value="1234"/>
+            <column name="is_pwd_reset" valueBoolean="false"/>
+            <column name="two_factor_enabled" valueBoolean="false"/>
+            <column name="login_attempts" valueNumeric="0"/>
+            <column name="last_login_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="login_time" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="access_token" value=""/>
+            <column name="refresh_token" value=""/>
+            <column name="device" value="Initial"/>
+            <column name="ip_address" value="127.0.0.1"/>
+            <column name="location" value="Localhost"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="logins" schemaName="bank">
+                <where>user_id IN (1,2)</where>
+            </delete>
+
+            <delete tableName="users" schemaName="bank">
+                <where>id IN (1,2)</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="create-schema-0000" author="mdpolashossein">
+        <sql dbms="postgresql">
+            CREATE SCHEMA IF NOT EXISTS bank;
+        </sql>
+        <rollback>
+            <sql dbms="postgresql">
+                DROP SCHEMA IF EXISTS bank CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="users-table-0001" author="mdpolashossein">
+        <createTable tableName="users" schemaName="bank">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_users_id"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_users_email"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(18)"/>
+            <column name="gender" type="VARCHAR(10)"/>
+            <column name="date_of_birth" type="DATE"/>
+            <column name="image_url" type="TEXT"/>
+            <column name="download_url" type="TEXT"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="users" schemaName="bank"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="users-table-0002" author="mdpolashossein">
+        <createTable tableName="logins" schemaName="bank">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_logins_id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(60)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_logins_username"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="salt" type="VARCHAR(255)"/>
+            <column name="is_pwd_reset" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="two_factor_enabled" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="locked_until" type="TIMESTAMP"/>
+            <column name="login_attempts" type="INT" defaultValueNumeric="0"/>
+            <column name="last_login_at" type="TIMESTAMP"/>
+            <column name="login_time" type="TIMESTAMP"/>
+            <column name="expire_at" type="TIMESTAMP"/>
+            <column name="access_token" type="TEXT"/>
+            <column name="refresh_token" type="TEXT"/>
+            <column name="device" type="VARCHAR(150)"/>
+            <column name="ip_address" type="VARCHAR(80)"/>
+            <column name="location" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint  constraintName="fk_logins_user"  baseTableSchemaName="bank"
+                baseTableName="logins"  baseColumnNames="user_id" referencedTableSchemaName="bank"
+                referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <createIndex tableName="logins" indexName="idx_logins_user_id" schemaName="bank">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="logins" schemaName="bank"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="users-table-0003" author="mdpolashossein">
+        <createTable tableName="login_logs" schemaName="bank">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_login_logs_id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="access_token" type="TEXT"/>
+            <column name="refresh_token" type="TEXT"/>
+            <column name="device" type="VARCHAR(150)"/>
+            <column name="ip_address" type="VARCHAR(80)"/>
+            <column name="location" type="TEXT"/>
+            <column name="fail_reason" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_login_logs_user" baseTableSchemaName="bank"
+                baseTableName="login_logs" baseColumnNames="user_id"
+                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedColumnNames="id" onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <createIndex tableName="login_logs" indexName="idx_login_logs_user_id" schemaName="bank">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="login_logs" schemaName="bank"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="users-table-0004" author="mdpolashossein">
+        <createTable tableName="password_reset_tokens" schemaName="bank">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_pwd_reset_id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_pwd_reset_user" baseTableSchemaName="bank"
+                baseTableName="password_reset_tokens" baseColumnNames="user_id"
+                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedColumnNames="id" onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <createIndex tableName="password_reset_tokens" indexName="idx_pwd_reset_user_id" schemaName="bank">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="password_reset_tokens" schemaName="bank"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="users-table-0005" author="mdpolashossein">
+        <createTable tableName="user_otp" schemaName="bank">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_user_otp_id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="otp_code" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="channel" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_user_otp_user" baseTableSchemaName="bank"
+                baseTableName="user_otp" baseColumnNames="user_id"
+                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedColumnNames="id" onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <createIndex tableName="user_otp" indexName="idx_user_otp_user_id" schemaName="bank">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="user_otp" schemaName="bank"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="users-table-0006" author="mdpolashossein">
+        <createTable tableName="trusted_devices" schemaName="bank">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_trusted_devices_id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="device_fingerprint" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="device_name" type="VARCHAR(150)"/>
+            <column name="ip_address" type="VARCHAR(80)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_trusted_devices_user" baseTableSchemaName="bank"
+                baseTableName="trusted_devices" baseColumnNames="user_id"
+                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedColumnNames="id" onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <createIndex tableName="trusted_devices" indexName="idx_trusted_devices_user_id" schemaName="bank">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="trusted_devices" indexName="uk_trusted_devices_user_fingerprint" schemaName="bank" unique="true">
+            <column name="user_id"/>
+            <column name="device_fingerprint"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="trusted_devices" schemaName="bank"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
