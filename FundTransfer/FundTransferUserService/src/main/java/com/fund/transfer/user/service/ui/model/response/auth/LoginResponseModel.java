@@ -11,6 +11,9 @@ import lombok.*;
 @EqualsAndHashCode(callSuper=false)
 public class LoginResponseModel {
 
+    private boolean success;
     private String message;
+    private String token;
+    private Long userId;
 
 }

@@ -8,6 +8,6 @@ public interface LoginService {
 
 
     Mono<LoginResponseModel> userLogin(LoginDto loginDto);
-
+    Mono<Boolean> logout(String userName);
 
 }

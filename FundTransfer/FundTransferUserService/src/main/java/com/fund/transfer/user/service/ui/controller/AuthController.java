@@ -32,5 +32,11 @@ public class AuthController {
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
+    @PostMapping("/logout")
+    public Mono<Boolean> userlogout(@RequestParam String userName) {
+        logger.info("user logout method called from auth controller");
+        return loginService.logout(userName);
+    }
+
 
 }
