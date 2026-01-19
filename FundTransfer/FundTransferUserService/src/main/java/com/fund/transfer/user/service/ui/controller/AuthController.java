@@ -1,7 +1,7 @@
 package com.fund.transfer.user.service.ui.controller;
 
 import com.fund.transfer.user.service.service.auth.LoginService;
-import com.fund.transfer.user.service.shared.auth.LoginDto;
+import com.fund.transfer.user.service.shared.request.auth.LoginDto;
 import com.fund.transfer.user.service.ui.model.request.auth.LoginRequestModel;
 import com.fund.transfer.user.service.ui.model.response.auth.LoginResponseModel;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ import reactor.core.publisher.Mono;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private final LoginService loginService;
     private final ModelMapper modelMapper;
+    private final LoginService loginService;
 
     @PostMapping("/login")
     public Mono<ResponseEntity<LoginResponseModel>> userLogin(@RequestBody LoginRequestModel request) {

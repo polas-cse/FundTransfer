@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.shared.auth;
+package com.fund.transfer.user.service.shared.response.auth;
 
 import lombok.*;
 

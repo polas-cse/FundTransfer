@@ -39,11 +39,11 @@
             <column name="active" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_by" type="VARCHAR(60)"/>
+            <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_by" type="VARCHAR(60)"/>
+            <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
@@ -79,18 +79,18 @@
             <column name="device" type="VARCHAR(150)"/>
             <column name="ip_address" type="VARCHAR(80)"/>
             <column name="location" type="TEXT"/>
-            <column name="created_by" type="VARCHAR(60)"/>
+            <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_by" type="VARCHAR(60)"/>
+            <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
-        <addForeignKeyConstraint  constraintName="fk_logins_user"  baseTableSchemaName="bank"
-                baseTableName="logins"  baseColumnNames="user_id" referencedTableSchemaName="bank"
-                referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"
-                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint constraintName="fk_logins_user" baseTableSchemaName="bank"
+                                 baseTableName="logins" baseColumnNames="user_id" referencedTableSchemaName="bank"
+                                 referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
 
         <createIndex tableName="logins" indexName="idx_logins_user_id" schemaName="bank">
             <column name="user_id"/>
@@ -115,7 +115,7 @@
             <column name="ip_address" type="VARCHAR(80)"/>
             <column name="location" type="TEXT"/>
             <column name="fail_reason" type="TEXT"/>
-            <column name="created_by" type="VARCHAR(60)"/>
+            <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
@@ -153,11 +153,11 @@
             <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_by" type="VARCHAR(60)"/>
+            <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_by" type="VARCHAR(60)"/>
+            <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
@@ -197,7 +197,7 @@
             <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_by" type="VARCHAR(60)"/>
+            <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
@@ -232,11 +232,11 @@
             </column>
             <column name="device_name" type="VARCHAR(150)"/>
             <column name="ip_address" type="VARCHAR(80)"/>
-            <column name="created_by" type="VARCHAR(60)"/>
+            <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_by" type="VARCHAR(60)"/>
+            <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 

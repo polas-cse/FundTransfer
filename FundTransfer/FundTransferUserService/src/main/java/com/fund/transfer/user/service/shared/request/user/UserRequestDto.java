@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.ui.model.request.user;
+package com.fund.transfer.user.service.shared.request.user;
 
 import lombok.*;
 
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper=false)
-public class UserRequestModel {
+public class UserRequestDto {
 
     private Long id;
     private String email;

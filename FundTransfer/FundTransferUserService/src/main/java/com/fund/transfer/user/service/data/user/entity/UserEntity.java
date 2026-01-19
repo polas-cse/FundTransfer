@@ -1,8 +1,12 @@
 package com.fund.transfer.user.service.data.user.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -13,20 +17,18 @@ import java.sql.Timestamp;
 @EqualsAndHashCode(callSuper=false)
 public class UserEntity {
 
-    private long id;
+    private Long id;
     private String email;
     private String first_name;
     private String last_name;
     private String phone;
     private String gender;
-    private Timestamp date_of_birth;
+    private LocalDate date_of_birth;
     private String image_url;
     private String download_url;
-    private boolean active;
-    private String created_by;
-    private Timestamp created_at;
-    private String updated_by;
-    private Timestamp updated_at;
-
-
+    private Boolean active;
+    private Long created_by;
+    private LocalDateTime created_at;
+    private Long updated_by;
+    private LocalDateTime updated_at;
 }

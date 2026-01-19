@@ -2,7 +2,7 @@ package com.fund.transfer.user.service.service.auth;
 
 import com.fund.transfer.user.service.data.auth.AuthRepository;
 import com.fund.transfer.user.service.global.security.JwtUtil;
-import com.fund.transfer.user.service.shared.auth.LoginDto;
+import com.fund.transfer.user.service.shared.request.auth.LoginDto;
 import com.fund.transfer.user.service.ui.model.response.auth.LoginResponseModel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -45,9 +45,11 @@ public class LoginServiceImpl implements LoginService {
                                             user.getId()
                                     );
 
-                                    return redisTemplate.opsForValue()
-                                            .set(cacheKey, response, Duration.ofHours(6))
-                                            .thenReturn(response);
+                                    return authRepository.saveLoginLogs(user.getUser_id(), token)
+                                                    .then(redisTemplate.opsForValue()
+                                                            .set(cacheKey, response, Duration.ofHours(6))
+                                                            .thenReturn(response));
+
                                 })
                                 .switchIfEmpty(
                                         Mono.just(new LoginResponseModel(false, "Invalid credentials", null, null))
