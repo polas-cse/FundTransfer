@@ -25,9 +25,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public Mono<ResponseEntity<UserResponseModel>> saveUser(@RequestBody UserRequestModel requestBody){
+    public Mono<ResponseEntity<UserResponseModel>> saveUser(
+            @RequestBody UserRequestModel requestBody,
+            @RequestHeader(value = "Authorization", required = false) String authHeader){
         UserRequestDto dto = modelMapper.map(requestBody, UserRequestDto.class);
-        return userService.saveUser(dto)
+        return userService.saveUser(dto, authHeader)
                 .map(responseDto -> modelMapper.map(responseDto, UserResponseModel.class))
                 .map(ResponseEntity::ok);
     }

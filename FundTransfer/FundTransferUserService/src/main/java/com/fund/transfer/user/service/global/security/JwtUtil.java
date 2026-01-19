@@ -45,41 +45,38 @@ public class JwtUtil {
 
     public Mono<Long> getUserId() {
         return ReactiveSecurityContextHolder.getContext()
-                .doOnNext(ctx -> System.out.println("🔍 Security Context: " + ctx))
                 .map(ctx -> ctx.getAuthentication())
+                .filter(auth -> auth != null && auth.isAuthenticated())
                 .flatMap(auth -> {
-
                     Object credentials = auth.getCredentials();
                     if (credentials instanceof String) {
-                        return Mono.just((String) credentials);
+                        String token = (String) credentials;
+                        try {
+                            Long userId = extractUserId(token);
+                            System.out.println("✅ Extracted userId from JWT: " + userId);
+                            return Mono.just(userId);
+                        } catch (Exception e) {
+                            return Mono.empty();
+                        }
                     }
-
-                    Object details = auth.getDetails();
-                    if (details instanceof String) {
-                        return Mono.just((String) details);
-                    }
-
-                    Object principal = auth.getPrincipal();
-                    if (principal instanceof String) {
-                        return Mono.just((String) principal);
-                    }
-
                     return Mono.empty();
                 })
-                .map(token -> {
-                    Long userId = extractUserId(token);
-                    System.out.println("Extracted userId: " + userId);
-                    return userId;
-                })
-                .doOnError(e -> System.err.println("Error extracting userId: " + e.getMessage()))
-                .switchIfEmpty(Mono.defer(() -> {
-                    System.err.println("No userId found, using default");
-                    return Mono.just(1L);
-                }));
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("No authenticated user found")));
     }
 
     public Long extractUserId(String token) {
         return extractClaims(token).get("userId", Long.class);
+    }
+
+    public Long extractUserIdFromAuthHeader(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid authorization header");
+        }
+        String token = authHeader.substring(7);
+        if (!isTokenValid(token)) {
+            throw new IllegalArgumentException("Invalid or expired token");
+        }
+        return extractUserId(token);
     }
 
     public boolean isTokenValid(String token) {
