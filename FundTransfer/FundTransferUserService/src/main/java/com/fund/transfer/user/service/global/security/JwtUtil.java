@@ -68,15 +68,15 @@ public class JwtUtil {
         return extractClaims(token).get("userId", Long.class);
     }
 
-    public Long extractUserIdFromAuthHeader(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid authorization header");
-        }
-        String token = authHeader.substring(7);
-        if (!isTokenValid(token)) {
-            throw new IllegalArgumentException("Invalid or expired token");
-        }
-        return extractUserId(token);
+    public Mono<Long> extractUserIdFromAuthHeader(String authHeader) {
+        return Mono.fromCallable(() -> {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new IllegalArgumentException("Missing or invalid Authorization header");
+            }
+
+            String token = authHeader.substring(7);
+            return extractUserId(token);
+        });
     }
 
     public boolean isTokenValid(String token) {

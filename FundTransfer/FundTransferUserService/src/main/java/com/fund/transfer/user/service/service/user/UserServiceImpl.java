@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -27,33 +29,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserResponseDto> saveUser(UserRequestDto requestDto, String authHeader) {
-        return Mono.fromCallable(() -> {
-            try {
-                Long userId = jwtUtil.extractUserIdFromAuthHeader(authHeader);
-                logger.info("Got user ID from JWT: {}", userId);
-                return userId;
-            } catch (Exception e) {
-                logger.error("Error extracting userId from header: {}", e.getMessage());
-                throw new IllegalArgumentException("Invalid or missing authentication token", e);
-            }
-        })
-                .flatMap(userId -> {
-                    return userRepository.saveUser(
-                            requestDto.getEmail(),
-                            requestDto.getFirstName(),
-                            requestDto.getLastName(),
-                            requestDto.getPhone(),
-                            requestDto.getGender(),
-                            requestDto.getDateOfBirth(),
-                            requestDto.getImageUrl(),
-                            requestDto.getDownloadUrl(),
-                            userId
-                    );
-                })
+        String cacheKey = "AUTH_CACHE:" + authHeader;
+
+        return redisTemplate.opsForValue()
+                .get(cacheKey)
+                .map(idStr -> Long.parseLong(idStr.toString()))
+                .doOnNext(id -> logger.info("UserId from Redis cache: {}", id))
+                .switchIfEmpty(
+                        jwtUtil.extractUserIdFromAuthHeader(authHeader)
+                                .doOnNext(id -> logger.info("UserId from JWT: {}", id))
+                                .flatMap(id ->
+                                        redisTemplate.opsForValue()
+                                                .set(cacheKey, id.toString(), Duration.ofHours(6))
+                                                .thenReturn(id)
+                                )
+                )
+                .flatMap(userId ->
+                        userRepository.saveUser(
+                                requestDto.getEmail(),
+                                requestDto.getFirstName(),
+                                requestDto.getLastName(),
+                                requestDto.getPhone(),
+                                requestDto.getGender(),
+                                requestDto.getDateOfBirth(),
+                                requestDto.getImageUrl(),
+                                requestDto.getDownloadUrl(),
+                                userId
+                        )
+                )
                 .map(model -> modelMapper.map(model, UserResponseDto.class))
                 .doOnSuccess(u -> logger.info("User saved successfully: {}", u != null ? u.getEmail() : "null"))
                 .doOnError(e -> logger.error("Error saving user", e));
     }
+
 
     @Override
     public Mono<UserResponseDto> updateUser(UserRequestDto requestDto) {
