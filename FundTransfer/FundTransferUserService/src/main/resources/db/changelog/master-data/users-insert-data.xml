@@ -70,11 +70,17 @@
             <delete tableName="logins" schemaName="bank">
                 <where>user_id IN (1,2)</where>
             </delete>
-
             <delete tableName="users" schemaName="bank">
                 <where>id IN (1,2)</where>
             </delete>
         </rollback>
+    </changeSet>
+
+    <changeSet id="users-insert-0002-reset-sequences" author="mdpolashossein">
+        <sql dbms="postgresql">
+            ALTER SEQUENCE bank.users_id_seq RESTART WITH 3;
+            ALTER SEQUENCE bank.logins_id_seq RESTART WITH 3;
+        </sql>
     </changeSet>
 
 </databaseChangeLog>
