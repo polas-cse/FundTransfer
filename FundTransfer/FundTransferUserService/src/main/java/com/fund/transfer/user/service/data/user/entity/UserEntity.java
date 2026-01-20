@@ -19,16 +19,16 @@ public class UserEntity {
 
     private Long id;
     private String email;
-    private String first_name;
-    private String last_name;
+    private String firstName;
+    private String lastName;
     private String phone;
     private String gender;
-    private LocalDate date_of_birth;
-    private String image_url;
-    private String download_url;
+    private LocalDate dateOfBirth;
+    private String imageUrl;
+    private String downloadUrl;
     private Boolean active;
-    private Long created_by;
-    private LocalDateTime created_at;
-    private Long updated_by;
-    private LocalDateTime updated_at;
+    private Long createdBy;
+    private LocalDateTime createdAt;
+    private Long updatedBy;
+    private LocalDateTime updatedAt;
 }

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class UserResponseDto {
 
     private Long id;
+    private String userName;
     private String email;
     private String firstName;
     private String lastName;
@@ -22,7 +23,5 @@ public class UserResponseDto {
     private LocalDate dateOfBirth;
     private String imageUrl;
     private String downloadUrl;
-    private Long createdBy;
-    private Long updatedBy;
 
 }

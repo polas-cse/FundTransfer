@@ -14,6 +14,8 @@ import java.time.LocalDate;
 public class UserRequestDto {
 
     private Long id;
+    private String userName;
+    private String password;
     private String email;
     private String firstName;
     private String lastName;

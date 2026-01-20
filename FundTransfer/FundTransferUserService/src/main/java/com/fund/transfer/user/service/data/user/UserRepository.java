@@ -22,6 +22,12 @@ public interface UserRepository extends R2dbcRepository<UserEntity, Long> {
                               LocalDate dateOfBirth, String imageUrl, String downloadUrl, Long createdBy);
 
     @Query("""
+    INSERT INTO logins(user_id, username, password, created_by)
+    VALUES (:userId, :userName, :password, :createdBy)
+    """)
+    Mono<Integer> saveLogins(Long userId, String userName, String password, Long createdBy);
+
+    @Query("""
         UPDATE users
         SET email = :email, first_name = :firstName, last_name = :lastName, phone = :phone,
             gender = :gender, date_of_birth = :dateOfBirth, image_url = :imageUrl, download_url = :downloadUrl, 

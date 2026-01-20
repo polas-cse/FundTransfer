@@ -46,19 +46,47 @@ public class UserServiceImpl implements UserService {
                 )
                 .flatMap(userId ->
                         userRepository.saveUser(
-                                requestDto.getEmail(),
-                                requestDto.getFirstName(),
-                                requestDto.getLastName(),
-                                requestDto.getPhone(),
-                                requestDto.getGender(),
-                                requestDto.getDateOfBirth(),
-                                requestDto.getImageUrl(),
-                                requestDto.getDownloadUrl(),
-                                userId
-                        )
+                                        requestDto.getEmail(),
+                                        requestDto.getFirstName(),
+                                        requestDto.getLastName(),
+                                        requestDto.getPhone(),
+                                        requestDto.getGender(),
+                                        requestDto.getDateOfBirth(),
+                                        requestDto.getImageUrl(),
+                                        requestDto.getDownloadUrl(),
+                                        userId
+                                )
+                                .flatMap(entity -> {
+                                    logger.info("User entity saved with id: {}", entity.getId());
+                                    return userRepository.saveLogins(
+                                                    entity.getId(),
+                                                    requestDto.getUserName(),
+                                                    requestDto.getPassword(),
+                                                    userId
+                                            )
+                                            .thenReturn(entity);
+                                })
                 )
-                .map(model -> modelMapper.map(model, UserResponseDto.class))
-                .doOnSuccess(u -> logger.info("User saved successfully: {}", u != null ? u.getEmail() : "null"))
+                .map(entity -> UserResponseDto.builder()
+                        .id(entity.getId())
+                        .email(entity.getEmail())
+                        .firstName(entity.getFirstName())
+                        .lastName(entity.getLastName())
+                        .phone(entity.getPhone())
+                        .gender(entity.getGender())
+                        .dateOfBirth(entity.getDateOfBirth())
+                        .imageUrl(entity.getImageUrl())
+                        .downloadUrl(entity.getDownloadUrl())
+                        .userName(requestDto.getUserName())
+                        .build()
+                )
+                .doOnSuccess(u -> {
+                    if (u == null) {
+                        logger.error("UserResponseDto is null!");
+                    } else {
+                        logger.info("User saved successfully: {}", u.getEmail());
+                    }
+                })
                 .doOnError(e -> logger.error("Error saving user", e));
     }
 
