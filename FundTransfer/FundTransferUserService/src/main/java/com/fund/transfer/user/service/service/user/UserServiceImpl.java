@@ -2,6 +2,7 @@ package com.fund.transfer.user.service.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fund.transfer.user.service.data.user.UserRepository;
+import com.fund.transfer.user.service.global.exception.ApiException;
 import com.fund.transfer.user.service.global.security.JwtUtil;
 import com.fund.transfer.user.service.shared.request.user.UserListRequestDto;
 import com.fund.transfer.user.service.shared.request.user.UserRequestDto;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +51,7 @@ public class UserServiceImpl implements UserService {
                                 )
                 )
                 .flatMap(userId ->
-                        userRepository.saveUser( requestDto.getEmail(), requestDto.getFirstName(), requestDto.getLastName(), requestDto.getPhone(),
+                        userRepository.saveUser(requestDto.getEmail(), requestDto.getFirstName(), requestDto.getLastName(), requestDto.getPhone(),
                                         requestDto.getGender(), requestDto.getDateOfBirth(), requestDto.getImageUrl(), requestDto.getDownloadUrl(), userId)
                                 .flatMap(entity -> {
                                     logger.info("User entity saved with id: {}", entity.getId());
@@ -68,9 +70,19 @@ public class UserServiceImpl implements UserService {
                         logger.info("User saved successfully: {}", u.getEmail());
                     }
                 })
-                .doOnError(e -> logger.error("Error saving user", e));
+                .onErrorMap(ex -> {
+                    if (ex instanceof DuplicateKeyException) {
+                        if (ex.getMessage().contains("uk_users_username")) {
+                            return new ApiException("USER_NAME_EXISTS", "Username already exists");
+                        }
+                        if (ex.getMessage().contains("uk_users_email")) {
+                            return new ApiException("USER_EMAIL_EXISTS", "This email is already registered");
+                        }
+                        return new ApiException("DUPLICATE_KEY", "Duplicate value found");
+                    }
+                    return ex;
+                });
     }
-
 
     @Override
     @Transactional
@@ -90,11 +102,21 @@ public class UserServiceImpl implements UserService {
                                                 .thenReturn(id)
                                 )
                 )
-                .flatMap(userId ->
-                        userRepository.updateUser(requestDto.getId(), requestDto.getEmail(), requestDto.getFirstName(), requestDto.getLastName(), requestDto.getPhone(),
-                                        requestDto.getGender(), requestDto.getDateOfBirth(), requestDto.getImageUrl(), requestDto.getDownloadUrl(), userId)
+                .flatMap(userId -> {
+                    String userDetailsCacheKey = "USER_DETAILS_CACHE:" + userId;
+                    logger.info("Deleting cache for key: {}", userDetailsCacheKey);
 
-                )
+                    return userRepository.updateUser(requestDto.getId(),requestDto.getEmail(),requestDto.getFirstName(),requestDto.getLastName(),
+                                    requestDto.getPhone(), requestDto.getGender(), requestDto.getDateOfBirth(),requestDto.getImageUrl(),
+                                    requestDto.getDownloadUrl(),userId)
+                            .flatMap(entity ->
+                                    redisTemplate.delete(userDetailsCacheKey)
+                                            .doOnNext(deleted ->
+                                                    logger.info("User details cache deleted successfully: {}", deleted)
+                                            )
+                                            .thenReturn(entity)
+                            );
+                })
                 .map(entity -> UserResponseDto.builder().id(entity.getId()).email(entity.getEmail()).firstName(entity.getFirstName())
                         .lastName(entity.getLastName()).phone(entity.getPhone()).gender(entity.getGender()).dateOfBirth(entity.getDateOfBirth())
                         .imageUrl(entity.getImageUrl()).downloadUrl(entity.getDownloadUrl()).userName(requestDto.getUserName()).build()
@@ -106,58 +128,75 @@ public class UserServiceImpl implements UserService {
                         logger.info("User updated successfully: {}", u.getEmail());
                     }
                 })
-                .doOnError(e -> logger.error("Error saving user", e));
+                .onErrorMap(ex -> {
+                    if (ex instanceof DuplicateKeyException) {
+                        if (ex.getMessage().contains("uk_users_email")) {
+                            return new ApiException("USER_EMAIL_EXISTS", "This email is already registered");
+                        }
+                        return new ApiException("DUPLICATE_KEY", "Duplicate value found");
+                    }
+                    return ex;
+                });
     }
 
     @Override
     public Mono<UserResponseDto> userDetails(Long userId) {
         String cacheKey = "USER_DETAILS_CACHE:" + userId;
+        logger.info("Checking cache for key: {}", cacheKey);
 
         return redisTemplate.opsForValue()
                 .get(cacheKey)
+                .doOnNext(data -> logger.info("Cache HIT for userId: {}", userId))
                 .flatMap(cachedData -> {
-                    logger.info("User Details from Redis cache for userId: {}", userId);
                     try {
-                        UserResponseDto dto = objectMapper.readValue(cachedData.toString(), UserResponseDto.class);
+                        String jsonString = cachedData.toString();
+                        logger.debug("Cached JSON data: {}", jsonString);
+
+                        UserResponseDto dto = objectMapper.readValue(jsonString, UserResponseDto.class);
+                        logger.info("Successfully deserialized user from cache: {}", dto.getEmail());
                         return Mono.just(dto);
                     } catch (Exception e) {
-                        logger.error("Error deserializing cached user details", e);
-                        return Mono.empty();
+                        logger.error("Error deserializing cached user details for userId: {}", userId, e);
+                        return redisTemplate.delete(cacheKey).then(Mono.empty());
                     }
                 })
                 .switchIfEmpty(
-                        userRepository.userDetails(userId)
-                                .flatMap(userDetails -> {
-                                    logger.info("User Details from Database for userId: {}", userId);
-                                    UserResponseDto responseDto = UserResponseDto.builder()
-                                            .id(userDetails.getId())
-                                            .userName(userDetails.getUsername())
-                                            .email(userDetails.getEmail())
-                                            .firstName(userDetails.getFirstName())
-                                            .lastName(userDetails.getLastName())
-                                            .phone(userDetails.getPhone())
-                                            .gender(userDetails.getGender())
-                                            .dateOfBirth(userDetails.getDateOfBirth())
-                                            .imageUrl(userDetails.getImageUrl())
-                                            .downloadUrl(userDetails.getDownloadUrl())
-                                            .build();
-                                    try {
-                                        String jsonData = objectMapper.writeValueAsString(responseDto);
-                                        return redisTemplate.opsForValue()
-                                                .set(cacheKey, jsonData, Duration.ofHours(6))
-                                                .doOnSuccess(result -> logger.info("User details cached successfully"))
-                                                .thenReturn(responseDto);
-                                    } catch (Exception e) {
-                                        logger.error("Error caching user details", e);
-                                        return Mono.just(responseDto);
-                                    }
-                                })
+                        Mono.defer(() -> {
+                            logger.info("Cache MISS for userId: {}, fetching from database", userId);
+                            return userRepository.userDetails(userId)
+                                    .flatMap(userDetails -> {
+                                        logger.info("User Details fetched from Database for userId: {}", userId);
+
+                                        UserResponseDto responseDto = UserResponseDto.builder().id(userDetails.getId()).userName(userDetails.getUsername())
+                                                .email(userDetails.getEmail()).firstName(userDetails.getFirstName()).lastName(userDetails.getLastName())
+                                                .phone(userDetails.getPhone()).gender(userDetails.getGender()).dateOfBirth(userDetails.getDateOfBirth())
+                                                .imageUrl(userDetails.getImageUrl()).downloadUrl(userDetails.getDownloadUrl()).build();
+
+                                        try {
+                                            String jsonData = objectMapper.writeValueAsString(responseDto);
+                                            logger.debug("Serialized JSON for caching: {}", jsonData);
+
+                                            return redisTemplate.opsForValue()
+                                                    .set(cacheKey, jsonData, Duration.ofHours(6))
+                                                    .doOnSuccess(result ->
+                                                            logger.info("User details cached successfully for userId: {} with TTL 6 hours", userId)
+                                                    )
+                                                    .doOnError(error ->
+                                                            logger.error("Failed to cache user details for userId: {}", userId, error)
+                                                    )
+                                                    .thenReturn(responseDto);
+                                        } catch (Exception e) {
+                                            logger.error("Error serializing user details for caching, userId: {}", userId, e);
+                                            return Mono.just(responseDto);
+                                        }
+                                    });
+                        })
                 )
                 .doOnSuccess(dto -> {
                     if (dto != null) {
                         logger.info("User details retrieved successfully: {}", dto.getEmail());
-                    }else{
-                        logger.info("User details not retrieved successfully");
+                    } else {
+                        logger.warn("User details not found for userId: {}", userId);
                     }
                 })
                 .doOnError(e -> logger.error("Error retrieving user details for userId: {}", userId, e));
