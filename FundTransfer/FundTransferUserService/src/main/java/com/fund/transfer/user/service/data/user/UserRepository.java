@@ -37,26 +37,23 @@ public interface UserRepository extends R2dbcRepository<UserEntity, Long> {
                                 String gender, LocalDate dateOfBirth, String imageUrl, String downloadUrl, Long updatedBy);
 
     @Query("""
-        SELECT id, email, first_name, last_name, phone, gender, date_of_birth, image_url, download_url, created_by, updated_by
-        FROM users 
-        WHERE id = :userId AND active = true
-        """)
+    SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.gender, 
+           u.date_of_birth, u.image_url, u.download_url, u.created_by, u.updated_by,
+           l.username
+    FROM users u
+    LEFT JOIN logins l ON u.id = l.user_id
+    WHERE u.id = :userId AND u.active = true
+    """)
     Mono<UserEntity> userDetails(Long userId);
 
     @Query("""
-        UPDATE users
-        SET active = false 
-        WHERE id = :userId 
-        RETURNING *
+        UPDATE users SET active = false  WHERE id = :userId RETURNING *
         """)
     Mono<UserEntity> userDelete(Long userId);
 
     @Query("""
         SELECT id, email, first_name, last_name, phone, gender, date_of_birth, image_url, download_url, created_by, updated_by
-        FROM users
-        WHERE (:userId IS NULL OR id = :userId) 
-        AND active = true 
-        ORDER BY created_at DESC
+        FROM users WHERE (:userId IS NULL OR id = :userId) AND active = true ORDER BY created_at DESC
         """)
     Flux<UserEntity> userList(@Nullable Long userId);
 }

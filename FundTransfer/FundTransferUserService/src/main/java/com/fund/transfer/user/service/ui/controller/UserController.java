@@ -47,7 +47,9 @@ public class UserController {
 
     @GetMapping
     public Mono<ResponseEntity<UserResponseModel>> userDetails(@RequestParam Long id){
-        return null;
+        return userService.userDetails(id)
+                .map(responseDto-> modelMapper.map(responseDto, UserResponseModel.class))
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping("list")

@@ -1,5 +1,6 @@
 package com.fund.transfer.user.service.service.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fund.transfer.user.service.data.user.UserRepository;
 import com.fund.transfer.user.service.global.security.JwtUtil;
 import com.fund.transfer.user.service.shared.request.user.UserListRequestDto;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final ReactiveRedisTemplate<String, Object> redisTemplate;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -109,7 +111,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserResponseDto> userDetails(Long userId) {
-        return null;
+        String cacheKey = "USER_DETAILS_CACHE:" + userId;
+
+        return redisTemplate.opsForValue()
+                .get(cacheKey)
+                .flatMap(cachedData -> {
+                    logger.info("User Details from Redis cache for userId: {}", userId);
+                    try {
+                        UserResponseDto dto = objectMapper.readValue(cachedData.toString(), UserResponseDto.class);
+                        return Mono.just(dto);
+                    } catch (Exception e) {
+                        logger.error("Error deserializing cached user details", e);
+                        return Mono.empty();
+                    }
+                })
+                .switchIfEmpty(
+                        userRepository.userDetails(userId)
+                                .flatMap(userDetails -> {
+                                    logger.info("User Details from Database for userId: {}", userId);
+                                    UserResponseDto responseDto = UserResponseDto.builder()
+                                            .id(userDetails.getId())
+                                            .userName(userDetails.getUsername())
+                                            .email(userDetails.getEmail())
+                                            .firstName(userDetails.getFirstName())
+                                            .lastName(userDetails.getLastName())
+                                            .phone(userDetails.getPhone())
+                                            .gender(userDetails.getGender())
+                                            .dateOfBirth(userDetails.getDateOfBirth())
+                                            .imageUrl(userDetails.getImageUrl())
+                                            .downloadUrl(userDetails.getDownloadUrl())
+                                            .build();
+                                    try {
+                                        String jsonData = objectMapper.writeValueAsString(responseDto);
+                                        return redisTemplate.opsForValue()
+                                                .set(cacheKey, jsonData, Duration.ofHours(6))
+                                                .doOnSuccess(result -> logger.info("User details cached successfully"))
+                                                .thenReturn(responseDto);
+                                    } catch (Exception e) {
+                                        logger.error("Error caching user details", e);
+                                        return Mono.just(responseDto);
+                                    }
+                                })
+                )
+                .doOnSuccess(dto -> {
+                    if (dto != null) {
+                        logger.info("User details retrieved successfully: {}", dto.getEmail());
+                    }else{
+                        logger.info("User details not retrieved successfully");
+                    }
+                })
+                .doOnError(e -> logger.error("Error retrieving user details for userId: {}", userId, e));
     }
 
     @Override
