@@ -26,17 +26,23 @@ public class UserController {
 
     @PostMapping
     public Mono<ResponseEntity<UserResponseModel>> saveUser(
-            @RequestBody UserRequestModel requestBody,
-            @RequestHeader(value = "Authorization", required = false) String authHeader){
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestBody UserRequestModel requestBody){
         UserRequestDto dto = modelMapper.map(requestBody, UserRequestDto.class);
-        return userService.saveUser(dto, authHeader)
+        return userService.saveUser(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, UserResponseModel.class))
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping
-    public Mono<ResponseEntity<UserResponseModel>> updateUser(@RequestBody UserRequestModel requestBody){
-        return null;
+    public Mono<ResponseEntity<UserResponseModel>> updateUser(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestBody UserRequestModel requestBody){
+        UserRequestDto dto = modelMapper.map(requestBody, UserRequestDto.class);
+
+        return userService.updateUser(authHeader, dto)
+                .map(responseDto-> modelMapper.map(responseDto, UserResponseModel.class))
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping

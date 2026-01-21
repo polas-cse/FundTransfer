@@ -28,11 +28,9 @@ public interface UserRepository extends R2dbcRepository<UserEntity, Long> {
     Mono<Integer> saveLogins(Long userId, String userName, String password, Long createdBy);
 
     @Query("""
-        UPDATE users
-        SET email = :email, first_name = :firstName, last_name = :lastName, phone = :phone,
+        UPDATE users SET email = :email, first_name = :firstName, last_name = :lastName, phone = :phone,
             gender = :gender, date_of_birth = :dateOfBirth, image_url = :imageUrl, download_url = :downloadUrl, 
-            updated_by = :updatedBy, updated_at = NOW() 
-        WHERE id = :userId 
+            updated_by = :updatedBy, updated_at = NOW()  WHERE id = :userId 
         RETURNING *
         """)
     Mono<UserEntity> updateUser(Long userId, String email, String firstName, String lastName, String phone,

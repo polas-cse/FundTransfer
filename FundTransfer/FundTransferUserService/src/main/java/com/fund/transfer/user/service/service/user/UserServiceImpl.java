@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -28,7 +29,8 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public Mono<UserResponseDto> saveUser(UserRequestDto requestDto, String authHeader) {
+    @Transactional
+    public Mono<UserResponseDto> saveUser(String authHeader, UserRequestDto requestDto) {
         String cacheKey = "AUTH_CACHE:" + authHeader;
 
         return redisTemplate.opsForValue()
@@ -45,40 +47,17 @@ public class UserServiceImpl implements UserService {
                                 )
                 )
                 .flatMap(userId ->
-                        userRepository.saveUser(
-                                        requestDto.getEmail(),
-                                        requestDto.getFirstName(),
-                                        requestDto.getLastName(),
-                                        requestDto.getPhone(),
-                                        requestDto.getGender(),
-                                        requestDto.getDateOfBirth(),
-                                        requestDto.getImageUrl(),
-                                        requestDto.getDownloadUrl(),
-                                        userId
-                                )
+                        userRepository.saveUser( requestDto.getEmail(), requestDto.getFirstName(), requestDto.getLastName(), requestDto.getPhone(),
+                                        requestDto.getGender(), requestDto.getDateOfBirth(), requestDto.getImageUrl(), requestDto.getDownloadUrl(), userId)
                                 .flatMap(entity -> {
                                     logger.info("User entity saved with id: {}", entity.getId());
-                                    return userRepository.saveLogins(
-                                                    entity.getId(),
-                                                    requestDto.getUserName(),
-                                                    requestDto.getPassword(),
-                                                    userId
-                                            )
+                                    return userRepository.saveLogins(entity.getId(), requestDto.getUserName(), requestDto.getPassword(), userId)
                                             .thenReturn(entity);
                                 })
                 )
-                .map(entity -> UserResponseDto.builder()
-                        .id(entity.getId())
-                        .email(entity.getEmail())
-                        .firstName(entity.getFirstName())
-                        .lastName(entity.getLastName())
-                        .phone(entity.getPhone())
-                        .gender(entity.getGender())
-                        .dateOfBirth(entity.getDateOfBirth())
-                        .imageUrl(entity.getImageUrl())
-                        .downloadUrl(entity.getDownloadUrl())
-                        .userName(requestDto.getUserName())
-                        .build()
+                .map(entity -> UserResponseDto.builder().id(entity.getId()).email(entity.getEmail()).firstName(entity.getFirstName())
+                        .lastName(entity.getLastName()).phone(entity.getPhone()).gender(entity.getGender()).dateOfBirth(entity.getDateOfBirth())
+                        .imageUrl(entity.getImageUrl()).downloadUrl(entity.getDownloadUrl()).userName(requestDto.getUserName()).build()
                 )
                 .doOnSuccess(u -> {
                     if (u == null) {
@@ -92,8 +71,40 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Mono<UserResponseDto> updateUser(UserRequestDto requestDto) {
-        return null;
+    @Transactional
+    public Mono<UserResponseDto> updateUser(String authHeader, UserRequestDto requestDto) {
+        String cacheKey = "AUTH_CACHE:" + authHeader;
+
+        return redisTemplate.opsForValue()
+                .get(cacheKey)
+                .map(idStr -> Long.parseLong(idStr.toString()))
+                .doOnNext(id -> logger.info("UserId from Redis cache: {}", id))
+                .switchIfEmpty(
+                        jwtUtil.extractUserIdFromAuthHeader(authHeader)
+                                .doOnNext(id -> logger.info("UserId from JWT: {}", id))
+                                .flatMap(id ->
+                                        redisTemplate.opsForValue()
+                                                .set(cacheKey, id.toString(), Duration.ofHours(6))
+                                                .thenReturn(id)
+                                )
+                )
+                .flatMap(userId ->
+                        userRepository.updateUser(requestDto.getId(), requestDto.getEmail(), requestDto.getFirstName(), requestDto.getLastName(), requestDto.getPhone(),
+                                        requestDto.getGender(), requestDto.getDateOfBirth(), requestDto.getImageUrl(), requestDto.getDownloadUrl(), userId)
+
+                )
+                .map(entity -> UserResponseDto.builder().id(entity.getId()).email(entity.getEmail()).firstName(entity.getFirstName())
+                        .lastName(entity.getLastName()).phone(entity.getPhone()).gender(entity.getGender()).dateOfBirth(entity.getDateOfBirth())
+                        .imageUrl(entity.getImageUrl()).downloadUrl(entity.getDownloadUrl()).userName(requestDto.getUserName()).build()
+                )
+                .doOnSuccess(u -> {
+                    if (u == null) {
+                        logger.error("UserResponseDto is null!");
+                    } else {
+                        logger.info("User updated successfully: {}", u.getEmail());
+                    }
+                })
+                .doOnError(e -> logger.error("Error saving user", e));
     }
 
     @Override

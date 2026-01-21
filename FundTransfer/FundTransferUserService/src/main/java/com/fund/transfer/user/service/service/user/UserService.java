@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 
 public interface UserService {
 
-    Mono<UserResponseDto> saveUser(UserRequestDto requestDto, String authHeader);
-    Mono<UserResponseDto> updateUser(UserRequestDto requestDto);
+    Mono<UserResponseDto> saveUser(String authHeader, UserRequestDto requestDto);
+    Mono<UserResponseDto> updateUser(String authHeader, UserRequestDto requestDto);
     Mono<UserResponseDto> userDetails(Long userId);
     Mono<UserResponseDto> deleteUser(Long userId);
     Flux<UserListResponseDto> userList(UserListRequestDto requestDto);
