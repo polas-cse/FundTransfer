@@ -26,6 +26,19 @@ import java.time.Duration;
 public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    // Cache key prefixes and patterns
+    private static final String AUTH_CACHE_PREFIX = "AUTH_CACHE:";
+    private static final String USER_DETAILS_CACHE_PREFIX = "USER_DETAILS_CACHE:";
+    private static final String USER_LIST_CACHE_PREFIX = "USER_LIST_CACHE:";
+    private static final String USER_LIST_CACHE_ALL = "USER_LIST_CACHE:ALL";
+    private static final String USER_LIST_CACHE_PATTERN = "USER_LIST_CACHE:*";
+
+    // Cache TTL durations
+    private static final Duration AUTH_CACHE_TTL = Duration.ofHours(6);
+    private static final Duration USER_DETAILS_CACHE_TTL = Duration.ofHours(6);
+    private static final Duration USER_LIST_CACHE_TTL = Duration.ofMinutes(30);
+
     private final ReactiveRedisTemplate<String, Object> redisTemplate;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
@@ -35,10 +48,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Mono<UserResponseDto> saveUser(String authHeader, UserRequestDto requestDto) {
-        String cacheKey = "AUTH_CACHE:" + authHeader;
+        String authCacheKey = AUTH_CACHE_PREFIX + authHeader;
 
         return redisTemplate.opsForValue()
-                .get(cacheKey)
+                .get(authCacheKey)
                 .map(idStr -> Long.parseLong(idStr.toString()))
                 .doOnNext(id -> logger.info("UserId from Redis cache: {}", id))
                 .switchIfEmpty(
@@ -46,22 +59,59 @@ public class UserServiceImpl implements UserService {
                                 .doOnNext(id -> logger.info("UserId from JWT: {}", id))
                                 .flatMap(id ->
                                         redisTemplate.opsForValue()
-                                                .set(cacheKey, id.toString(), Duration.ofHours(6))
+                                                .set(authCacheKey, id.toString(), AUTH_CACHE_TTL)
                                                 .thenReturn(id)
                                 )
                 )
                 .flatMap(userId ->
-                        userRepository.saveUser(requestDto.getEmail(), requestDto.getFirstName(), requestDto.getLastName(), requestDto.getPhone(),
-                                        requestDto.getGender(), requestDto.getDateOfBirth(), requestDto.getImageUrl(), requestDto.getDownloadUrl(), userId)
+                        userRepository.saveUser(
+                                        requestDto.getEmail(),
+                                        requestDto.getFirstName(),
+                                        requestDto.getLastName(),
+                                        requestDto.getPhone(),
+                                        requestDto.getGender(),
+                                        requestDto.getDateOfBirth(),
+                                        requestDto.getImageUrl(),
+                                        requestDto.getDownloadUrl(),
+                                        userId)
                                 .flatMap(entity -> {
                                     logger.info("User entity saved with id: {}", entity.getId());
-                                    return userRepository.saveLogins(entity.getId(), requestDto.getUserName(), requestDto.getPassword(), userId)
+                                    return userRepository.saveLogins(
+                                                    entity.getId(),
+                                                    requestDto.getUserName(),
+                                                    requestDto.getPassword(),
+                                                    userId)
+                                            .thenReturn(entity);
+                                })
+                                .flatMap(entity -> {
+                                    return redisTemplate.keys(USER_LIST_CACHE_PATTERN)
+                                            .collectList()
+                                            .flatMap(keys -> {
+                                                if (keys.isEmpty()) {
+                                                    logger.info("No user list caches found to delete");
+                                                    return Mono.just(0L);
+                                                }
+                                                logger.info("Deleting {} user list cache keys after save", keys.size());
+                                                return redisTemplate.delete(keys.toArray(new String[0]))
+                                                        .doOnNext(deleted ->
+                                                                logger.info("User list caches deleted after save, count: {}", deleted)
+                                                        );
+                                            })
                                             .thenReturn(entity);
                                 })
                 )
-                .map(entity -> UserResponseDto.builder().id(entity.getId()).email(entity.getEmail()).firstName(entity.getFirstName())
-                        .lastName(entity.getLastName()).phone(entity.getPhone()).gender(entity.getGender()).dateOfBirth(entity.getDateOfBirth())
-                        .imageUrl(entity.getImageUrl()).downloadUrl(entity.getDownloadUrl()).userName(requestDto.getUserName()).build()
+                .map(entity -> UserResponseDto.builder()
+                        .id(entity.getId())
+                        .email(entity.getEmail())
+                        .firstName(entity.getFirstName())
+                        .lastName(entity.getLastName())
+                        .phone(entity.getPhone())
+                        .gender(entity.getGender())
+                        .dateOfBirth(entity.getDateOfBirth())
+                        .imageUrl(entity.getImageUrl())
+                        .downloadUrl(entity.getDownloadUrl())
+                        .userName(requestDto.getUserName())
+                        .build()
                 )
                 .doOnSuccess(u -> {
                     if (u == null) {
@@ -87,10 +137,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Mono<UserResponseDto> updateUser(String authHeader, UserRequestDto requestDto) {
-        String cacheKey = "AUTH_CACHE:" + authHeader;
+        String authCacheKey = AUTH_CACHE_PREFIX + authHeader;
 
         return redisTemplate.opsForValue()
-                .get(cacheKey)
+                .get(authCacheKey)
                 .map(idStr -> Long.parseLong(idStr.toString()))
                 .doOnNext(id -> logger.info("UserId from Redis cache: {}", id))
                 .switchIfEmpty(
@@ -98,33 +148,64 @@ public class UserServiceImpl implements UserService {
                                 .doOnNext(id -> logger.info("UserId from JWT: {}", id))
                                 .flatMap(id ->
                                         redisTemplate.opsForValue()
-                                                .set(cacheKey, id.toString(), Duration.ofHours(6))
+                                                .set(authCacheKey, id.toString(), AUTH_CACHE_TTL)
                                                 .thenReturn(id)
                                 )
                 )
                 .flatMap(userId -> {
-                    String userDetailsCacheKey = "USER_DETAILS_CACHE:" + userId;
-                    logger.info("Deleting cache for key: {}", userDetailsCacheKey);
+                    String userDetailsCacheKey = USER_DETAILS_CACHE_PREFIX + requestDto.getId();
+                    logger.info("Updating user and clearing cache for key: {}", userDetailsCacheKey);
 
-                    return userRepository.updateUser(requestDto.getId(),requestDto.getEmail(),requestDto.getFirstName(),requestDto.getLastName(),
-                                    requestDto.getPhone(), requestDto.getGender(), requestDto.getDateOfBirth(),requestDto.getImageUrl(),
-                                    requestDto.getDownloadUrl(),userId)
-                            .flatMap(entity ->
-                                    redisTemplate.delete(userDetailsCacheKey)
-                                            .doOnNext(deleted ->
-                                                    logger.info("User details cache deleted successfully: {}", deleted)
-                                            )
-                                            .thenReturn(entity)
-                            );
+                    return userRepository.updateUser(
+                                    requestDto.getId(),
+                                    requestDto.getEmail(),
+                                    requestDto.getFirstName(),
+                                    requestDto.getLastName(),
+                                    requestDto.getPhone(),
+                                    requestDto.getGender(),
+                                    requestDto.getDateOfBirth(),
+                                    requestDto.getImageUrl(),
+                                    requestDto.getDownloadUrl(),
+                                    userId)
+                            .flatMap(entity -> {
+                                Mono<Long> clearDetailsCache = redisTemplate.delete(userDetailsCacheKey)
+                                        .doOnNext(deleted ->
+                                                logger.info("User details cache deleted after update: {}", deleted)
+                                        );
+
+                                Mono<Long> clearListCaches = redisTemplate.keys(USER_LIST_CACHE_PATTERN)
+                                        .collectList()
+                                        .flatMap(keys -> {
+                                            if (keys.isEmpty()) {
+                                                logger.info("No user list caches found to delete");
+                                                return Mono.just(0L);
+                                            }
+                                            logger.info("Deleting {} user list cache keys after update", keys.size());
+                                            return redisTemplate.delete(keys.toArray(new String[0]))
+                                                    .doOnNext(deleted ->
+                                                            logger.info("User list caches deleted after update, count: {}", deleted)
+                                                    );
+                                        });
+
+                                return Mono.zip(clearDetailsCache, clearListCaches)
+                                        .thenReturn(entity);
+                            });
                 })
-                .map(entity -> UserResponseDto.builder().id(entity.getId()).email(entity.getEmail()).firstName(entity.getFirstName())
-                        .lastName(entity.getLastName()).phone(entity.getPhone()).gender(entity.getGender()).dateOfBirth(entity.getDateOfBirth())
-                        .imageUrl(entity.getImageUrl()).downloadUrl(entity.getDownloadUrl()).userName(requestDto.getUserName()).build()
+                .map(entity -> UserResponseDto.builder()
+                        .id(entity.getId())
+                        .email(entity.getEmail())
+                        .firstName(entity.getFirstName())
+                        .lastName(entity.getLastName())
+                        .phone(entity.getPhone())
+                        .gender(entity.getGender())
+                        .dateOfBirth(entity.getDateOfBirth())
+                        .imageUrl(entity.getImageUrl())
+                        .downloadUrl(entity.getDownloadUrl())
+                        .userName(requestDto.getUserName())
+                        .build()
                 )
                 .doOnSuccess(u -> {
-                    if (u == null) {
-                        logger.error("UserResponseDto is null!");
-                    } else {
+                    if (u != null) {
                         logger.info("User updated successfully: {}", u.getEmail());
                     }
                 })
@@ -141,7 +222,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserResponseDto> userDetails(Long userId) {
-        String cacheKey = "USER_DETAILS_CACHE:" + userId;
+        String cacheKey = USER_DETAILS_CACHE_PREFIX + userId;
         logger.info("Checking cache for key: {}", cacheKey);
 
         return redisTemplate.opsForValue()
@@ -167,17 +248,25 @@ public class UserServiceImpl implements UserService {
                                     .flatMap(userDetails -> {
                                         logger.info("User Details fetched from Database for userId: {}", userId);
 
-                                        UserResponseDto responseDto = UserResponseDto.builder().id(userDetails.getId()).userName(userDetails.getUsername())
-                                                .email(userDetails.getEmail()).firstName(userDetails.getFirstName()).lastName(userDetails.getLastName())
-                                                .phone(userDetails.getPhone()).gender(userDetails.getGender()).dateOfBirth(userDetails.getDateOfBirth())
-                                                .imageUrl(userDetails.getImageUrl()).downloadUrl(userDetails.getDownloadUrl()).build();
+                                        UserResponseDto responseDto = UserResponseDto.builder()
+                                                .id(userDetails.getId())
+                                                .userName(userDetails.getUsername())
+                                                .email(userDetails.getEmail())
+                                                .firstName(userDetails.getFirstName())
+                                                .lastName(userDetails.getLastName())
+                                                .phone(userDetails.getPhone())
+                                                .gender(userDetails.getGender())
+                                                .dateOfBirth(userDetails.getDateOfBirth())
+                                                .imageUrl(userDetails.getImageUrl())
+                                                .downloadUrl(userDetails.getDownloadUrl())
+                                                .build();
 
                                         try {
                                             String jsonData = objectMapper.writeValueAsString(responseDto);
                                             logger.debug("Serialized JSON for caching: {}", jsonData);
 
                                             return redisTemplate.opsForValue()
-                                                    .set(cacheKey, jsonData, Duration.ofHours(6))
+                                                    .set(cacheKey, jsonData, USER_DETAILS_CACHE_TTL)
                                                     .doOnSuccess(result ->
                                                             logger.info("User details cached successfully for userId: {} with TTL 6 hours", userId)
                                                     )
@@ -203,12 +292,126 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<UserResponseDto> deleteUser(Long userId) {
-        return null;
+    public Flux<UserListResponseDto> userList(UserListRequestDto requestDto) {
+        String cacheKey = requestDto.getCreatedBy() != null
+                ? USER_LIST_CACHE_PREFIX + requestDto.getCreatedBy()
+                : USER_LIST_CACHE_ALL;
+
+        logger.info("Fetching user list with cache key: {}", cacheKey);
+
+        return redisTemplate.opsForValue()
+                .get(cacheKey)
+                .doOnNext(data -> logger.info("Cache HIT for user list: {}", cacheKey))
+                .flatMapMany(cachedData -> {
+                    try {
+                        String jsonString = cachedData.toString();
+                        logger.debug("Cached user list JSON: {}", jsonString);
+
+                        UserListResponseDto[] dtoArray = objectMapper.readValue(
+                                jsonString,
+                                UserListResponseDto[].class
+                        );
+                        logger.info("Successfully deserialized {} users from cache", dtoArray.length);
+                        return Flux.fromArray(dtoArray);
+                    } catch (Exception e) {
+                        logger.error("Error deserializing cached user list", e);
+                        return redisTemplate.delete(cacheKey).thenMany(Flux.empty());
+                    }
+                })
+                .switchIfEmpty(
+                        Flux.defer(() -> {
+                            logger.info("Cache MISS for user list, fetching from database");
+                            return userRepository.userList(requestDto.getCreatedBy())
+                                    .map(entity -> UserListResponseDto.builder()
+                                            .id(entity.getId())
+                                            .email(entity.getEmail())
+                                            .firstName(entity.getFirstName())
+                                            .lastName(entity.getLastName())
+                                            .phone(entity.getPhone())
+                                            .gender(entity.getGender())
+                                            .dateOfBirth(entity.getDateOfBirth())
+                                            .imageUrl(entity.getImageUrl())
+                                            .downloadUrl(entity.getDownloadUrl())
+                                            .build())
+                                    .collectList()
+                                    .flatMapMany(userList -> {
+                                        logger.info("Fetched {} users from database", userList.size());
+
+                                        if (!userList.isEmpty()) {
+                                            try {
+                                                String jsonData = objectMapper.writeValueAsString(userList);
+                                                logger.debug("Serialized user list for caching");
+
+                                                return redisTemplate.opsForValue()
+                                                        .set(cacheKey, jsonData, USER_LIST_CACHE_TTL)
+                                                        .doOnSuccess(result ->
+                                                                logger.info("User list cached successfully with {} users, TTL: 30 minutes", userList.size())
+                                                        )
+                                                        .doOnError(error ->
+                                                                logger.error("Failed to cache user list", error)
+                                                        )
+                                                        .thenMany(Flux.fromIterable(userList));
+                                            } catch (Exception e) {
+                                                logger.error("Error serializing user list for caching", e);
+                                                return Flux.fromIterable(userList);
+                                            }
+                                        }
+                                        return Flux.fromIterable(userList);
+                                    });
+                        })
+                )
+                .doOnComplete(() -> logger.info("User list retrieval completed"))
+                .doOnError(e -> logger.error("Error retrieving user list", e));
     }
 
     @Override
-    public Flux<UserListResponseDto> userList(UserListRequestDto requestDto) {
-        return null;
+    @Transactional
+    public Mono<UserResponseDto> deleteUser(Long userId) {
+        String userDetailsCacheKey = USER_DETAILS_CACHE_PREFIX + userId;
+
+        logger.info("Deleting user with userId: {}", userId);
+
+        return userRepository.userDelete(userId)
+                .flatMap(deletedUser -> {
+                    logger.info("User soft-deleted successfully: {}", deletedUser.getId());
+
+                    Mono<Long> deleteDetailsCache = redisTemplate.delete(userDetailsCacheKey)
+                            .doOnNext(deleted ->
+                                    logger.info("User details cache deleted for userId: {}, count: {}", userId, deleted)
+                            );
+
+                    Mono<Long> deleteListCaches = redisTemplate.keys(USER_LIST_CACHE_PATTERN)
+                            .collectList()
+                            .flatMap(keys -> {
+                                if (keys.isEmpty()) {
+                                    logger.info("No user list caches found to delete");
+                                    return Mono.just(0L);
+                                }
+                                logger.info("Deleting {} user list cache keys after delete", keys.size());
+                                return redisTemplate.delete(keys.toArray(new String[0]))
+                                        .doOnNext(deleted ->
+                                                logger.info("User list caches deleted after delete, count: {}", deleted)
+                                        );
+                            });
+
+                    return Mono.zip(deleteDetailsCache, deleteListCaches)
+                            .then(Mono.just(UserResponseDto.builder()
+                                    .id(deletedUser.getId())
+                                    .email(deletedUser.getEmail())
+                                    .firstName(deletedUser.getFirstName())
+                                    .lastName(deletedUser.getLastName())
+                                    .phone(deletedUser.getPhone())
+                                    .gender(deletedUser.getGender())
+                                    .dateOfBirth(deletedUser.getDateOfBirth())
+                                    .imageUrl(deletedUser.getImageUrl())
+                                    .downloadUrl(deletedUser.getDownloadUrl())
+                                    .build()));
+                })
+                .doOnSuccess(dto -> {
+                    if (dto != null) {
+                        logger.info("User deleted successfully: {}", dto.getEmail());
+                    }
+                })
+                .doOnError(e -> logger.error("Error deleting user for userId: {}", userId, e));
     }
 }

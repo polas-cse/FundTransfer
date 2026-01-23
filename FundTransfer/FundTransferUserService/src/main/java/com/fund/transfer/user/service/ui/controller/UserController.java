@@ -1,6 +1,7 @@
 package com.fund.transfer.user.service.ui.controller;
 
 import com.fund.transfer.user.service.service.user.UserService;
+import com.fund.transfer.user.service.shared.request.user.UserListRequestDto;
 import com.fund.transfer.user.service.shared.request.user.UserRequestDto;
 import com.fund.transfer.user.service.ui.model.request.user.UserListRequestModel;
 import com.fund.transfer.user.service.ui.model.request.user.UserRequestModel;
@@ -52,14 +53,23 @@ public class UserController {
                 .map(ResponseEntity::ok);
     }
 
-    @GetMapping("list")
-    public Flux<ResponseEntity<UserListResponseModel>> userList(@RequestBody UserListRequestModel requestBody){
-        return null;
+    @PostMapping("list")
+    public Flux<ResponseEntity<UserListResponseModel>> userList(@RequestBody UserListRequestModel requestBody) {
+
+        UserListRequestDto requestDto = modelMapper.map(requestBody, UserListRequestDto.class);
+
+        return userService.userList(requestDto)
+                .map(dto -> {
+                    UserListResponseModel response = modelMapper.map(dto, UserListResponseModel.class);
+                    return ResponseEntity.ok(response);
+                });
     }
 
     @DeleteMapping
-    public ResponseEntity<Boolean> userDelete(@RequestParam Long id){
-        return null;
+    public Mono<ResponseEntity<Boolean>> userDelete(@RequestParam Long id) {
+        return userService.deleteUser(id)
+                .map(dto -> ResponseEntity.ok(true))
+                .defaultIfEmpty(ResponseEntity.ok(false));
     }
 
 }
