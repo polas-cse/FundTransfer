@@ -24,6 +24,7 @@ public class UserRequestDto {
     private LocalDate dateOfBirth;
     private String imageUrl;
     private String downloadUrl;
+    private boolean active;
     private Long createdBy;
     private Long updatedBy;
 

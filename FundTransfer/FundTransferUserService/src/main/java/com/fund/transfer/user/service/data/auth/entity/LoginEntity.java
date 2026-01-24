@@ -16,25 +16,25 @@ public class LoginEntity {
 
     private long id;
     private long user_id;
-    private String username;
+    private String userName;
     private String password;
     private String salt;
-    private boolean is_pwd_reset;
-    private boolean two_factor_enabled;
-    private Timestamp locked_until;
-    private int login_attempts;
-    private Timestamp last_login_at;
-    private Timestamp login_time;
-    private Timestamp expire_at;
-    private String access_token;
-    private String refresh_token;
+    private boolean isPwdReset;
+    private boolean twoFactorEnabled;
+    private Timestamp lockedUntil;
+    private int loginAttempts;
+    private Timestamp lastLoginAt;
+    private Timestamp loginTime;
+    private Timestamp expireAt;
+    private String accessToken;
+    private String refreshToken;
     private String device;
-    private String ip_address;
+    private String ipAddress;
     private String location;
-    private String created_by;
-    private Timestamp created_at;
-    private String updated_by;
-    private Timestamp updated_at;
+    private String createdBy;
+    private Timestamp createdAt;
+    private String updatedBy;
+    private Timestamp updatedAt;
 
 
 }

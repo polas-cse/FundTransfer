@@ -21,6 +21,7 @@ public class UserResponseModel {
     private String phone;
     private String gender;
     private LocalDate dateOfBirth;
+    private boolean active;
     private String imageUrl;
     private String downloadUrl;
 

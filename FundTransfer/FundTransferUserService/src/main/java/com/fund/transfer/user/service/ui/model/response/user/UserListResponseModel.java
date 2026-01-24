@@ -23,5 +23,6 @@ public class UserListResponseModel {
     private LocalDate dateOfBirth;
     private String imageUrl;
     private String downloadUrl;
+    private boolean active;
 
 }

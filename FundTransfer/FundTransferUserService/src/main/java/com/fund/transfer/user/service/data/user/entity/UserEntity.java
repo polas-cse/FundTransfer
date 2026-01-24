@@ -2,6 +2,7 @@ package com.fund.transfer.user.service.data.user.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class UserEntity {
 
     private Long id;
-    private String username;
+    private String userName;
     private String email;
     private String firstName;
     private String lastName;

@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService {
                         .imageUrl(entity.getImageUrl())
                         .downloadUrl(entity.getDownloadUrl())
                         .userName(requestDto.getUserName())
+                        .active(entity.getActive())
                         .build()
                 )
                 .doOnSuccess(u -> {
@@ -166,6 +167,7 @@ public class UserServiceImpl implements UserService {
                                     requestDto.getDateOfBirth(),
                                     requestDto.getImageUrl(),
                                     requestDto.getDownloadUrl(),
+                                    requestDto.isActive(),
                                     userId)
                             .flatMap(entity -> {
                                 Mono<Long> clearDetailsCache = redisTemplate.delete(userDetailsCacheKey)
@@ -202,6 +204,7 @@ public class UserServiceImpl implements UserService {
                         .imageUrl(entity.getImageUrl())
                         .downloadUrl(entity.getDownloadUrl())
                         .userName(requestDto.getUserName())
+                        .active(entity.getActive())
                         .build()
                 )
                 .doOnSuccess(u -> {
@@ -248,9 +251,11 @@ public class UserServiceImpl implements UserService {
                                     .flatMap(userDetails -> {
                                         logger.info("User Details fetched from Database for userId: {}", userId);
 
+                                        logger.error("log............ {} ", userDetails);
+
                                         UserResponseDto responseDto = UserResponseDto.builder()
                                                 .id(userDetails.getId())
-                                                .userName(userDetails.getUsername())
+                                                .userName(userDetails.getUserName())
                                                 .email(userDetails.getEmail())
                                                 .firstName(userDetails.getFirstName())
                                                 .lastName(userDetails.getLastName())
@@ -259,6 +264,7 @@ public class UserServiceImpl implements UserService {
                                                 .dateOfBirth(userDetails.getDateOfBirth())
                                                 .imageUrl(userDetails.getImageUrl())
                                                 .downloadUrl(userDetails.getDownloadUrl())
+                                                .active(userDetails.getActive())
                                                 .build();
 
                                         try {
@@ -324,6 +330,7 @@ public class UserServiceImpl implements UserService {
                             return userRepository.userList(requestDto.getCreatedBy())
                                     .map(entity -> UserListResponseDto.builder()
                                             .id(entity.getId())
+                                            .userName(entity.getUserName())
                                             .email(entity.getEmail())
                                             .firstName(entity.getFirstName())
                                             .lastName(entity.getLastName())
@@ -332,6 +339,7 @@ public class UserServiceImpl implements UserService {
                                             .dateOfBirth(entity.getDateOfBirth())
                                             .imageUrl(entity.getImageUrl())
                                             .downloadUrl(entity.getDownloadUrl())
+                                            .active(entity.getActive())
                                             .build())
                                     .collectList()
                                     .flatMapMany(userList -> {
@@ -397,6 +405,7 @@ public class UserServiceImpl implements UserService {
                     return Mono.zip(deleteDetailsCache, deleteListCaches)
                             .then(Mono.just(UserResponseDto.builder()
                                     .id(deletedUser.getId())
+                                    .userName(deletedUser.getUserName())
                                     .email(deletedUser.getEmail())
                                     .firstName(deletedUser.getFirstName())
                                     .lastName(deletedUser.getLastName())
@@ -405,6 +414,7 @@ public class UserServiceImpl implements UserService {
                                     .dateOfBirth(deletedUser.getDateOfBirth())
                                     .imageUrl(deletedUser.getImageUrl())
                                     .downloadUrl(deletedUser.getDownloadUrl())
+                                    .active(deletedUser.getActive())
                                     .build()));
                 })
                 .doOnSuccess(dto -> {

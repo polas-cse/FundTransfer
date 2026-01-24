@@ -60,8 +60,8 @@
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="username" type="VARCHAR(60)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_logins_username"/>
+            <column name="user_name" type="VARCHAR(60)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_logins_user_name"/>
             </column>
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>

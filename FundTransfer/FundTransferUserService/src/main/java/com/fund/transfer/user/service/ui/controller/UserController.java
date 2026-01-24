@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("user")
@@ -54,15 +57,17 @@ public class UserController {
     }
 
     @PostMapping("list")
-    public Flux<ResponseEntity<UserListResponseModel>> userList(@RequestBody UserListRequestModel requestBody) {
+    public Mono<ResponseEntity<List<UserListResponseModel>>> userList(@RequestBody UserListRequestModel requestBody) {
 
-        UserListRequestDto requestDto = modelMapper.map(requestBody, UserListRequestDto.class);
+        UserListRequestDto requestDto = UserListRequestDto.builder()
+                .createdBy(requestBody.getCreatedBy())
+                .build();
 
         return userService.userList(requestDto)
-                .map(dto -> {
-                    UserListResponseModel response = modelMapper.map(dto, UserListResponseModel.class);
-                    return ResponseEntity.ok(response);
-                });
+                .map(dto -> modelMapper.map(dto, UserListResponseModel.class))
+                .collectList()
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.ok(Collections.emptyList()));
     }
 
     @DeleteMapping

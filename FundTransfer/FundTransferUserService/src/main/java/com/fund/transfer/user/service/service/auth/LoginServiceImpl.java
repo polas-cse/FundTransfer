@@ -34,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
                         authRepository.loginUser(loginDto.getUserName(), loginDto.getPassword())
                                 .flatMap(user -> {
                                     String token = jwtUtil.generateToken(
-                                            user.getUsername(),
+                                            user.getUserName(),
                                             user.getId()
                                     );
 
@@ -49,7 +49,6 @@ public class LoginServiceImpl implements LoginService {
                                                     .then(redisTemplate.opsForValue()
                                                             .set(cacheKey, response, Duration.ofHours(6))
                                                             .thenReturn(response));
-
                                 })
                                 .switchIfEmpty(
                                         Mono.just(new LoginResponseModel(false, "Invalid credentials", null, null))

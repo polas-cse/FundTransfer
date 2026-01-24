@@ -23,5 +23,6 @@ public class UserListResponseDto {
     private LocalDate dateOfBirth;
     private String imageUrl;
     private String downloadUrl;
+    private boolean active;
 
 }
