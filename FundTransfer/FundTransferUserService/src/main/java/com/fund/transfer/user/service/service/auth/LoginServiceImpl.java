@@ -2,6 +2,8 @@ package com.fund.transfer.user.service.service.auth;
 
 import com.fund.transfer.user.service.data.auth.AuthRepository;
 import com.fund.transfer.user.service.global.security.JwtUtil;
+import com.fund.transfer.user.service.global.utils.CashKeyUtils;
+import com.fund.transfer.user.service.global.utils.CashTTL;
 import com.fund.transfer.user.service.shared.request.auth.LoginDto;
 import com.fund.transfer.user.service.ui.model.response.auth.LoginResponseModel;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +24,15 @@ public class LoginServiceImpl implements LoginService {
     private final ReactiveRedisTemplate<String, Object> redisTemplate;
     private final JwtUtil jwtUtil;
 
+    // Cache key prefixes and patterns
+    private static final String LOGIN_CACHE_PREFIX = CashKeyUtils.LOGIN_CACHE_PREFIX;
+
+    // Cache TTL durations
+    private static final Duration LOGIN_CACHE_TTL = CashTTL.LOGIN_CACHE_TTL;
+
     @Override
     public Mono<LoginResponseModel> userLogin(LoginDto loginDto) {
-        String cacheKey = "LOGIN_CACHE:" + loginDto.getUserName();
+        String cacheKey = LOGIN_CACHE_PREFIX + loginDto.getUserName();
 
         return redisTemplate.opsForValue()
                 .get(cacheKey)
@@ -46,9 +54,9 @@ public class LoginServiceImpl implements LoginService {
                                     );
 
                                     return authRepository.saveLoginLogs(user.getUser_id(), token)
-                                                    .then(redisTemplate.opsForValue()
-                                                            .set(cacheKey, response, Duration.ofHours(6))
-                                                            .thenReturn(response));
+                                            .then(redisTemplate.opsForValue()
+                                                    .set(cacheKey, response, LOGIN_CACHE_TTL)
+                                                    .thenReturn(response));
                                 })
                                 .switchIfEmpty(
                                         Mono.just(new LoginResponseModel(false, "Invalid credentials", null, null))
@@ -62,6 +70,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Mono<Boolean> logout(String userName) {
-        return redisTemplate.delete("LOGIN_CACHE:" + userName).map(count -> count > 0);
+        String cacheKey = LOGIN_CACHE_PREFIX + userName;
+        return redisTemplate.delete(cacheKey).map(count -> count > 0);
     }
 }

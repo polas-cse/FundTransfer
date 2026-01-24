@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fund.transfer.user.service.data.user.UserRepository;
 import com.fund.transfer.user.service.global.exception.ApiException;
 import com.fund.transfer.user.service.global.security.JwtUtil;
+import com.fund.transfer.user.service.global.utils.CashKeyUtils;
+import com.fund.transfer.user.service.global.utils.CashTTL;
 import com.fund.transfer.user.service.shared.request.user.UserListRequestDto;
 import com.fund.transfer.user.service.shared.request.user.UserRequestDto;
 import com.fund.transfer.user.service.shared.response.user.UserListResponseDto;
@@ -26,24 +28,23 @@ import java.time.Duration;
 public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
-    // Cache key prefixes and patterns
-    private static final String AUTH_CACHE_PREFIX = "AUTH_CACHE:";
-    private static final String USER_DETAILS_CACHE_PREFIX = "USER_DETAILS_CACHE:";
-    private static final String USER_LIST_CACHE_PREFIX = "USER_LIST_CACHE:";
-    private static final String USER_LIST_CACHE_ALL = "USER_LIST_CACHE:ALL";
-    private static final String USER_LIST_CACHE_PATTERN = "USER_LIST_CACHE:*";
-
-    // Cache TTL durations
-    private static final Duration AUTH_CACHE_TTL = Duration.ofHours(6);
-    private static final Duration USER_DETAILS_CACHE_TTL = Duration.ofHours(6);
-    private static final Duration USER_LIST_CACHE_TTL = Duration.ofMinutes(30);
-
     private final ReactiveRedisTemplate<String, Object> redisTemplate;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+
+    // Cache key prefixes and patterns
+    private final String AUTH_CACHE_PREFIX = CashKeyUtils.AUTH_CACHE_PREFIX;
+    private final String USER_DETAILS_CACHE_PREFIX = CashKeyUtils.USER_DETAILS_CACHE_PREFIX;
+    private final String USER_LIST_CACHE_PREFIX = CashKeyUtils.USER_LIST_CACHE_PREFIX;
+    private final String USER_LIST_CACHE_ALL = CashKeyUtils.USER_LIST_CACHE_ALL;
+    private final String USER_LIST_CACHE_PATTERN = CashKeyUtils.USER_LIST_CACHE_PATTERN;
+
+    // Cache TTL durations
+    private final Duration AUTH_CACHE_TTL = CashTTL.AUTH_CACHE_TTL;
+    private final Duration USER_DETAILS_CACHE_TTL = CashTTL.USER_DETAILS_CACHE_TTL;
+    private final Duration USER_LIST_CACHE_TTL = CashTTL.USER_LIST_CACHE_TTL;
 
     @Override
     @Transactional
@@ -250,8 +251,6 @@ public class UserServiceImpl implements UserService {
                             return userRepository.userDetails(userId)
                                     .flatMap(userDetails -> {
                                         logger.info("User Details fetched from Database for userId: {}", userId);
-
-                                        logger.error("log............ {} ", userDetails);
 
                                         UserResponseDto responseDto = UserResponseDto.builder()
                                                 .id(userDetails.getId())
