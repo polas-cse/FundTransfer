@@ -78,9 +78,16 @@
 
     <changeSet id="users-insert-0002-reset-sequences" author="mdpolashossein">
         <sql dbms="postgresql">
-            ALTER SEQUENCE user_service.users_id_seq RESTART WITH 3;
-            ALTER SEQUENCE user_service.logins_id_seq RESTART WITH 3;
+            SELECT setval(
+                           'user_service.users_id_seq',
+                           COALESCE((SELECT MAX(id) FROM user_service.users), 0)
+                   );
+            SELECT setval(
+                           'user_service.logins_id_seq',
+                           COALESCE((SELECT MAX(id) FROM user_service.logins), 0)
+                   );
         </sql>
     </changeSet>
+
 
 </databaseChangeLog>

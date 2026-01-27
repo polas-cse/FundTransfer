@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="banks-insert-0001" author="mdpolashossein">
+
+        <insert tableName="banks" schemaName="banking_service">
+            <column name="id" valueNumeric="1"/>
+            <column name="bank_name" value="Sonali Bank Ltd"/>
+            <column name="bank_code" value="SONALI"/>
+            <column name="swift_code" value="BSONBDDH"/>
+            <column name="country" value="Bangladesh"/>
+            <column name="capital_amount" valueNumeric="1000000000.00"/>
+            <column name="total_profit" valueNumeric="0.00"/>
+            <column name="total_expense" valueNumeric="0.00"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <insert tableName="banks" schemaName="banking_service">
+            <column name="id" valueNumeric="2"/>
+            <column name="bank_name" value="Dutch Bangla Bank Ltd"/>
+            <column name="bank_code" value="DBBL"/>
+            <column name="swift_code" value="DBBLBDDH"/>
+            <column name="country" value="Bangladesh"/>
+            <column name="capital_amount" valueNumeric="1500000000.00"/>
+            <column name="total_profit" valueNumeric="0.00"/>
+            <column name="total_expense" valueNumeric="0.00"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="banks" schemaName="banking_service">
+                <where>id IN (1,2)</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="banks-reset-seq-0002" author="mdpolashossein">
+        <sql dbms="postgresql">
+            SELECT setval('banking_service.banks_id_seq',
+                          (SELECT MAX(id) FROM banking_service.banks));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
