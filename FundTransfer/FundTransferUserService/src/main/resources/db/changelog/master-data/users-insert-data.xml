@@ -6,7 +6,7 @@
        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="users-insert-0001" author="mdpolashossein">
-        <insert tableName="users" schemaName="bank">
+        <insert tableName="users" schemaName="user_service">
             <column name="id" valueNumeric="1"/>
             <column name="first_name" value="System"/>
             <column name="last_name" value="Admin"/>
@@ -18,7 +18,7 @@
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
 
-        <insert tableName="users" schemaName="bank">
+        <insert tableName="users" schemaName="user_service">
             <column name="id" valueNumeric="2"/>
             <column name="first_name" value="Polas"/>
             <column name="last_name" value="Hossain"/>
@@ -30,7 +30,7 @@
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
 
-        <insert tableName="logins" schemaName="bank">
+        <insert tableName="logins" schemaName="user_service">
             <column name="id" valueNumeric="1"/>
             <column name="user_id" valueNumeric="1"/>
             <column name="user_name" value="admin"/>
@@ -48,7 +48,7 @@
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
 
-        <insert tableName="logins" schemaName="bank">
+        <insert tableName="logins" schemaName="user_service">
             <column name="id" valueNumeric="2"/>
             <column name="user_id" valueNumeric="2"/>
             <column name="user_name" value="polas"/>
@@ -67,10 +67,10 @@
         </insert>
 
         <rollback>
-            <delete tableName="logins" schemaName="bank">
+            <delete tableName="logins" schemaName="user_service">
                 <where>user_id IN (1,2)</where>
             </delete>
-            <delete tableName="users" schemaName="bank">
+            <delete tableName="users" schemaName="user_service">
                 <where>id IN (1,2)</where>
             </delete>
         </rollback>
@@ -78,8 +78,8 @@
 
     <changeSet id="users-insert-0002-reset-sequences" author="mdpolashossein">
         <sql dbms="postgresql">
-            ALTER SEQUENCE bank.users_id_seq RESTART WITH 3;
-            ALTER SEQUENCE bank.logins_id_seq RESTART WITH 3;
+            ALTER SEQUENCE user_service.users_id_seq RESTART WITH 3;
+            ALTER SEQUENCE user_service.logins_id_seq RESTART WITH 3;
         </sql>
     </changeSet>
 

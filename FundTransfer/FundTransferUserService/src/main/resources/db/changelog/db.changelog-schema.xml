@@ -8,17 +8,17 @@
 
     <changeSet id="create-schema-0000" author="mdpolashossein">
         <sql dbms="postgresql">
-            CREATE SCHEMA IF NOT EXISTS bank;
+            CREATE SCHEMA IF NOT EXISTS user_service;
         </sql>
         <rollback>
             <sql dbms="postgresql">
-                DROP SCHEMA IF EXISTS bank CASCADE;
+                DROP SCHEMA IF EXISTS user_service CASCADE;
             </sql>
         </rollback>
     </changeSet>
 
     <changeSet id="users-table-0001" author="mdpolashossein">
-        <createTable tableName="users" schemaName="bank">
+        <createTable tableName="users" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_users_id"/>
             </column>
@@ -48,12 +48,12 @@
         </createTable>
 
         <rollback>
-            <dropTable tableName="users" schemaName="bank"/>
+            <dropTable tableName="users" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
     <changeSet id="users-table-0002" author="mdpolashossein">
-        <createTable tableName="logins" schemaName="bank">
+        <createTable tableName="logins" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_logins_id"/>
             </column>
@@ -87,22 +87,22 @@
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
-        <addForeignKeyConstraint constraintName="fk_logins_user" baseTableSchemaName="bank"
-                                 baseTableName="logins" baseColumnNames="user_id" referencedTableSchemaName="bank"
+        <addForeignKeyConstraint constraintName="fk_logins_user" baseTableSchemaName="user_service"
+                                 baseTableName="logins" baseColumnNames="user_id" referencedTableSchemaName="user_service"
                                  referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
 
-        <createIndex tableName="logins" indexName="idx_logins_user_id" schemaName="bank">
+        <createIndex tableName="logins" indexName="idx_logins_user_id" schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="logins" schemaName="bank"/>
+            <dropTable tableName="logins" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
     <changeSet id="users-table-0003" author="mdpolashossein">
-        <createTable tableName="login_logs" schemaName="bank">
+        <createTable tableName="login_logs" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_login_logs_id"/>
             </column>
@@ -122,22 +122,22 @@
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_login_logs_user" baseTableSchemaName="bank"
+                constraintName="fk_login_logs_user" baseTableSchemaName="user_service"
                 baseTableName="login_logs" baseColumnNames="user_id"
-                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedTableSchemaName="user_service" referencedTableName="users"
                 referencedColumnNames="id" onDelete="CASCADE"
                 onUpdate="CASCADE"/>
-        <createIndex tableName="login_logs" indexName="idx_login_logs_user_id" schemaName="bank">
+        <createIndex tableName="login_logs" indexName="idx_login_logs_user_id" schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="login_logs" schemaName="bank"/>
+            <dropTable tableName="login_logs" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
     <changeSet id="users-table-0004" author="mdpolashossein">
-        <createTable tableName="password_reset_tokens" schemaName="bank">
+        <createTable tableName="password_reset_tokens" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_pwd_reset_id"/>
             </column>
@@ -162,23 +162,23 @@
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_pwd_reset_user" baseTableSchemaName="bank"
+                constraintName="fk_pwd_reset_user" baseTableSchemaName="user_service"
                 baseTableName="password_reset_tokens" baseColumnNames="user_id"
-                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedTableSchemaName="user_service" referencedTableName="users"
                 referencedColumnNames="id" onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
-        <createIndex tableName="password_reset_tokens" indexName="idx_pwd_reset_user_id" schemaName="bank">
+        <createIndex tableName="password_reset_tokens" indexName="idx_pwd_reset_user_id" schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="password_reset_tokens" schemaName="bank"/>
+            <dropTable tableName="password_reset_tokens" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
     <changeSet id="users-table-0005" author="mdpolashossein">
-        <createTable tableName="user_otp" schemaName="bank">
+        <createTable tableName="user_otp" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_user_otp_id"/>
             </column>
@@ -204,23 +204,23 @@
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_user_otp_user" baseTableSchemaName="bank"
+                constraintName="fk_user_otp_user" baseTableSchemaName="user_service"
                 baseTableName="user_otp" baseColumnNames="user_id"
-                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedTableSchemaName="user_service" referencedTableName="users"
                 referencedColumnNames="id" onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
-        <createIndex tableName="user_otp" indexName="idx_user_otp_user_id" schemaName="bank">
+        <createIndex tableName="user_otp" indexName="idx_user_otp_user_id" schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="user_otp" schemaName="bank"/>
+            <dropTable tableName="user_otp" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
     <changeSet id="users-table-0006" author="mdpolashossein">
-        <createTable tableName="trusted_devices" schemaName="bank">
+        <createTable tableName="trusted_devices" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_trusted_devices_id"/>
             </column>
@@ -241,23 +241,23 @@
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_trusted_devices_user" baseTableSchemaName="bank"
+                constraintName="fk_trusted_devices_user" baseTableSchemaName="user_service"
                 baseTableName="trusted_devices" baseColumnNames="user_id"
-                referencedTableSchemaName="bank" referencedTableName="users"
+                referencedTableSchemaName="user_service" referencedTableName="users"
                 referencedColumnNames="id" onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
-        <createIndex tableName="trusted_devices" indexName="idx_trusted_devices_user_id" schemaName="bank">
+        <createIndex tableName="trusted_devices" indexName="idx_trusted_devices_user_id" schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
-        <createIndex tableName="trusted_devices" indexName="uk_trusted_devices_user_fingerprint" schemaName="bank" unique="true">
+        <createIndex tableName="trusted_devices" indexName="uk_trusted_devices_user_fingerprint" schemaName="user_service" unique="true">
             <column name="user_id"/>
             <column name="device_fingerprint"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="trusted_devices" schemaName="bank"/>
+            <dropTable tableName="trusted_devices" schemaName="user_service"/>
         </rollback>
     </changeSet>
 

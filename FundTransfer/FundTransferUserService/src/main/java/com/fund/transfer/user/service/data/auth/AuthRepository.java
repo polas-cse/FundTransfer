@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface AuthRepository extends R2dbcRepository<LoginEntity, Long> {
 
-    @Query("SELECT * FROM logins WHERE username = :username AND password = :password")
+    @Query("SELECT * FROM logins WHERE user_name = :username AND password = :password")
     Mono<LoginEntity> loginUser(String username, String password);
 
     @Modifying
