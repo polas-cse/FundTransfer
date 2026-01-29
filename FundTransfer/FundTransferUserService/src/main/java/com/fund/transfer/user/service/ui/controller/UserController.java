@@ -88,7 +88,7 @@ public class UserController {
                     response.put("success", true);
                     response.put("data", users);
                     response.put("pagination", Map.of(
-                            "total", totalCount,
+                            "count", totalCount,
                             "limit", limit,
                             "offset", offset,
                             "hasMore", (offset + limit) < totalCount
