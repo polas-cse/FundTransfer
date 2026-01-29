@@ -31,44 +31,58 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         super(Config.class);
     }
 
-    public static class Config {
-        // Empty config for now, can add properties if needed
-    }
+    public static class Config {}
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+            try {
+                ServerHttpRequest request = exchange.getRequest();
 
-            ServerHttpRequest request = exchange.getRequest();
+                System.out.println("🔍 Gateway Filter - Processing request: " + request.getPath());
 
-            // Check if Authorization header exists
-            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+                if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                    System.err.println("❌ No authorization header");
+                    return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+                }
+
+                String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+                System.out.println("📝 Authorization header found");
+
+                if (!authorizationHeader.startsWith("Bearer ")) {
+                    System.err.println("❌ Invalid authorization header format");
+                    return onError(exchange, "Invalid authorization header format", HttpStatus.UNAUTHORIZED);
+                }
+
+                String jwt = authorizationHeader.replace("Bearer ", "");
+                System.out.println("🔑 JWT Token extracted (first 20 chars): " + jwt.substring(0, Math.min(20, jwt.length())));
+
+                if (!isJwtValid(jwt)) {
+                    System.err.println("❌ JWT token is not valid");
+                    return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+                }
+
+                Claims claims = extractClaims(jwt);
+                Long userId = claims.get("userId", Long.class);
+                String username = claims.getSubject();
+
+                System.out.println("✅ JWT Valid - UserId: " + userId + ", Username: " + username);
+
+                ServerHttpRequest modifiedRequest = request.mutate()
+                        .header("X-User-Id", userId.toString())
+                        .header("X-User-Name", username)
+                        .build();
+
+                System.out.println("✅ Headers added - Forwarding to service");
+
+                return chain.filter(exchange.mutate().request(modifiedRequest).build());
+
+            } catch (Exception e) {
+                System.err.println("❌ Gateway Filter Exception: " + e.getClass().getName());
+                System.err.println("❌ Error Message: " + e.getMessage());
+                e.printStackTrace();
+                return onError(exchange, "Authentication error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-
-            // Check if it starts with Bearer
-            if (!authorizationHeader.startsWith("Bearer ")) {
-                return onError(exchange, "Invalid authorization header format", HttpStatus.UNAUTHORIZED);
-            }
-
-            String jwt = authorizationHeader.replace("Bearer ", "");
-
-            // Validate JWT token
-            if (!isJwtValid(jwt)) {
-                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
-            }
-
-            // Extract user info and add to request headers
-            Claims claims = extractClaims(jwt);
-
-            ServerHttpRequest modifiedRequest = request.mutate()
-                    .header("X-User-Id", claims.get("userId", Long.class).toString())
-                    .header("X-User-Name", claims.getSubject())
-                    .build();
-
-            return chain.filter(exchange.mutate().request(modifiedRequest).build());
         };
     }
 
@@ -76,8 +90,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
 
+        System.err.println("⚠️ Sending error response: " + err + " (Status: " + httpStatus + ")");
         DataBufferFactory bufferFactory = response.bufferFactory();
-        DataBuffer dataBuffer = bufferFactory.wrap(err.getBytes());
+        String jsonError = String.format("{\"error\":\"%s\",\"status\":%d,\"timestamp\":\"%s\"}", err, httpStatus.value(), java.time.LocalDateTime.now());
+        DataBuffer dataBuffer = bufferFactory.wrap(jsonError.getBytes(StandardCharsets.UTF_8));
+        response.getHeaders().add("Content-Type", "application/json");
 
         return response.writeWith(Mono.just(dataBuffer));
     }
@@ -85,6 +102,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private boolean isJwtValid(String jwt) {
         try {
             String tokenSecret = env.getProperty("jwt.secret");
+
+            if (tokenSecret == null || tokenSecret.isEmpty()) {
+                System.err.println("❌ JWT secret is null or empty!");
+                return false;
+            }
+
+            System.out.println("🔐 JWT Secret length: " + tokenSecret.length());
+
             SecretKey signingKey = Keys.hmacShaKeyFor(tokenSecret.getBytes(StandardCharsets.UTF_8));
 
             Jwts.parser()
@@ -92,8 +117,10 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                     .build()
                     .parseSignedClaims(jwt);
 
+            System.out.println("✅ JWT validation successful");
             return true;
         } catch (Exception ex) {
+            System.err.println("❌ JWT validation failed: " + ex.getClass().getName() + " - " + ex.getMessage());
             return false;
         }
     }
