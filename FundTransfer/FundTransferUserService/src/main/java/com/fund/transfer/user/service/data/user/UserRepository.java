@@ -1,6 +1,7 @@
 package com.fund.transfer.user.service.data.user;
 
 import com.fund.transfer.user.service.data.user.entity.UserEntity;
+import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.annotation.Nullable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
@@ -73,13 +74,34 @@ public interface UserRepository extends R2dbcRepository<UserEntity, Long> {
     Mono<UserEntity> userDelete(Long userId);
 
     @Query("""
-        SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.gender, 
-               u.date_of_birth, u.image_url, u.download_url, u.active, u.created_by, u.updated_by, 
-               l.user_name
+        SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.gender, u.date_of_birth, u.image_url, u.download_url, u.active, 
+               u.created_by, u.updated_by, l.user_name
         FROM users u 
         LEFT JOIN logins l ON u.id = l.user_id 
-        WHERE (:userId IS NULL OR u.id = :userId) AND u.active = true
-        ORDER BY u.created_at DESC
+        WHERE u.active = true
+            AND (:createdBy IS NULL OR u.created_by = :createdBy)
+            AND (:search IS NULL OR 
+                 LOWER(l.user_name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+                 LOWER(u.first_name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+                 LOWER(u.last_name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+                 LOWER(u.phone) LIKE LOWER(CONCAT('%', :search, '%'))
+            )
+        ORDER BY u.created_at DESC LIMIT :limit OFFSET :offset
         """)
-    Flux<UserEntity> userList(@Nullable Long userId);
+    Flux<UserEntity> userList(@Nullable @Param("createdBy") Long createdBy, @Nullable @Param("search") String search,
+            @Param("limit") Integer limit, @Param("offset") Integer offset);
+
+    @Query("""
+        SELECT COUNT(u.id) FROM users u 
+        LEFT JOIN logins l ON u.id = l.user_id 
+        WHERE u.active = true
+            AND (:createdBy IS NULL OR u.created_by = :createdBy)
+            AND (:search IS NULL OR 
+                 LOWER(l.user_name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+                 LOWER(u.first_name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+                 LOWER(u.last_name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+                 LOWER(u.phone) LIKE LOWER(CONCAT('%', :search, '%'))
+            )
+        """)
+    Mono<Long> countUsers(@Nullable @Param("createdBy") Long createdBy, @Nullable @Param("search") String search);
 }

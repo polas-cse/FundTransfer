@@ -17,7 +17,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,18 +58,48 @@ public class UserController {
                 .map(ResponseEntity::ok);
     }
 
-    @PostMapping("list")
-    public Mono<ResponseEntity<List<UserListResponseModel>>> userList(@RequestBody UserListRequestModel requestBody) {
+    @PostMapping("/list")
+    public Mono<ResponseEntity<Map<String, Object>>> userList(
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Name") String currentUsername,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam(required = false, defaultValue = "0") int offset,
+            @RequestParam(required = false) String search,
+            @RequestBody(required = false) UserListRequestModel requestBody
+    ) {
+        System.out.println("Requested: " + currentUsername + " (ID: " + currentUserId + ")");
 
         UserListRequestDto requestDto = UserListRequestDto.builder()
-                .createdBy(requestBody.getCreatedBy())
+                .createdBy(requestBody != null ? requestBody.getCreatedBy() : null)
+                .limit(limit)
+                .offset(offset)
+                .search(search)
                 .build();
 
         return userService.userList(requestDto)
                 .map(dto -> modelMapper.map(dto, UserListResponseModel.class))
                 .collectList()
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.ok(Collections.emptyList()));
+                .zipWith(userService.userCount(requestDto))
+                .map(tuple -> {
+                    List<UserListResponseModel> users = tuple.getT1();
+                    Long totalCount = tuple.getT2();
+
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("data", users);
+                    response.put("pagination", Map.of(
+                            "total", totalCount,
+                            "limit", limit,
+                            "offset", offset,
+                            "hasMore", (offset + limit) < totalCount
+                    ));
+
+                    return ResponseEntity.ok(response);
+                })
+                .doOnError(error -> {
+                    System.err.println("Error in userList: " + error.getMessage());
+                    error.printStackTrace();
+                });
     }
 
     @DeleteMapping

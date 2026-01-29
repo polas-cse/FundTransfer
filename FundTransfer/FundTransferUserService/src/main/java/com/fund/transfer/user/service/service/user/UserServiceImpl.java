@@ -298,9 +298,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Flux<UserListResponseDto> userList(UserListRequestDto requestDto) {
-        String cacheKey = requestDto.getCreatedBy() != null
-                ? USER_LIST_CACHE_PREFIX + requestDto.getCreatedBy()
-                : USER_LIST_CACHE_ALL;
+        // Build cache key inline
+        String cacheKey = USER_LIST_CACHE_PREFIX +
+                (requestDto.getCreatedBy() != null ? "user:" + requestDto.getCreatedBy() + ":" : "") +
+                (requestDto.getSearch() != null && !requestDto.getSearch().isEmpty() ? "search:" + requestDto.getSearch() + ":" : "") +
+                "limit:" + requestDto.getLimit() + ":offset:" + requestDto.getOffset();
 
         logger.info("Fetching user list with cache key: {}", cacheKey);
 
@@ -310,8 +312,6 @@ public class UserServiceImpl implements UserService {
                 .flatMapMany(cachedData -> {
                     try {
                         String jsonString = cachedData.toString();
-                        logger.debug("Cached user list JSON: {}", jsonString);
-
                         UserListResponseDto[] dtoArray = objectMapper.readValue(
                                 jsonString,
                                 UserListResponseDto[].class
@@ -326,7 +326,12 @@ public class UserServiceImpl implements UserService {
                 .switchIfEmpty(
                         Flux.defer(() -> {
                             logger.info("Cache MISS for user list, fetching from database");
-                            return userRepository.userList(requestDto.getCreatedBy())
+                            return userRepository.userList(
+                                            requestDto.getCreatedBy(),
+                                            requestDto.getSearch(),
+                                            requestDto.getLimit(),
+                                            requestDto.getOffset()
+                                    )
                                     .map(entity -> UserListResponseDto.builder()
                                             .id(entity.getId())
                                             .userName(entity.getUserName())
@@ -347,15 +352,10 @@ public class UserServiceImpl implements UserService {
                                         if (!userList.isEmpty()) {
                                             try {
                                                 String jsonData = objectMapper.writeValueAsString(userList);
-                                                logger.debug("Serialized user list for caching");
-
                                                 return redisTemplate.opsForValue()
                                                         .set(cacheKey, jsonData, USER_LIST_CACHE_TTL)
                                                         .doOnSuccess(result ->
-                                                                logger.info("User list cached successfully with {} users, TTL: 30 minutes", userList.size())
-                                                        )
-                                                        .doOnError(error ->
-                                                                logger.error("Failed to cache user list", error)
+                                                                logger.info("User list cached successfully with {} users", userList.size())
                                                         )
                                                         .thenMany(Flux.fromIterable(userList));
                                             } catch (Exception e) {
@@ -369,6 +369,26 @@ public class UserServiceImpl implements UserService {
                 )
                 .doOnComplete(() -> logger.info("User list retrieval completed"))
                 .doOnError(e -> logger.error("Error retrieving user list", e));
+    }
+
+    @Override
+    public Mono<Long> userCount(UserListRequestDto requestDto) {
+        String countCacheKey = USER_LIST_CACHE_PREFIX +
+                (requestDto.getCreatedBy() != null ? "user:" + requestDto.getCreatedBy() + ":" : "") +
+                (requestDto.getSearch() != null && !requestDto.getSearch().isEmpty() ? "search:" + requestDto.getSearch() + ":" : "") +
+                "limit:" + requestDto.getLimit() + ":offset:" + requestDto.getOffset() + ":count";
+
+        return redisTemplate.opsForValue()
+                .get(countCacheKey)
+                .map(cached -> Long.parseLong(cached.toString()))
+                .switchIfEmpty(
+                        userRepository.countUsers(requestDto.getCreatedBy(), requestDto.getSearch())
+                                .flatMap(count ->
+                                        redisTemplate.opsForValue()
+                                                .set(countCacheKey, count.toString(), USER_LIST_CACHE_TTL)
+                                                .thenReturn(count)
+                                )
+                );
     }
 
     @Override

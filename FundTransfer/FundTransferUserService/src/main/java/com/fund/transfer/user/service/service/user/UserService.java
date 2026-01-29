@@ -13,6 +13,7 @@ public interface UserService {
     Mono<UserResponseDto> updateUser(String authHeader, UserRequestDto requestDto);
     Mono<UserResponseDto> userDetails(Long userId);
     Flux<UserListResponseDto> userList(UserListRequestDto requestDto);
+    Mono<Long> userCount(UserListRequestDto requestDto);
     Mono<UserResponseDto> deleteUser(Long userId);
 
 }
