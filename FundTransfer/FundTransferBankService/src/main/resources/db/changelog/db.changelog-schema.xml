@@ -38,7 +38,6 @@
                 <constraints nullable="false"/>
             </column>
 
-            <!-- Bank financials -->
             <column name="capital_amount" type="DECIMAL(18,2)" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
@@ -51,11 +50,19 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_by" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
@@ -97,9 +104,14 @@
 
             <column name="currency" type="VARCHAR(10)" defaultValue="BDT"/>
             <column name="is_primary" type="BOOLEAN" defaultValueBoolean="false"/>
-            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
-
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
@@ -142,8 +154,14 @@
             </column>
 
             <column name="transaction_status" type="VARCHAR(20)" defaultValue="PENDING"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
             <column name="processed_at" type="TIMESTAMP"/>
+
+            <column name="created_by" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="BIGINT"/>
+            <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
         <rollback>
@@ -171,7 +189,12 @@
             <column name="total_fee_earned" type="DECIMAL(18,2)"/>
             <column name="total_transactions" type="BIGINT"/>
 
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="BIGINT"/>
+            <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
         <rollback>
@@ -197,7 +220,12 @@
             <column name="message" type="TEXT"/>
             <column name="error_code" type="VARCHAR(50)"/>
 
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="BIGINT"/>
+            <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
         <rollback>

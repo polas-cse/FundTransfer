@@ -1,4 +1,4 @@
-package com.fund.transfer.bank.service.data.bank.entity;
+package com.fund.transfer.bank.service.ui.model.response.bank;
 
 import lombok.*;
 import org.springframework.data.annotation.Transient;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper=false)
-public class Bank {
+public class BankResponseModel {
 
     private Long id;
     private String bankName;
@@ -25,7 +25,6 @@ public class Bank {
     private Boolean status;
     private Boolean isDeleted;
     private Long createdBy;
-    @Transient
     private String createdByName;
     private LocalDateTime createdAt;
     private Long updatedBy;
