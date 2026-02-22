@@ -298,7 +298,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Flux<UserListResponseDto> userList(UserListRequestDto requestDto) {
-        // Build cache key inline
         String cacheKey = USER_LIST_CACHE_PREFIX +
                 (requestDto.getCreatedBy() != null ? "user:" + requestDto.getCreatedBy() + ":" : "") +
                 (requestDto.getSearch() != null && !requestDto.getSearch().isEmpty() ? "search:" + requestDto.getSearch() + ":" : "") +

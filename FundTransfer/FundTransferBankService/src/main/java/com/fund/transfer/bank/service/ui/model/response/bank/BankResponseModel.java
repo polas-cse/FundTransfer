@@ -22,12 +22,8 @@ public class BankResponseModel {
     private float capitalAmount;
     private float totalProfit;
     private float totalExpense;
-    private Boolean status;
-    private Boolean isDeleted;
-    private Long createdBy;
+    private boolean active;
+    private boolean isDeleted;
     private String createdByName;
-    private LocalDateTime createdAt;
-    private Long updatedBy;
-    private LocalDateTime updatedAt;
 
 }

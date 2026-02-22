@@ -21,11 +21,7 @@ public class BankRequestDto {
     private float capitalAmount;
     private float totalProfit;
     private float totalExpense;
-    private Boolean status;
+    private boolean active;
     private Boolean isDeleted;
-    private Long createdBy;
-    private LocalDateTime createdAt;
-    private Long updatedBy;
-    private LocalDateTime updatedAt;
 
 }

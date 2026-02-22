@@ -21,11 +21,7 @@ public class BankListResponseDto {
     private float capitalAmount;
     private float totalProfit;
     private float totalExpense;
-    private Boolean status;
-    private Boolean isDeleted;
-    private Long createdBy;
-    private LocalDateTime createdAt;
-    private Long updatedBy;
-    private LocalDateTime updatedAt;
+    private boolean active;
+    private boolean isDeleted;
 
 }

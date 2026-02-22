@@ -12,5 +12,8 @@ import lombok.*;
 public class BankListRequestModel {
 
     private Long createdBy;
+    private Integer limit;
+    private Integer offset;
+    private String search;
 
 }

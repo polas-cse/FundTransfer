@@ -12,24 +12,24 @@ public interface BankRepository extends R2dbcRepository<Bank, Long> {
 
     @Query("""
         INSERT INTO banking_service.banks(bank_name, bank_code, swift_code, country, capital_amount,
-            total_profit, total_expense, active, created_by )
+            total_profit, total_expense, created_by)
         VALUES (:bankName, :bankCode, :swiftCode, :country, :capitalAmount,
-                :totalProfit, :totalExpense, :status, :createdBy )
+                :totalProfit, :totalExpense, :createdBy)
         RETURNING *
         """)
-    Mono<Bank> saveBank( String bankName, String bankCode, String swiftCode, String country,
-            float capitalAmount, float totalProfit, float totalExpense, boolean status, Long createdBy );
+    Mono<Bank> saveBank(String bankName, String bankCode, String swiftCode, String country,
+            float capitalAmount, float totalProfit, float totalExpense, Long createdBy);
 
     @Query("""
         UPDATE banking_service.banks
         SET bank_name = :bankName, bank_code = :bankCode, swift_code = :swiftCode, country = :country,
             capital_amount = :capitalAmount, total_profit = :totalProfit, total_expense = :totalExpense,
-            active = :status, updated_by = :updatedBy, updated_at = NOW()
+            active = :active, updated_by = :updatedBy, updated_at = NOW()
         WHERE id = :bankId
         RETURNING *
         """)
-    Mono<Bank> updateBank( Long bankId, String bankName, String bankCode, String swiftCode, String country,
-            float capitalAmount, float totalProfit, float totalExpense, boolean status, Long updatedBy );
+    Mono<Bank> updateBank(Long bankId, String bankName, String bankCode, String swiftCode, String country,
+            float capitalAmount, float totalProfit, float totalExpense, boolean active, Long updatedBy);
 
     @Query("""
         SELECT  b.id, b.bank_name, b.bank_code, b.swift_code, b.country, b.capital_amount, b.total_profit,

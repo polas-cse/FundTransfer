@@ -22,8 +22,8 @@ public class Bank {
     private float capitalAmount;
     private float totalProfit;
     private float totalExpense;
-    private Boolean status;
-    private Boolean isDeleted;
+    private boolean active;
+    private boolean isDeleted;
     private Long createdBy;
     @Transient
     private String createdByName;
