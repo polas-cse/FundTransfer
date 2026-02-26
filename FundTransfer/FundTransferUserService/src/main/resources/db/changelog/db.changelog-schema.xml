@@ -34,6 +34,9 @@
             <column name="phone" type="VARCHAR(18)"/>
             <column name="gender" type="VARCHAR(10)"/>
             <column name="date_of_birth" type="DATE"/>
+            <column name="balance" type="DECIMAL(18,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
             <column name="image_url" type="TEXT"/>
             <column name="download_url" type="TEXT"/>
             <column name="active" type="BOOLEAN" defaultValueBoolean="true">

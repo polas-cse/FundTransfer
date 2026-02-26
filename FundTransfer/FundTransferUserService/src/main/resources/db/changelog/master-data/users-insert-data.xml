@@ -14,6 +14,7 @@
             <column name="email" value="admin@gmail.com"/>
             <column name="gender" value="Male"/>
             <column name="date_of_birth" value="1999-03-05"/>
+            <column name="balance" value="10000.00"/>
             <column name="active" valueBoolean="true"/>
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
@@ -26,6 +27,7 @@
             <column name="email" value="polas@gmail.com"/>
             <column name="gender" value="Male"/>
             <column name="date_of_birth" value="1999-03-05"/>
+            <column name="balance" value="10000.00"/>
             <column name="active" valueBoolean="true"/>
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
