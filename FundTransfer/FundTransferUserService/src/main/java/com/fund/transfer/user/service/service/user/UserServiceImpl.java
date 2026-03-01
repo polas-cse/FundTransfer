@@ -3,6 +3,9 @@ package com.fund.transfer.user.service.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fund.transfer.user.service.data.user.UserRepository;
 import com.fund.transfer.user.service.global.exception.ApiException;
+import com.fund.transfer.user.service.global.grpc.BankAccountGrpcClient;
+import com.fund.transfer.user.service.global.messaging.model.BankAccountMessage;
+import com.fund.transfer.user.service.global.messaging.publisher.BankAccountEventPublisher;
 import com.fund.transfer.user.service.global.security.JwtUtil;
 import com.fund.transfer.user.service.global.utils.CashKeyUtils;
 import com.fund.transfer.user.service.global.utils.CashTTL;
@@ -45,6 +48,8 @@ public class UserServiceImpl implements UserService {
     private final Duration AUTH_CACHE_TTL = CashTTL.AUTH_CACHE_TTL;
     private final Duration USER_DETAILS_CACHE_TTL = CashTTL.USER_DETAILS_CACHE_TTL;
     private final Duration USER_LIST_CACHE_TTL = CashTTL.USER_LIST_CACHE_TTL;
+    private final BankAccountGrpcClient bankAccountGrpcClient;
+    private final BankAccountEventPublisher bankAccountEventPublisher;
 
     @Override
     @Transactional
@@ -84,19 +89,44 @@ public class UserServiceImpl implements UserService {
                                                     userId)
                                             .thenReturn(entity);
                                 })
+                                .flatMap(entity ->
+                                        redisTemplate.keys(USER_LIST_CACHE_PATTERN)
+                                                .collectList()
+                                                .flatMap(keys -> {
+                                                    if (keys.isEmpty()) return Mono.just(0L);
+                                                    return redisTemplate.delete(keys.toArray(new String[0]));
+                                                })
+                                                .thenReturn(entity)
+                                )
                                 .flatMap(entity -> {
-                                    return redisTemplate.keys(USER_LIST_CACHE_PATTERN)
-                                            .collectList()
-                                            .flatMap(keys -> {
-                                                if (keys.isEmpty()) {
-                                                    logger.info("No user list caches found to delete");
-                                                    return Mono.just(0L);
-                                                }
-                                                logger.info("Deleting {} user list cache keys after save", keys.size());
-                                                return redisTemplate.delete(keys.toArray(new String[0]))
-                                                        .doOnNext(deleted ->
-                                                                logger.info("User list caches deleted after save, count: {}", deleted)
-                                                        );
+                                    // Build message once for reuse
+                                    BankAccountMessage bankAccountMessage = BankAccountMessage.builder()
+                                            .userId(entity.getId())
+                                            .bankId(requestDto.getBankId())
+                                            .accountNumber(requestDto.getAccountNumber())
+                                            .accountType(requestDto.getAccountType())
+                                            .accountHolderName(entity.getFirstName() + " " + entity.getLastName())
+                                            .balance(requestDto.getBalance())
+                                            .currency(requestDto.getCurrency())
+                                            .isPrimary(requestDto.isPrimary())
+                                            .createdBy(userId)
+                                            .retryCount(0)
+                                            .build();
+
+                                    return bankAccountGrpcClient.createBankAccount(bankAccountMessage)
+                                            .doOnSuccess(grpcResponse ->
+                                                    logger.info("gRPC bank account created for userId: {}, accountId: {}",
+                                                            entity.getId(), grpcResponse.getId())
+                                            )
+                                            .onErrorResume(grpcEx -> {
+                                                // All gRPC retries exhausted — fallback to RabbitMQ
+                                                logger.error("gRPC failed after retries for userId: {}, publishing to RabbitMQ: {}",
+                                                        entity.getId(), grpcEx.getMessage());
+                                                return bankAccountEventPublisher.publish(bankAccountMessage)
+                                                        .doOnSuccess(v ->
+                                                                logger.info("Bank account event queued in RabbitMQ for userId: {}", entity.getId())
+                                                        )
+                                                        .then(Mono.empty());
                                             })
                                             .thenReturn(entity);
                                 })
@@ -116,20 +146,15 @@ public class UserServiceImpl implements UserService {
                         .build()
                 )
                 .doOnSuccess(u -> {
-                    if (u == null) {
-                        logger.error("UserResponseDto is null!");
-                    } else {
-                        logger.info("User saved successfully: {}", u.getEmail());
-                    }
+                    if (u == null) logger.error("UserResponseDto is null!");
+                    else logger.info("User saved successfully: {}", u.getEmail());
                 })
                 .onErrorMap(ex -> {
                     if (ex instanceof DuplicateKeyException) {
-                        if (ex.getMessage().contains("uk_users_username")) {
+                        if (ex.getMessage().contains("uk_users_username"))
                             return new ApiException("USER_NAME_EXISTS", "Username already exists");
-                        }
-                        if (ex.getMessage().contains("uk_users_email")) {
+                        if (ex.getMessage().contains("uk_users_email"))
                             return new ApiException("USER_EMAIL_EXISTS", "This email is already registered");
-                        }
                         return new ApiException("DUPLICATE_KEY", "Duplicate value found");
                     }
                     return ex;

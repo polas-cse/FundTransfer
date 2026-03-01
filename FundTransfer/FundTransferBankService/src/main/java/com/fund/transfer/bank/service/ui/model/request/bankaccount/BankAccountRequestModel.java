@@ -1,5 +1,7 @@
 package com.fund.transfer.bank.service.ui.model.request.bankaccount;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Builder
@@ -9,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper=false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BankAccountRequestModel {
 
     private Long id;
@@ -19,6 +22,8 @@ public class BankAccountRequestModel {
     private String accountHolderName;
     private float balance;
     private String currency;
+
+    @JsonProperty("isPrimary")
     private boolean isPrimary;
     private boolean active;
 
