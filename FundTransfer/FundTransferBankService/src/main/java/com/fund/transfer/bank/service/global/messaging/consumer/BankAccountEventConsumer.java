@@ -1,6 +1,5 @@
 package com.fund.transfer.bank.service.global.messaging.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fund.transfer.bank.service.data.bankaccount.BankAccountRepository;
 import com.fund.transfer.bank.service.global.config.RabbitMQConfig;
 import com.fund.transfer.bank.service.global.messaging.model.BankAccountMessage;
@@ -8,12 +7,14 @@ import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class BankAccountEventConsumer {
                             log.error("Failed to create bank account from RabbitMQ event for userId: {}",
                                     message.getUserId(), e)
                     )
-                    .block(); // blocking inside listener is acceptable
+                    .block();
 
             channel.basicAck(deliveryTag, false);
 
@@ -67,11 +68,20 @@ public class BankAccountEventConsumer {
                 log.warn("Retrying bank account creation via RabbitMQ, attempt {} for userId: {}",
                         message.getRetryCount(), message.getUserId());
 
+                String correlationId = UUID.randomUUID().toString();
+                CorrelationData correlationData = new CorrelationData(correlationId);
+                
                 rabbitTemplate.convertAndSend(
                         RabbitMQConfig.BANK_ACCOUNT_EXCHANGE,
                         RabbitMQConfig.BANK_ACCOUNT_ROUTING_KEY,
-                        message
+                        message,
+                        msg -> {
+                            msg.getMessageProperties().setHeader("correlation_id", correlationId);
+                            return msg;
+                        },
+                        correlationData
                 );
+                log.info("Requeued message for userId: {}, correlationId: {}", message.getUserId(), correlationId);
                 channel.basicAck(deliveryTag, false); // ack original, re-queued manually
             } else {
                 log.error("Max retries exceeded for userId: {}, sending to DLQ", message.getUserId());

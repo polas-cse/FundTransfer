@@ -119,7 +119,6 @@ public class UserServiceImpl implements UserService {
                                                             entity.getId(), grpcResponse.getId())
                                             )
                                             .onErrorResume(grpcEx -> {
-                                                // All gRPC retries exhausted — fallback to RabbitMQ
                                                 logger.error("gRPC failed after retries for userId: {}, publishing to RabbitMQ: {}",
                                                         entity.getId(), grpcEx.getMessage());
                                                 return bankAccountEventPublisher.publish(bankAccountMessage)

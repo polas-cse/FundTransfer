@@ -1,5 +1,6 @@
 package com.fund.transfer.user.service.global.configure;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.core.Binding;
@@ -13,7 +14,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+@Slf4j
 @Configuration
 public class RabbitMQConfig {
 
@@ -25,7 +26,7 @@ public class RabbitMQConfig {
 
     @Bean
     public TopicExchange bankAccountExchange() {
-        return new TopicExchange(BANK_ACCOUNT_EXCHANGE);
+        return new TopicExchange(BANK_ACCOUNT_EXCHANGE, true, false); // durable=true, autoDelete=false
     }
 
     @Bean
@@ -33,7 +34,7 @@ public class RabbitMQConfig {
         return QueueBuilder.durable(BANK_ACCOUNT_QUEUE)
                 .withArgument("x-dead-letter-exchange", BANK_ACCOUNT_EXCHANGE)
                 .withArgument("x-dead-letter-routing-key", BANK_ACCOUNT_DLQ_ROUTING)
-                .withArgument("x-message-ttl", 60000)
+                .withArgument("x-message-ttl", 86400000)
                 .build();
     }
 
@@ -65,6 +66,20 @@ public class RabbitMQConfig {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(jsonMessageConverter());
+        template.setMandatory(true);
+        template.setReturnsCallback(m -> {
+            log.error("Message returned from RabbitMQ: {} - {}", m.getReplyCode(), m.getReplyText());
+        });
+        // Enable publisher confirms with correlation data tracking
+        template.setConfirmCallback((correlationData, ack, cause) -> {
+            if (ack) {
+                String id = correlationData != null ? correlationData.getId() : "unknown";
+                log.info("Message confirmed by RabbitMQ broker - correlationId: {}", id);
+            } else {
+                String id = correlationData != null ? correlationData.getId() : "unknown";
+                log.error("Message not confirmed by RabbitMQ broker - correlationId: {}, cause: {}", id, cause);
+            }
+        });
         return template;
     }
 }
