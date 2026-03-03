@@ -1,6 +1,7 @@
 package com.fund.transfer.user.service.global.grpc.client;
 
-import com.fund.transfer.user.service.global.messaging.bankaccount.model.BankAccountMessage;
+import com.fund.transfer.user.service.global.messaging.bankaccount.model
+        .BankAccountMessage;
 import com.fund.transfer.user.service.grpc.generated.BankAccountRequest;
 import com.fund.transfer.user.service.grpc.generated.BankAccountResponse;
 import com.fund.transfer.user.service.grpc.generated.BankAccountServiceGrpc;

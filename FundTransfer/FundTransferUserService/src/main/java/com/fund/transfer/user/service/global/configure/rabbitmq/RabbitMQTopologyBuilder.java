@@ -1,16 +1,13 @@
 package com.fund.transfer.user.service.global.configure.rabbitmq;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.QueueBuilder;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 
 public final class RabbitMQTopologyBuilder {
 
     private RabbitMQTopologyBuilder() {}
 
-    public static Queue durableQueueWithDLQ(String queueName, String exchangeName, String dlqRoutingKey, long ttlMillis) {
+    public static Queue durableQueueWithDLQ(String queueName, String exchangeName,
+                                            String dlqRoutingKey, long ttlMillis) {
         return QueueBuilder.durable(queueName)
                 .withArgument("x-dead-letter-exchange", exchangeName)
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey)

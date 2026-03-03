@@ -21,8 +21,6 @@ public class BankAccountEventConsumer {
     private final BankAccountRepository bankAccountRepository;
     private final RabbitTemplate rabbitTemplate;
 
-    private static final int MAX_RETRY_COUNT = 5;
-
     @RabbitListener(queues = RabbitMQUtils.BANK_ACCOUNT_QUEUE)
     public void consume(BankAccountMessage message,
                         @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
@@ -51,7 +49,7 @@ public class BankAccountEventConsumer {
 
     private void handleRetryOrDeadLetter(BankAccountMessage message, long deliveryTag, Channel channel) {
         try {
-            if (message.getRetryCount() < MAX_RETRY_COUNT) {
+            if (message.getRetryCount() < RabbitMQUtils.MAX_RETRY_COUNT) {
                 message.setRetryCount(message.getRetryCount() + 1);
                 log.warn("Retrying (attempt {}) for userId: {}", message.getRetryCount(), message.getUserId());
 

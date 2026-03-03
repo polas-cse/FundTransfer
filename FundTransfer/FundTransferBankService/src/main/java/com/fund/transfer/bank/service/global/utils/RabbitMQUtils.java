@@ -2,6 +2,8 @@ package com.fund.transfer.bank.service.global.utils;
 
 public class RabbitMQUtils {
 
+    public static final int MAX_RETRY_COUNT = 5;
+
     public static final String BANK_ACCOUNT_EXCHANGE       = "bank.account.exchange";
     public static final String BANK_ACCOUNT_QUEUE          = "bank.account.create.queue";
     public static final String BANK_ACCOUNT_ROUTING_KEY    = "bank.account.create";

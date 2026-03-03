@@ -12,36 +12,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQCoreConfig {
 
-    /**
-     * JSON message converter for all RabbitMQ interactions.
-     */
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    /**
-     * RabbitTemplate with publisher confirms, returns, and JSON converter.
-     * <p>
-     * Requires the following properties in your application.yml:
-     *   spring.rabbitmq.publisher-confirm-type: correlated
-     *   spring.rabbitmq.publisher-returns: true
-     * </p>
-     */
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(jsonMessageConverter());
-        template.setMandatory(true); // enable returns
+        template.setMandatory(true);
 
-        // Handle returned messages (routing issues)
         template.setReturnsCallback(returned ->
                 log.error("Message returned: exchange={}, routingKey={}, replyCode={}, replyText={}",
                         returned.getExchange(), returned.getRoutingKey(),
                         returned.getReplyCode(), returned.getReplyText())
         );
 
-        // Handle publisher confirms
         template.setConfirmCallback((correlationData, ack, cause) -> {
             String id = correlationData != null ? correlationData.getId() : "unknown";
             if (ack) {
