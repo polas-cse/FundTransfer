@@ -1,7 +1,7 @@
-package com.fund.transfer.user.service.global.messaging.user.config;
+package com.fund.transfer.user.service.global.messaging.bankaccount.config;
 
 
-import com.fund.transfer.user.service.global.configure.RabbitMQCoreConfig;
+import com.fund.transfer.user.service.global.configure.rabbitmq.RabbitMQCoreConfig;
 import com.fund.transfer.user.service.global.utils.RabbitMQUtils;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import(RabbitMQCoreConfig.class)
-public class UserServiceRabbitMQConfig {
+public class BankAccountServiceRabbitMQConfig {
 
     @Bean
     public TopicExchange bankAccountExchange() {

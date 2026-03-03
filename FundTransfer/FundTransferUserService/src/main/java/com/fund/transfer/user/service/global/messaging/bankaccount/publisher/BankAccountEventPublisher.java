@@ -1,6 +1,6 @@
-package com.fund.transfer.user.service.global.messaging.user.publisher;
+package com.fund.transfer.user.service.global.messaging.bankaccount.publisher;
 
-import com.fund.transfer.user.service.global.messaging.user.model.BankAccountMessage;
+import com.fund.transfer.user.service.global.messaging.bankaccount.model.BankAccountMessage;
 import com.fund.transfer.user.service.global.utils.RabbitMQUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

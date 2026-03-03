@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.global.configure;
+package com.fund.transfer.user.service.global.configure.grpc;
 
 import com.fund.transfer.user.service.grpc.generated.BankAccountServiceGrpc;
 import io.grpc.Channel;

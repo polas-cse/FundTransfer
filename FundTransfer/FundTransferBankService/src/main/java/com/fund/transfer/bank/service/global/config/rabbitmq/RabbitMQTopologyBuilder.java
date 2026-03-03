@@ -1,10 +1,6 @@
-package com.fund.transfer.user.service.global.configure.rabbitmq;
+package com.fund.transfer.bank.service.global.config.rabbitmq;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.QueueBuilder;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 
 public final class RabbitMQTopologyBuilder {
 

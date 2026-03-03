@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.global.utils;
+package com.fund.transfer.bank.service.global.utils;
 
 public class RabbitMQUtils {
 

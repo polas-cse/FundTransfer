@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.global.configure;
+package com.fund.transfer.user.service.global.configure.rabbitmq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

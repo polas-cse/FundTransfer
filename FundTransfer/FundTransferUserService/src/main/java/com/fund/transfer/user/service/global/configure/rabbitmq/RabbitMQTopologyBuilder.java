@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.global.configure;
+package com.fund.transfer.user.service.global.configure.rabbitmq;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

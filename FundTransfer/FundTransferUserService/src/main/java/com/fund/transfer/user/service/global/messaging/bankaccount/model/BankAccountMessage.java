@@ -1,4 +1,4 @@
-package com.fund.transfer.user.service.global.messaging.user.model;
+package com.fund.transfer.user.service.global.messaging.bankaccount.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
