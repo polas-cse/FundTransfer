@@ -21,7 +21,7 @@ public class BankAccountEventConsumer {
     private final BankAccountRepository bankAccountRepository;
     private final RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = RabbitMQUtils.BANK_ACCOUNT_QUEUE)
+    @RabbitListener(queues = RabbitMQUtils.BANK_ACCOUNT_CREATE_QUEUE)
     public void consume(BankAccountMessage message,
                         @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
                         Channel channel) throws IOException {
@@ -55,7 +55,7 @@ public class BankAccountEventConsumer {
 
                 rabbitTemplate.convertAndSend(
                         RabbitMQUtils.BANK_ACCOUNT_EXCHANGE,
-                        RabbitMQUtils.BANK_ACCOUNT_ROUTING_KEY,
+                        RabbitMQUtils.BANK_ACCOUNT_ROUTING_CREATE_KEY,
                         message
                 );
                 channel.basicAck(deliveryTag, false);

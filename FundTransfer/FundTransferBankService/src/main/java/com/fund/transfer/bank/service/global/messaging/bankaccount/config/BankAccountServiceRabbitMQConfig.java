@@ -20,29 +20,29 @@ public class BankAccountServiceRabbitMQConfig {
     @Bean
     public Queue bankAccountQueue() {
         return RabbitMQTopologyBuilder.durableQueueWithDLQ(
-                RabbitMQUtils.BANK_ACCOUNT_QUEUE,
+                RabbitMQUtils.BANK_ACCOUNT_CREATE_QUEUE,
                 RabbitMQUtils.BANK_ACCOUNT_EXCHANGE,
-                RabbitMQUtils.BANK_ACCOUNT_DLQ_ROUTING,
+                RabbitMQUtils.BANK_ACCOUNT_CREATE_DLQ_ROUTING,
                 86400000
         );
     }
 
     @Bean
     public Queue bankAccountDeadLetterQueue() {
-        return RabbitMQTopologyBuilder.durableDeadLetterQueue(RabbitMQUtils.BANK_ACCOUNT_DLQ);
+        return RabbitMQTopologyBuilder.durableDeadLetterQueue(RabbitMQUtils.BANK_ACCOUNT_CREATE_DLQ);
     }
 
     @Bean
     public Binding bankAccountBinding() {
         return RabbitMQTopologyBuilder.bindQueueToExchange(
-                bankAccountQueue(), bankAccountExchange(), RabbitMQUtils.BANK_ACCOUNT_ROUTING_KEY
+                bankAccountQueue(), bankAccountExchange(), RabbitMQUtils.BANK_ACCOUNT_ROUTING_CREATE_KEY
         );
     }
 
     @Bean
     public Binding bankAccountDlqBinding() {
         return RabbitMQTopologyBuilder.bindQueueToExchange(
-                bankAccountDeadLetterQueue(), bankAccountExchange(), RabbitMQUtils.BANK_ACCOUNT_DLQ_ROUTING
+                bankAccountDeadLetterQueue(), bankAccountExchange(), RabbitMQUtils.BANK_ACCOUNT_CREATE_DLQ_ROUTING
         );
     }
 }

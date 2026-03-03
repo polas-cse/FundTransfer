@@ -26,7 +26,7 @@ public class BankAccountEventPublisher {
 
                 rabbitTemplate.convertAndSend(
                         RabbitMQUtils.BANK_ACCOUNT_EXCHANGE,
-                        RabbitMQUtils.BANK_ACCOUNT_ROUTING_KEY,
+                        RabbitMQUtils.BANK_ACCOUNT_ROUTING_CREATE_KEY,
                         message,
                         msg -> {
                             msg.getMessageProperties().setHeader("correlation_id", correlationId);
