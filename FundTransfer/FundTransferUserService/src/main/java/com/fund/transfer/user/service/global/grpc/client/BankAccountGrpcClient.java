@@ -2,6 +2,7 @@ package com.fund.transfer.user.service.global.grpc.client;
 
 import com.fund.transfer.user.service.global.messaging.bankaccount.model
         .BankAccountMessage;
+import com.fund.transfer.user.service.global.utils.GrpcUtils;
 import com.fund.transfer.user.service.grpc.generated.BankAccountRequest;
 import com.fund.transfer.user.service.grpc.generated.BankAccountResponse;
 import com.fund.transfer.user.service.grpc.generated.BankAccountServiceGrpc;
@@ -22,14 +23,11 @@ public class BankAccountGrpcClient {
 
     private final BankAccountServiceGrpc.BankAccountServiceBlockingStub bankAccountStub;
 
-    private static final int    MAX_RETRIES   = 3;
-    private static final long   RETRY_DELAY_MS = 500;
-
     public Mono<BankAccountResponse> createBankAccount(BankAccountMessage message) {
         return Mono.fromCallable(() -> attemptGrpcCall(message))
                 .retryWhen(
-                        Retry.backoff(MAX_RETRIES, Duration.ofMillis(RETRY_DELAY_MS))
-                                .maxBackoff(Duration.ofSeconds(3))
+                        Retry.backoff(GrpcUtils.MAX_RETRIES, Duration.ofMillis(GrpcUtils.RETRY_DELAY_MS))
+                                .maxBackoff(Duration.ofSeconds(GrpcUtils.MAX_RETRIES_TIME))
                                 .filter(ex -> ex instanceof StatusRuntimeException)
                                 .doBeforeRetry(retrySignal ->
                                         log.warn("gRPC retry attempt {} for userId: {} due to: {}",
