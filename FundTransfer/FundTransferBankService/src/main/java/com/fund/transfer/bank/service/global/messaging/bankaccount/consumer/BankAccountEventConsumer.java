@@ -1,8 +1,8 @@
 package com.fund.transfer.bank.service.global.messaging.consumer;
 
 import com.fund.transfer.bank.service.data.bankaccount.BankAccountRepository;
-import com.fund.transfer.bank.service.global.config.RabbitMQConfig;
 import com.fund.transfer.bank.service.global.messaging.model.BankAccountMessage;
+import com.fund.transfer.bank.service.global.utils.RabbitMQUtils;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,13 @@ public class BankAccountEventConsumer {
     private final BankAccountRepository bankAccountRepository;
     private final RabbitTemplate rabbitTemplate;
 
+    private final String BANK_ACCOUNT_EXCHANGE = RabbitMQUtils.BANK_ACCOUNT_EXCHANGE;
+    private final String BANK_ACCOUNT_QUEUE = RabbitMQUtils.BANK_ACCOUNT_QUEUE;
+    private final String BANK_ACCOUNT_ROUTING_KEY = RabbitMQUtils.BANK_ACCOUNT_ROUTING_KEY;
+
     private static final int MAX_RETRY_COUNT = 5;
 
-    @RabbitListener(queues = RabbitMQConfig.BANK_ACCOUNT_QUEUE)
+    @RabbitListener(queues = BANK_ACCOUNT_QUEUE)
     public void consumeBankAccountEvent(BankAccountMessage message,
                                         @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
                                         Channel channel) {
@@ -72,8 +76,8 @@ public class BankAccountEventConsumer {
                 CorrelationData correlationData = new CorrelationData(correlationId);
                 
                 rabbitTemplate.convertAndSend(
-                        RabbitMQConfig.BANK_ACCOUNT_EXCHANGE,
-                        RabbitMQConfig.BANK_ACCOUNT_ROUTING_KEY,
+                        BANK_ACCOUNT_EXCHANGE,
+                        BANK_ACCOUNT_ROUTING_KEY,
                         message,
                         msg -> {
                             msg.getMessageProperties().setHeader("correlation_id", correlationId);
