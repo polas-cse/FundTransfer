@@ -18,7 +18,7 @@ public class BankAccountEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public Mono<Void> publish(BankAccountMessage message) {
+    public Mono<Void> publishSaveBankAccount(BankAccountMessage message) {
         return Mono.fromRunnable(() -> {
             try {
                 String correlationId = UUID.randomUUID().toString();
@@ -34,11 +34,36 @@ public class BankAccountEventPublisher {
                         },
                         correlationData
                 );
-                log.info("Published event for userId: {}, correlationId: {}", message.getUserId(), correlationId);
+                log.info("Published event to save bank account for userId: {}, correlationId: {}", message.getUserId(), correlationId);
             } catch (Exception e) {
-                log.error("Failed to publish event for userId: {}", message.getUserId(), e);
-                throw new RuntimeException("RabbitMQ publish failed", e);
+                log.error("Failed to publish event to save bank account for userId: {}", message.getUserId(), e);
+                throw new RuntimeException("RabbitMQ publish failed to save bank account", e);
             }
         }).subscribeOn(Schedulers.boundedElastic()).then();
     }
+
+    public Mono<Void> publishUpdateBankAccount(BankAccountMessage message) {
+        return Mono.fromRunnable(() -> {
+            try {
+                String correlationId = UUID.randomUUID().toString();
+                CorrelationData correlationData = new CorrelationData(correlationId);
+
+                rabbitTemplate.convertAndSend(
+                        RabbitMQUtils.BANK_ACCOUNT_EXCHANGE,
+                        RabbitMQUtils.BANK_ACCOUNT_ROUTING_UPDATE_KEY,
+                        message,
+                        msg -> {
+                            msg.getMessageProperties().setHeader("correlation_id", correlationId);
+                            return msg;
+                        },
+                        correlationData
+                );
+                log.info("Published event to update bank account for userId: {}, correlationId: {}", message.getUserId(), correlationId);
+            } catch (Exception e) {
+                log.error("Failed to publish event to update bank account for userId: {}", message.getUserId(), e);
+                throw new RuntimeException("RabbitMQ publish failed to update bank account", e);
+            }
+        }).subscribeOn(Schedulers.boundedElastic()).then();
+    }
+
 }

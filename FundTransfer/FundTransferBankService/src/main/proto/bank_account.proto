@@ -8,18 +8,20 @@ package bank.account;
 
 service BankAccountService {
   rpc CreateBankAccount (BankAccountRequest) returns (BankAccountResponse);
+  rpc UpdateBankAccount (BankAccountRequest) returns (BankAccountResponse);
 }
 
 message BankAccountRequest {
-  int64  user_id              = 1;
-  int64  bank_id              = 2;
-  string account_number       = 3;
-  string account_type         = 4;
-  string account_holder_name  = 5;
-  float  balance              = 6;
-  string currency             = 7;
-  bool   is_primary           = 8;
-  int64  created_by           = 9;
+  int64  id                   = 1;
+  int64  user_id              = 2;
+  int64  bank_id              = 3;
+  string account_number       = 4;
+  string account_type         = 5;
+  string account_holder_name  = 6;
+  float  balance              = 7;
+  string currency             = 8;
+  bool   is_primary           = 9;
+  int64  created_by           = 10;
 }
 
 message BankAccountResponse {

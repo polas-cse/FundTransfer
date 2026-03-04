@@ -1,6 +1,5 @@
 package com.fund.transfer.bank.service.data.bankaccount;
 
-import com.fund.transfer.bank.service.data.bank.entity.Bank;
 import com.fund.transfer.bank.service.data.bankaccount.entity.BankAccount;
 import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.annotation.Nullable;
@@ -31,9 +30,9 @@ public interface BankAccountRepository extends R2dbcRepository<BankAccount, Long
         WHERE id = :bankAccountId
         RETURNING *
         """)
-    Mono<BankAccount> updateBankAccount(Long bankAccountId, String accountNumber, String accountType,
+    Mono<BankAccount> updateBankAccount(long bankAccountId, String accountNumber, String accountType,
                                         String accountHolderName, float balance, String currency,
-                                        boolean isPrimary, Long updatedBy);
+                                        boolean isPrimary, long updatedBy);
 
     @Query("""
         SELECT ba.id, ba.user_id, ba.bank_id, ba.account_number, ba.account_type,
@@ -43,13 +42,13 @@ public interface BankAccountRepository extends R2dbcRepository<BankAccount, Long
         LEFT JOIN user_service.users u ON u.id = ba.created_by
         WHERE ba.id = :bankAccountId AND ba.active = true
         """)
-    Mono<BankAccount> bankAccountDetails(Long bankAccountId);
+    Mono<BankAccount> bankAccountDetails(long bankAccountId);
 
     @Query("""
         UPDATE banking_service.bank_accounts SET active = false WHERE id = :bankAccountId
         RETURNING *
         """)
-    Mono<BankAccount> bankAccountDelete(Long bankAccountId);
+    Mono<BankAccount> bankAccountDelete(long bankAccountId);
 
     @Query("""
         SELECT ba.id, ba.user_id, ba.bank_id, ba.account_number, ba.account_type,
@@ -68,7 +67,7 @@ public interface BankAccountRepository extends R2dbcRepository<BankAccount, Long
         ORDER BY ba.created_at DESC
         LIMIT :limit OFFSET :offset
         """)
-    Flux<BankAccount> bankAccountList(@Nullable @Param("createdBy") Long createdBy,
+    Flux<BankAccount> bankAccountList(@Nullable @Param("createdBy") long createdBy,
                                       @Nullable @Param("search") String search,
                                       @Param("limit") Integer limit,
                                       @Param("offset") Integer offset);
@@ -84,6 +83,6 @@ public interface BankAccountRepository extends R2dbcRepository<BankAccount, Long
             LOWER(ba.currency) LIKE LOWER(CONCAT('%', :search, '%'))
         )
         """)
-    Mono<Long> countBankAccount(@Nullable @Param("createdBy") Long createdBy,
+    Mono<Long> countBankAccount(@Nullable @Param("createdBy") long createdBy,
                                 @Nullable @Param("search") String search);
 }

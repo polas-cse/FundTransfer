@@ -34,7 +34,7 @@ public class BankAccountGrpcServer extends BankAccountServiceGrpc.BankAccountSer
                         request.getCreatedBy())
                 .subscribe(
                         account -> {
-                            log.info("Bank account created via gRPC: {}", account.getId());
+                            log.info("Bank account created via gRPC id: {}", account.getId());
                             responseObserver.onNext(BankAccountResponse.newBuilder()
                                     .setId(account.getId())
                                     .setAccountNumber(account.getAccountNumber())
@@ -52,4 +52,40 @@ public class BankAccountGrpcServer extends BankAccountServiceGrpc.BankAccountSer
                         }
                 );
     }
+
+    @Override
+    public void updateBankAccount(BankAccountRequest request,
+                                  StreamObserver<BankAccountResponse> responseObserver) {
+        log.info("gRPC updateBankAccount received for userId: {}", request.getUserId());
+
+        bankAccountRepository.updateBankAccount(
+                        request.getBankId(),
+                        request.getAccountNumber(),
+                        request.getAccountType(),
+                        request.getAccountHolderName(),
+                        request.getBalance(),
+                        request.getCurrency(),
+                        request.getIsPrimary(),
+                        request.getCreatedBy())
+                .subscribe(
+                        account -> {
+                            log.info("Bank account updated via gRPC id: {}", account.getId());
+                            responseObserver.onNext(BankAccountResponse.newBuilder()
+                                    .setId(account.getId())
+                                    .setAccountNumber(account.getAccountNumber())
+                                    .setAccountHolderName(account.getAccountHolderName())
+                                    .setSuccess(true)
+                                    .setMessage("Bank account updated successfully")
+                                    .build());
+                            responseObserver.onCompleted();
+                        },
+                        error -> {
+                            log.error("gRPC bank account update failed for userId: {}", request.getUserId(), error);
+                            responseObserver.onError(Status.INTERNAL
+                                    .withDescription("Failed to update bank account: " + error.getMessage())
+                                    .asRuntimeException());
+                        }
+                );
+    }
+
 }

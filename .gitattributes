@@ -1,0 +1,5 @@
+* text=auto
+*.properties text eol=lf
+*.xml text eol=lf
+*.java text eol=lf
+*.yml text eol=lf

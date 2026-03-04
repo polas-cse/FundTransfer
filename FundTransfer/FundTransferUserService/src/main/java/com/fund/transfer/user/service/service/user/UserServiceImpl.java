@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
                                             .onErrorResume(grpcEx -> {
                                                 logger.error("gRPC failed after retries for userId: {}, publishing to RabbitMQ: {}",
                                                         entity.getId(), grpcEx.getMessage());
-                                                return bankAccountEventPublisher.publish(bankAccountMessage)
+                                                return bankAccountEventPublisher.publishSaveBankAccount(bankAccountMessage)
                                                         .doOnSuccess(v ->
                                                                 logger.info("Bank account event queued in RabbitMQ for userId: {}", entity.getId())
                                                         )
@@ -215,7 +215,37 @@ public class UserServiceImpl implements UserService {
                                         });
 
                                 return Mono.zip(clearDetailsCache, clearListCaches)
-                                        .thenReturn(entity);
+                                        .then(Mono.defer(() -> {
+                                            BankAccountMessage bankAccountMessage = BankAccountMessage.builder()
+                                                    .id(requestDto.getBankAccountId())
+                                                    .userId(entity.getId())
+                                                    .bankId(requestDto.getBankId())
+                                                    .accountNumber(requestDto.getAccountNumber())
+                                                    .accountType(requestDto.getAccountType())
+                                                    .accountHolderName(entity.getFirstName() + " " + entity.getLastName())
+                                                    .balance(requestDto.getBalance())
+                                                    .currency(requestDto.getCurrency())
+                                                    .isPrimary(requestDto.isPrimary())
+                                                    .createdBy(userId)
+                                                    .retryCount(0)
+                                                    .build();
+
+                                            return bankAccountGrpcClient.updateBankAccount(bankAccountMessage)
+                                                    .doOnSuccess(grpcResponse ->
+                                                            logger.info("gRPC bank account updated for userId: {}, accountId: {}",
+                                                                    entity.getId(), grpcResponse.getId())
+                                                    )
+                                                    .onErrorResume(grpcEx -> {
+                                                        logger.error("gRPC failed to update after retries for userId: {}, publishing to RabbitMQ: {}",
+                                                                entity.getId(), grpcEx.getMessage());
+                                                        return bankAccountEventPublisher.publishUpdateBankAccount(bankAccountMessage)
+                                                                .doOnSuccess(v ->
+                                                                        logger.info("Bank account update event queued in RabbitMQ for userId: {}", entity.getId())
+                                                                )
+                                                                .then(Mono.empty());
+                                                    })
+                                                    .thenReturn(entity);
+                                        }));
                             });
                 })
                 .map(entity -> UserResponseDto.builder()

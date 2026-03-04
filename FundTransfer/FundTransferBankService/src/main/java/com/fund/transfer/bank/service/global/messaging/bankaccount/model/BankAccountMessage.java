@@ -12,14 +12,15 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankAccountMessage implements Serializable {
-    private Long userId;
-    private Long bankId;
+    private long id;
+    private long userId;
+    private long bankId;
     private String accountNumber;
     private String accountType;
     private String accountHolderName;
     private float balance;
     private String currency;
     private boolean isPrimary;
-    private Long createdBy;
+    private long createdBy;
     private int retryCount;
 }

@@ -30,6 +30,7 @@ public class UserRequestModel {
     private boolean active;
 
     private Long bankId;
+    private Long bankAccountId;
     private String accountNumber;
     private String accountType;
     private float balance;

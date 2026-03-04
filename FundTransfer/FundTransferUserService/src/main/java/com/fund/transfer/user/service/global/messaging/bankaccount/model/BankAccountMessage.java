@@ -12,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankAccountMessage implements Serializable {
+    private Long id;
     private Long userId;
     private Long bankId;
     private String accountNumber;

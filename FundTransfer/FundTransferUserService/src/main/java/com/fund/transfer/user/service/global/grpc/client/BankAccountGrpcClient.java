@@ -24,13 +24,13 @@ public class BankAccountGrpcClient {
     private final BankAccountServiceGrpc.BankAccountServiceBlockingStub bankAccountStub;
 
     public Mono<BankAccountResponse> createBankAccount(BankAccountMessage message) {
-        return Mono.fromCallable(() -> attemptGrpcCall(message))
+        return Mono.fromCallable(() -> attemptToSaveBankAccountGrpcCall(message))
                 .retryWhen(
                         Retry.backoff(GrpcUtils.MAX_RETRIES, Duration.ofMillis(GrpcUtils.RETRY_DELAY_MS))
                                 .maxBackoff(Duration.ofSeconds(GrpcUtils.MAX_RETRIES_TIME))
                                 .filter(ex -> ex instanceof StatusRuntimeException)
                                 .doBeforeRetry(retrySignal ->
-                                        log.warn("gRPC retry attempt {} for userId: {} due to: {}",
+                                        log.warn("gRPC retry attempt {} time to save bank account for userId: {} due to: {}",
                                                 retrySignal.totalRetries() + 1,
                                                 message.getUserId(),
                                                 retrySignal.failure().getMessage())
@@ -39,7 +39,7 @@ public class BankAccountGrpcClient {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private BankAccountResponse attemptGrpcCall(BankAccountMessage message) {
+    private BankAccountResponse attemptToSaveBankAccountGrpcCall(BankAccountMessage message) {
         BankAccountRequest request = BankAccountRequest.newBuilder()
                 .setUserId(message.getUserId())
                 .setBankId(message.getBankId())
@@ -55,4 +55,39 @@ public class BankAccountGrpcClient {
         log.info("Calling gRPC createBankAccount for userId: {}", message.getUserId());
         return bankAccountStub.createBankAccount(request);
     }
+
+    public Mono<BankAccountResponse> updateBankAccount(BankAccountMessage message) {
+        return Mono.fromCallable(() -> attemptToUpdateBankAccountGrpcCall(message))
+                .retryWhen(
+                        Retry.backoff(GrpcUtils.MAX_RETRIES, Duration.ofMillis(GrpcUtils.RETRY_DELAY_MS))
+                                .maxBackoff(Duration.ofSeconds(GrpcUtils.MAX_RETRIES_TIME))
+                                .filter(ex -> ex instanceof StatusRuntimeException)
+                                .doBeforeRetry(retrySignal ->
+                                        log.warn("gRPC retry attempt {} time to update bank account for userId: {} due to: {}",
+                                                retrySignal.totalRetries() + 1,
+                                                message.getUserId(),
+                                                retrySignal.failure().getMessage())
+                                )
+                )
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    private BankAccountResponse attemptToUpdateBankAccountGrpcCall(BankAccountMessage message) {
+        BankAccountRequest request = BankAccountRequest.newBuilder()
+                .setId(message.getId())
+                .setUserId(message.getUserId())
+                .setBankId(message.getBankId())
+                .setAccountNumber(message.getAccountNumber())
+                .setAccountType(message.getAccountType())
+                .setAccountHolderName(message.getAccountHolderName())
+                .setBalance(message.getBalance())
+                .setCurrency(message.getCurrency())
+                .setIsPrimary(message.isPrimary())
+                .setCreatedBy(message.getCreatedBy())
+                .build();
+
+        log.info("Calling gRPC updateBankAccount for userId: {}", message.getUserId());
+        return bankAccountStub.updateBankAccount(request);
+    }
+
 }
