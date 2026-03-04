@@ -8,7 +8,17 @@ package bank.account;
 
 service BankAccountService {
   rpc CreateBankAccount (BankAccountRequest) returns (BankAccountResponse);
-  rpc UpdateBankAccount (BankAccountRequest) returns (BankAccountResponse);
+  rpc BatchUpdateBankAccount (BankAccountBatchRequest) returns (BankAccountBatchResponse);
+}
+
+message BankAccountBatchRequest {
+  repeated BankAccountRequest accounts = 1;
+}
+
+message BankAccountBatchResponse {
+  repeated BankAccountResponse accounts = 1;
+  bool success = 2;
+  string message = 3;
 }
 
 message BankAccountRequest {

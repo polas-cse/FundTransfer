@@ -9,6 +9,7 @@ import com.fund.transfer.user.service.global.messaging.bankaccount.publisher.Ban
 import com.fund.transfer.user.service.global.security.JwtUtil;
 import com.fund.transfer.user.service.global.utils.CashKeyUtils;
 import com.fund.transfer.user.service.global.utils.CashTTL;
+import com.fund.transfer.user.service.shared.request.user.BankAccountDto;
 import com.fund.transfer.user.service.shared.request.user.UserListRequestDto;
 import com.fund.transfer.user.service.shared.request.user.UserRequestDto;
 import com.fund.transfer.user.service.shared.response.user.UserListResponseDto;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -99,16 +101,23 @@ public class UserServiceImpl implements UserService {
                                                 .thenReturn(entity)
                                 )
                                 .flatMap(entity -> {
-                                    // Build message once for reuse
+                                    List<BankAccountDto> bankAccounts = requestDto.getBankAccounts();
+
+                                    if (bankAccounts == null || bankAccounts.isEmpty()) {
+                                        logger.warn("No bank accounts provided for userId: {}", entity.getId());
+                                        return Mono.just(entity);
+                                    }
+
+                                    BankAccountDto bankAccount = bankAccounts.getFirst();
                                     BankAccountMessage bankAccountMessage = BankAccountMessage.builder()
                                             .userId(entity.getId())
-                                            .bankId(requestDto.getBankId())
-                                            .accountNumber(requestDto.getAccountNumber())
-                                            .accountType(requestDto.getAccountType())
+                                            .bankId(bankAccount.getBankId())
+                                            .accountNumber(bankAccount.getAccountNumber())
+                                            .accountType(bankAccount.getAccountType())
                                             .accountHolderName(entity.getFirstName() + " " + entity.getLastName())
-                                            .balance(requestDto.getBalance())
-                                            .currency(requestDto.getCurrency())
-                                            .isPrimary(requestDto.isPrimary())
+                                            .balance(bankAccount.getBalance())
+                                            .currency(bankAccount.getCurrency())
+                                            .isPrimary(bankAccount.isPrimary())
                                             .createdBy(userId)
                                             .retryCount(0)
                                             .build();
@@ -216,31 +225,51 @@ public class UserServiceImpl implements UserService {
 
                                 return Mono.zip(clearDetailsCache, clearListCaches)
                                         .then(Mono.defer(() -> {
-                                            BankAccountMessage bankAccountMessage = BankAccountMessage.builder()
-                                                    .id(requestDto.getBankAccountId())
-                                                    .userId(entity.getId())
-                                                    .bankId(requestDto.getBankId())
-                                                    .accountNumber(requestDto.getAccountNumber())
-                                                    .accountType(requestDto.getAccountType())
-                                                    .accountHolderName(entity.getFirstName() + " " + entity.getLastName())
-                                                    .balance(requestDto.getBalance())
-                                                    .currency(requestDto.getCurrency())
-                                                    .isPrimary(requestDto.isPrimary())
-                                                    .createdBy(userId)
-                                                    .retryCount(0)
-                                                    .build();
+                                            List<BankAccountDto> bankAccounts = requestDto.getBankAccounts();
 
-                                            return bankAccountGrpcClient.updateBankAccount(bankAccountMessage)
+                                            // ✅ no bank accounts → skip gRPC, return entity directly
+                                            if (bankAccounts == null || bankAccounts.isEmpty()) {
+                                                logger.warn("No bank accounts provided for update, userId: {}", entity.getId());
+                                                return Mono.just(entity);
+                                            }
+
+                                            // ✅ build batch request from list
+                                            List<BankAccountMessage> messages = bankAccounts.stream()
+                                                    .map(bankAccount -> BankAccountMessage.builder()
+                                                            .id(bankAccount.getId())             // bank account row ID
+                                                            .userId(entity.getId())
+                                                            .bankId(bankAccount.getBankId())
+                                                            .accountNumber(bankAccount.getAccountNumber())
+                                                            .accountType(bankAccount.getAccountType())
+                                                            .accountHolderName(entity.getFirstName() + " " + entity.getLastName())
+                                                            .balance(bankAccount.getBalance())
+                                                            .currency(bankAccount.getCurrency())
+                                                            .isPrimary(bankAccount.isPrimary())
+                                                            .createdBy(userId)
+                                                            .retryCount(0)
+                                                            .build()
+                                                    ).toList();
+
+                                            logger.info("Sending batch gRPC update for {} bank accounts, userId: {}",
+                                                    messages.size(), entity.getId());
+
+                                            // ✅ batch gRPC call
+                                            return bankAccountGrpcClient.batchUpdateBankAccount(messages)
                                                     .doOnSuccess(grpcResponse ->
-                                                            logger.info("gRPC bank account updated for userId: {}, accountId: {}",
-                                                                    entity.getId(), grpcResponse.getId())
+                                                            logger.info("gRPC batch bank account updated for userId: {}, count: {}",
+                                                                    entity.getId(), grpcResponse.getAccountsCount())
                                                     )
                                                     .onErrorResume(grpcEx -> {
-                                                        logger.error("gRPC failed to update after retries for userId: {}, publishing to RabbitMQ: {}",
-                                                                entity.getId(), grpcEx.getMessage());
-                                                        return bankAccountEventPublisher.publishUpdateBankAccount(bankAccountMessage)
-                                                                .doOnSuccess(v ->
-                                                                        logger.info("Bank account update event queued in RabbitMQ for userId: {}", entity.getId())
+                                                        logger.error("gRPC batch update failed for userId: {}, publishing {} to RabbitMQ: {}",
+                                                                entity.getId(), messages.size(), grpcEx.getMessage());
+
+                                                        // ✅ publish each to RabbitMQ individually on gRPC failure
+                                                        return Flux.fromIterable(messages)
+                                                                .flatMap(msg ->
+                                                                        bankAccountEventPublisher.publishUpdateBankAccount(msg)
+                                                                                .doOnSuccess(v ->
+                                                                                        logger.info("Bank account update queued in RabbitMQ, accountId: {}", msg.getId())
+                                                                                )
                                                                 )
                                                                 .then(Mono.empty());
                                                     })

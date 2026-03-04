@@ -3,9 +3,7 @@ package com.fund.transfer.user.service.global.grpc.client;
 import com.fund.transfer.user.service.global.messaging.bankaccount.model
         .BankAccountMessage;
 import com.fund.transfer.user.service.global.utils.GrpcUtils;
-import com.fund.transfer.user.service.grpc.generated.BankAccountRequest;
-import com.fund.transfer.user.service.grpc.generated.BankAccountResponse;
-import com.fund.transfer.user.service.grpc.generated.BankAccountServiceGrpc;
+import com.fund.transfer.user.service.grpc.generated.*;
 import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -56,38 +55,43 @@ public class BankAccountGrpcClient {
         return bankAccountStub.createBankAccount(request);
     }
 
-    public Mono<BankAccountResponse> updateBankAccount(BankAccountMessage message) {
-        return Mono.fromCallable(() -> attemptToUpdateBankAccountGrpcCall(message))
+    public Mono<BankAccountBatchResponse> batchUpdateBankAccount(List<BankAccountMessage> messages) {
+        return Mono.fromCallable(() -> attemptToBatchUpdateBankAccountGrpcCall(messages))
                 .retryWhen(
                         Retry.backoff(GrpcUtils.MAX_RETRIES, Duration.ofMillis(GrpcUtils.RETRY_DELAY_MS))
                                 .maxBackoff(Duration.ofSeconds(GrpcUtils.MAX_RETRIES_TIME))
                                 .filter(ex -> ex instanceof StatusRuntimeException)
                                 .doBeforeRetry(retrySignal ->
-                                        log.warn("gRPC retry attempt {} time to update bank account for userId: {} due to: {}",
+                                        log.warn("gRPC retry attempt {} for batch update, count: {} due to: {}",
                                                 retrySignal.totalRetries() + 1,
-                                                message.getUserId(),
+                                                messages.size(),
                                                 retrySignal.failure().getMessage())
                                 )
                 )
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private BankAccountResponse attemptToUpdateBankAccountGrpcCall(BankAccountMessage message) {
-        BankAccountRequest request = BankAccountRequest.newBuilder()
-                .setId(message.getId())
-                .setUserId(message.getUserId())
-                .setBankId(message.getBankId())
-                .setAccountNumber(message.getAccountNumber())
-                .setAccountType(message.getAccountType())
-                .setAccountHolderName(message.getAccountHolderName())
-                .setBalance(message.getBalance())
-                .setCurrency(message.getCurrency())
-                .setIsPrimary(message.isPrimary())
-                .setCreatedBy(message.getCreatedBy())
+    private BankAccountBatchResponse attemptToBatchUpdateBankAccountGrpcCall(List<BankAccountMessage> messages) {
+        List<BankAccountRequest> requests = messages.stream()
+                .map(message -> BankAccountRequest.newBuilder()
+                        .setId(message.getId())
+                        .setUserId(message.getUserId())
+                        .setBankId(message.getBankId())
+                        .setAccountNumber(message.getAccountNumber())
+                        .setAccountType(message.getAccountType())
+                        .setAccountHolderName(message.getAccountHolderName())
+                        .setBalance(message.getBalance())
+                        .setCurrency(message.getCurrency())
+                        .setIsPrimary(message.isPrimary())
+                        .setCreatedBy(message.getCreatedBy())
+                        .build()
+                ).toList();
+
+        BankAccountBatchRequest batchRequest = BankAccountBatchRequest.newBuilder()
+                .addAllAccounts(requests)
                 .build();
 
-        log.info("Calling gRPC updateBankAccount for userId: {}", message.getUserId());
-        return bankAccountStub.updateBankAccount(request);
+        log.info("Calling gRPC batchUpdateBankAccount, count: {}", messages.size());
+        return bankAccountStub.batchUpdateBankAccount(batchRequest);
     }
-
 }

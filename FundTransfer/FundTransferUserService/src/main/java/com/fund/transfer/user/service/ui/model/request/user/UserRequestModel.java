@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 @Getter
@@ -29,14 +30,7 @@ public class UserRequestModel {
     private String downloadUrl;
     private boolean active;
 
-    private Long bankId;
-    private Long bankAccountId;
-    private String accountNumber;
-    private String accountType;
-    private float balance;
-    private String currency;
-    @JsonProperty("isPrimary")
-    private boolean isPrimary;
+    private List<BankAccountModel> bankAccounts;
 
     private Long createdBy;
     private Long updatedBy;

@@ -57,10 +57,4 @@ public class RedisConfig {
         return new ReactiveRedisTemplate<>(connectionFactory, serializationContext);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        return mapper;
-    }
 }

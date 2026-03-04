@@ -1,14 +1,16 @@
 package com.fund.transfer.bank.service.global.grpc.service;
 
 import com.fund.transfer.bank.service.data.bankaccount.BankAccountRepository;
-import com.fund.transfer.bank.service.grpc.generated.BankAccountServiceGrpc;
-import com.fund.transfer.bank.service.grpc.generated.BankAccountRequest;
-import com.fund.transfer.bank.service.grpc.generated.BankAccountResponse;
+import com.fund.transfer.bank.service.global.messaging.bankaccount.model.BankAccountMessage;
+import com.fund.transfer.bank.service.grpc.generated.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -54,35 +56,47 @@ public class BankAccountGrpcServer extends BankAccountServiceGrpc.BankAccountSer
     }
 
     @Override
-    public void updateBankAccount(BankAccountRequest request,
-                                  StreamObserver<BankAccountResponse> responseObserver) {
-        log.info("gRPC updateBankAccount received for userId: {}", request.getUserId());
+    public void batchUpdateBankAccount(BankAccountBatchRequest request,
+                                       StreamObserver<BankAccountBatchResponse> responseObserver) {
+        log.info("gRPC batchUpdateBankAccount received, count: {}", request.getAccountsCount());
 
-        bankAccountRepository.updateBankAccount(
-                        request.getBankId(),
-                        request.getAccountNumber(),
-                        request.getAccountType(),
-                        request.getAccountHolderName(),
-                        request.getBalance(),
-                        request.getCurrency(),
-                        request.getIsPrimary(),
-                        request.getCreatedBy())
+        Flux.fromIterable(request.getAccountsList())
+                .flatMap(r -> bankAccountRepository.updateBankAccount(
+                        r.getId(),
+                        r.getAccountNumber(),
+                        r.getAccountType(),
+                        r.getAccountHolderName(),
+                        r.getBalance(),
+                        r.getCurrency(),
+                        r.getIsPrimary(),
+                        r.getCreatedBy()
+                ), 10)
+                .collectList()
                 .subscribe(
-                        account -> {
-                            log.info("Bank account updated via gRPC id: {}", account.getId());
-                            responseObserver.onNext(BankAccountResponse.newBuilder()
-                                    .setId(account.getId())
-                                    .setAccountNumber(account.getAccountNumber())
-                                    .setAccountHolderName(account.getAccountHolderName())
+                        accounts -> {
+                            log.info("Batch updated {} bank accounts via gRPC", accounts.size());
+
+                            List<BankAccountResponse> responses = accounts.stream()
+                                    .map(account -> BankAccountResponse.newBuilder()
+                                            .setId(account.getId())
+                                            .setAccountNumber(account.getAccountNumber())
+                                            .setAccountHolderName(account.getAccountHolderName())
+                                            .setSuccess(true)
+                                            .setMessage("Updated successfully")
+                                            .build()
+                                    ).toList();
+
+                            responseObserver.onNext(BankAccountBatchResponse.newBuilder()
+                                    .addAllAccounts(responses)
                                     .setSuccess(true)
-                                    .setMessage("Bank account updated successfully")
+                                    .setMessage("Batch updated " + accounts.size() + " bank accounts")
                                     .build());
                             responseObserver.onCompleted();
                         },
                         error -> {
-                            log.error("gRPC bank account update failed for userId: {}", request.getUserId(), error);
+                            log.error("gRPC batch update failed: {}", error.getMessage());
                             responseObserver.onError(Status.INTERNAL
-                                    .withDescription("Failed to update bank account: " + error.getMessage())
+                                    .withDescription("Batch update failed: " + error.getMessage())
                                     .asRuntimeException());
                         }
                 );

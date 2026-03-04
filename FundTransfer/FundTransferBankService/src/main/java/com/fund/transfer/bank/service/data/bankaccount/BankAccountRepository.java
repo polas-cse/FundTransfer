@@ -85,4 +85,5 @@ public interface BankAccountRepository extends R2dbcRepository<BankAccount, Long
         """)
     Mono<Long> countBankAccount(@Nullable @Param("createdBy") long createdBy,
                                 @Nullable @Param("search") String search);
+
 }
