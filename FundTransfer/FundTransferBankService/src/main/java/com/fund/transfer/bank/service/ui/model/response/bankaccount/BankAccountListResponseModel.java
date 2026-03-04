@@ -1,5 +1,8 @@
 package com.fund.transfer.bank.service.ui.model.response.bankaccount;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fund.transfer.bank.service.global.filter.output.SafeOutput;
 import lombok.*;
 
 @Builder
@@ -8,20 +11,40 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BankAccountListResponseModel {
 
     private Long id;
-    private Long userId;
-    private String userName;
-    private Long bankId;
-    private String bankName;
-    private String accountNumber;
-    private String accountType;
-    private String accountHolderName;
-    private float balance;
-    private String currency;
-    private boolean isPrimary;
-    private boolean active;
 
+    @SafeOutput(hidden = true)
+    private Long userId;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String userName;
+
+    @SafeOutput(hidden = true)
+    private Long bankId;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String bankName;
+
+    @SafeOutput(masked = true, visibleChars = 4)
+    private String accountNumber;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String accountType;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String accountHolderName;
+
+    private float balance;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String currency;
+
+    @JsonProperty("isPrimary")
+    private boolean primary;
+
+    private boolean active;
 }

@@ -1,5 +1,7 @@
 package com.fund.transfer.user.service.ui.model.response.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fund.transfer.user.service.global.filter.output.SafeOutput;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -10,19 +12,37 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserListResponseModel {
 
     private Long id;
-    private String userName;
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String phone;
-    private String gender;
-    private LocalDate dateOfBirth;
-    private String imageUrl;
-    private String downloadUrl;
-    private boolean active;
 
+    @SafeOutput(sanitizeHtml = true)
+    private String userName;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String email;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String firstName;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String lastName;
+
+    @SafeOutput(masked = true, visibleChars = 4)
+    private String phone;
+
+    @SafeOutput(sanitizeHtml = true)
+    private String gender;
+
+    private LocalDate dateOfBirth;
+
+    @SafeOutput(sanitizeHtml = true, truncate = true, maxLength = 500)
+    private String imageUrl;
+
+    @SafeOutput(sanitizeHtml = true, truncate = true, maxLength = 500)
+    private String downloadUrl;
+
+    private boolean active;
 }

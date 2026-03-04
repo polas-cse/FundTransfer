@@ -36,7 +36,7 @@
             <column name="id" valueNumeric="1"/>
             <column name="user_id" valueNumeric="1"/>
             <column name="user_name" value="admin"/>
-            <column name="password" value="1234"/>
+            <column name="password" value="123456"/>
             <column name="is_pwd_reset" valueBoolean="false"/>
             <column name="two_factor_enabled" valueBoolean="false"/>
             <column name="login_attempts" valueNumeric="0"/>
@@ -54,7 +54,7 @@
             <column name="id" valueNumeric="2"/>
             <column name="user_id" valueNumeric="2"/>
             <column name="user_name" value="polas"/>
-            <column name="password" value="1234"/>
+            <column name="password" value="123456"/>
             <column name="is_pwd_reset" valueBoolean="false"/>
             <column name="two_factor_enabled" valueBoolean="false"/>
             <column name="login_attempts" valueNumeric="0"/>
