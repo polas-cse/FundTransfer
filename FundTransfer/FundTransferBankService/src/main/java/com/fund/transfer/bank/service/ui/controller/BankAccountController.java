@@ -37,6 +37,7 @@ public class BankAccountController {
 
     @PostMapping
     public Mono<ResponseEntity<BankAccountResponseModel>> saveBankAccount(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestHeader(value = "Authorization", required = true)
             @NotBlank(message = "Authorization header is required") String authHeader,
             @RequestBody @Valid BankAccountRequestModel requestBody) {
@@ -46,12 +47,13 @@ public class BankAccountController {
         BankAccountRequestDto dto = modelMapper.map(requestBody, BankAccountRequestDto.class);
         return bankAccountService.saveBankAccount(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, BankAccountResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping
     public Mono<ResponseEntity<BankAccountResponseModel>> updateBankAccount(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestHeader(value = "Authorization", required = true)
             @NotBlank(message = "Authorization header is required") String authHeader,
             @RequestBody @Valid BankAccountRequestModel requestBody) {
@@ -65,12 +67,13 @@ public class BankAccountController {
         BankAccountRequestDto dto = modelMapper.map(requestBody, BankAccountRequestDto.class);
         return bankAccountService.updateBankAccount(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, BankAccountResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping
     public Mono<ResponseEntity<BankAccountResponseModel>> bankAccountDetails(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotNull(message = "Bank account ID is required")
             @Positive(message = "Bank account ID must be a positive number") Long id) {
@@ -79,12 +82,14 @@ public class BankAccountController {
 
         return bankAccountService.bankAccountDetails(id)
                 .map(responseDto -> modelMapper.map(responseDto, BankAccountResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @PostMapping("/list")
     public Mono<ResponseEntity<Map<String, Object>>> bankAccountList(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+
             @RequestHeader("X-User-Id")
             @NotNull(message = "X-User-Id header is required")
             @Positive(message = "X-User-Id must be a positive number") Long currentUserId,
@@ -116,7 +121,7 @@ public class BankAccountController {
 
         return bankAccountService.bankAccountList(requestDto)
                 .map(dto -> modelMapper.map(dto, BankAccountListResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .collectList()
                 .zipWith(bankAccountService.bankAccountCount(requestDto))
                 .map(tuple -> {
@@ -141,6 +146,7 @@ public class BankAccountController {
 
     @DeleteMapping
     public Mono<ResponseEntity<Boolean>> bankAccountDelete(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotNull(message = "Bank account ID is required")
             @Positive(message = "Bank account ID must be a positive number") Long id) {
@@ -149,6 +155,7 @@ public class BankAccountController {
 
         return bankAccountService.deleteBankAccount(id)
                 .map(dto -> ResponseEntity.ok(true))
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .defaultIfEmpty(ResponseEntity.ok(false));
     }
 }

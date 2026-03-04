@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Component
 @Slf4j
+@Component
 public class ResponseSanitizer {
 
     private static final Pattern HTML_PATTERN = Pattern.compile(
@@ -17,31 +18,46 @@ public class ResponseSanitizer {
             Pattern.CASE_INSENSITIVE
     );
 
-    /**
-     * Sanitize any response object recursively.
-     * Processes all fields annotated with @SafeOutput.
-     */
-    public <T> T sanitize(T object) {
+    //  main method — always use this in controllers
+    public <T> T sanitize(T object, String userRole) {
         if (object == null) return null;
 
+        //  normalize role — null stays null (will be treated as most restrictive)
+        String resolvedRole = (userRole != null && !userRole.isBlank())
+                ? userRole.toUpperCase()
+                : null;
+
+        log.debug("Sanitizing {} for role: '{}'",
+                object.getClass().getSimpleName(), resolvedRole);
+
         try {
-            processFields(object, object.getClass());
+            processFields(object, object.getClass(), resolvedRole);
         } catch (Exception e) {
-            log.error("Response sanitization failed for type: {}", object.getClass().getSimpleName(), e);
+            log.error("Sanitization failed — type: {}, role: {}",
+                    object.getClass().getSimpleName(), resolvedRole, e);
         }
         return object;
     }
 
-    /**
-     * Sanitize a list of response objects.
-     */
-    public <T> List<T> sanitizeList(List<T> list) {
+    //  no role = null = most restrictive
+    public <T> T sanitize(T object) {
+        return sanitize(object, null);
+    }
+
+    //  list sanitization with role
+    public <T> List<T> sanitizeList(List<T> list, String userRole) {
         if (list == null || list.isEmpty()) return list;
-        list.forEach(this::sanitize);
+        list.forEach(item -> sanitize(item, userRole));
         return list;
     }
 
-    private void processFields(Object object, Class<?> clazz) throws Exception {
+    //  list sanitization without role
+    public <T> List<T> sanitizeList(List<T> list) {
+        return sanitizeList(list, null);
+    }
+
+    private void processFields(Object object, Class<?> clazz, String userRole)
+            throws Exception {
         if (clazz == null || clazz == Object.class) return;
 
         for (Field field : clazz.getDeclaredFields()) {
@@ -53,50 +69,93 @@ public class ResponseSanitizer {
 
             if (value == null) continue;
 
-            // ── Hidden — set to null ─────────────────────────────────────
+            boolean canSee = canRoleSeeFullData(userRole, annotation.visibleToRoles());
+            log.debug("Field '{}' — role: '{}', canSee: {}",
+                    field.getName(), userRole, canSee);
+
+            // ── Hidden ──────────────────────────────────────────────────
             if (annotation.hidden()) {
-                field.set(object, null);
+                if (!canSee) {
+                    field.set(object, null);
+                    log.debug("Field '{}' hidden for role '{}'", field.getName(), userRole);
+                }
                 continue;
             }
 
-            // ── Placeholder — replace with fixed string ──────────────────
+            // ── Placeholder ─────────────────────────────────────────────
             if (!annotation.placeholder().isEmpty() && value instanceof String) {
-                field.set(object, annotation.placeholder());
+                if (!canSee) {
+                    field.set(object, annotation.placeholder());
+                }
                 continue;
             }
 
-            // ── String-specific processing ───────────────────────────────
+            // ── String processing ────────────────────────────────────────
             if (value instanceof String str) {
 
-                // Mask — show only last N chars
-                if (annotation.masked()) {
-                    field.set(object, mask(str, annotation.visibleChars()));
-                    continue;
-                }
-
-                // Sanitize HTML — strip dangerous tags
+                //  sanitizeHtml ALWAYS runs — no role bypass
                 if (annotation.sanitizeHtml()) {
                     str = sanitizeHtml(str);
                 }
 
-                // Truncate — cut to max length
-                if (annotation.truncate() && str.length() > annotation.maxLength()) {
-                    str = str.substring(0, annotation.maxLength()) + "...";
+                // ── Masked ───────────────────────────────────────────────
+                if (annotation.masked()) {
+                    if (canSee) {
+                        field.set(object, str);
+                        log.debug("Field '{}' unmasked for role '{}'",
+                                field.getName(), userRole);
+                    } else {
+                        field.set(object, mask(str, annotation.visibleChars()));
+                        log.debug("Field '{}' masked for role '{}'",
+                                field.getName(), userRole);
+                    }
+                    continue;
                 }
 
+                // ── Truncate ─────────────────────────────────────────────
+                if (annotation.truncate()) {
+                    if (canSee) {
+                        field.set(object, str);
+                    } else if (str.length() > annotation.maxLength()) {
+                        field.set(object, str.substring(0, annotation.maxLength()) + "...");
+                    } else {
+                        field.set(object, str);
+                    }
+                    continue;
+                }
+
+                //  only sanitizeHtml was applied
                 field.set(object, str);
             }
         }
 
-        //  Process parent class fields too
-        processFields(object, clazz.getSuperclass());
+        //  process parent class fields too
+        processFields(object, clazz.getSuperclass(), userRole);
+    }
+
+    /**
+     * null role  → ALWAYS false (most restrictive, no exceptions)
+     * empty list → true (no restriction defined, authenticated users see full)
+     * role in list → true
+     * role not in list → false
+     */
+    private boolean canRoleSeeFullData(String userRole, String[] visibleToRoles) {
+        //  null role = always restricted — comes first, no exceptions
+        if (userRole == null) {
+            return false;
+        }
+        //  empty list = no restriction defined = authenticated role sees full
+        if (visibleToRoles == null || visibleToRoles.length == 0) {
+            return true;
+        }
+        //  check if role is in allowed list
+        return Arrays.asList(visibleToRoles).contains(userRole);
     }
 
     private String mask(String value, int visibleChars) {
         if (value.length() <= visibleChars) return "*".repeat(value.length());
-        String visible = value.substring(value.length() - visibleChars);
-        String masked = "*".repeat(value.length() - visibleChars);
-        return masked + visible;
+        return "*".repeat(value.length() - visibleChars)
+                + value.substring(value.length() - visibleChars);
     }
 
     private String sanitizeHtml(String value) {

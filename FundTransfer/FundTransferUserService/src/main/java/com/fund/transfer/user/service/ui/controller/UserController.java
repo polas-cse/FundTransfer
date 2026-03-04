@@ -37,6 +37,7 @@ public class UserController {
 
     @PostMapping
     public Mono<ResponseEntity<UserResponseModel>> saveUser(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestHeader(value = "Authorization", required = true)
             @NotBlank(message = "Authorization header is required") String authHeader,
             @RequestBody @Valid UserRequestModel requestBody) {
@@ -46,12 +47,13 @@ public class UserController {
         UserRequestDto dto = modelMapper.map(requestBody, UserRequestDto.class);
         return userService.saveUser(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, UserResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping
     public Mono<ResponseEntity<UserResponseModel>> updateUser(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestHeader(value = "Authorization", required = true)
             @NotBlank(message = "Authorization header is required") String authHeader,
             @RequestBody @Valid UserRequestModel requestBody) {
@@ -65,12 +67,13 @@ public class UserController {
         UserRequestDto dto = modelMapper.map(requestBody, UserRequestDto.class);
         return userService.updateUser(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, UserResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping
     public Mono<ResponseEntity<UserResponseModel>> userDetails(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotNull(message = "User ID is required")
             @Positive(message = "User ID must be a positive number") Long id) {
@@ -79,12 +82,14 @@ public class UserController {
 
         return userService.userDetails(id)
                 .map(responseDto -> modelMapper.map(responseDto, UserResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @PostMapping("/list")
     public Mono<ResponseEntity<Map<String, Object>>> userList(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+
             @RequestHeader("X-User-Id")
             @NotNull(message = "X-User-Id header is required")
             @Positive(message = "X-User-Id must be a positive number") Long currentUserId,
@@ -116,7 +121,7 @@ public class UserController {
 
         return userService.userList(requestDto)
                 .map(dto -> modelMapper.map(dto, UserListResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .collectList()
                 .zipWith(userService.userCount(requestDto))
                 .map(tuple -> {
@@ -141,6 +146,7 @@ public class UserController {
 
     @DeleteMapping
     public Mono<ResponseEntity<Boolean>> userDelete(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotNull(message = "User ID is required")
             @Positive(message = "User ID must be a positive number") Long id) {
@@ -149,6 +155,7 @@ public class UserController {
 
         return userService.deleteUser(id)
                 .map(dto -> ResponseEntity.ok(true))
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .defaultIfEmpty(ResponseEntity.ok(false));
     }
 }

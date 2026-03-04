@@ -29,6 +29,7 @@ public class JwtUtil {
     public String generateToken(String username, Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
+        claims.put("role", "ADMIN");
 
         return Jwts.builder()
                 .claims(claims)
@@ -53,7 +54,7 @@ public class JwtUtil {
                         String token = (String) credentials;
                         try {
                             Long userId = extractUserId(token);
-                            System.out.println("✅ Extracted userId from JWT: " + userId);
+                            System.out.println(" Extracted userId from JWT: " + userId);
                             return Mono.just(userId);
                         } catch (Exception e) {
                             return Mono.empty();

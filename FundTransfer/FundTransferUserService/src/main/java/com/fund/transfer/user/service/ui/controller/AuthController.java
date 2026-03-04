@@ -45,6 +45,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public Mono<ResponseEntity<Boolean>> userLogout(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotBlank(message = "Username is required")
             @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters") String userName) {
@@ -53,6 +54,7 @@ public class AuthController {
 
         return loginService.logout(userName)
                 .map(ResponseEntity::ok)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }

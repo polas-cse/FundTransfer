@@ -24,7 +24,8 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Component
-public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
+public class AuthorizationHeaderFilter
+        extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     @Autowired
     Environment env;
@@ -41,112 +42,109 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             try {
                 ServerHttpRequest request = exchange.getRequest();
 
-                log.info("Gateway Filter - Processing request: {}", request.getPath());
+                log.info("Gateway Filter - Processing: {}", request.getPath());
 
-                // check Authorization header exists
+                // check Authorization header
                 if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                     log.warn("No authorization header for path: {}", request.getPath());
-                    return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+                    return onError(exchange, "No authorization header",
+                            HttpStatus.UNAUTHORIZED);
                 }
 
-                String authorizationHeader = request.getHeaders()
+                String authHeader = request.getHeaders()
                         .get(HttpHeaders.AUTHORIZATION).get(0);
 
-                // check Bearer format
-                if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-                    log.warn("Invalid authorization header format for path: {}", request.getPath());
-                    return onError(exchange, "Invalid authorization header format", HttpStatus.UNAUTHORIZED);
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    log.warn("Invalid authorization header format");
+                    return onError(exchange, "Invalid authorization header format",
+                            HttpStatus.UNAUTHORIZED);
                 }
 
-                String jwt = authorizationHeader.replace("Bearer ", "");
+                String jwt = authHeader.replace("Bearer ", "");
 
-                // validate JWT
                 if (!isJwtValid(jwt)) {
-                    log.warn("Invalid JWT token for path: {}", request.getPath());
-                    return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+                    log.warn("Invalid JWT for path: {}", request.getPath());
+                    return onError(exchange, "JWT token is not valid",
+                            HttpStatus.UNAUTHORIZED);
                 }
 
-                Claims claims = extractClaims(jwt);
-                Long userId = claims.get("userId", Long.class);
+                Claims claims  = extractClaims(jwt);
+                Long userId    = claims.get("userId", Long.class);
                 String username = claims.getSubject();
+                String role    = claims.get("role", String.class); // extract role
 
-                // guard against null claims
                 if (userId == null || username == null) {
-                    log.warn("JWT claims missing userId or username");
-                    return onError(exchange, "Invalid token claims", HttpStatus.UNAUTHORIZED);
+                    log.warn("JWT missing userId or username");
+                    return onError(exchange, "Invalid token claims",
+                            HttpStatus.UNAUTHORIZED);
                 }
 
-                log.info("JWT valid — userId: {}, username: {}", userId, username);
+                // normalize role — default USER if missing
+                String resolvedRole = (role != null && !role.isBlank())
+                        ? role.toUpperCase()
+                        : "USER";
 
-                // forward user info to downstream services
+                log.info("JWT valid — userId: {}, username: {}, role: {}",
+                        userId, username, resolvedRole);
+
+                // forward all headers to downstream services
                 ServerHttpRequest modifiedRequest = request.mutate()
-                        .header("X-User-Id", userId.toString())
+                        .header("X-User-Id",   userId.toString())
                         .header("X-User-Name", username)
+                        .header("X-User-Role", resolvedRole) // role forwarded
                         .build();
 
-                return chain.filter(exchange.mutate().request(modifiedRequest).build());
+                return chain.filter(
+                        exchange.mutate().request(modifiedRequest).build());
 
             } catch (Exception e) {
-                log.error("Gateway Filter Exception: {} — {}", e.getClass().getName(), e.getMessage(), e);
-                return onError(exchange, "Authentication error", HttpStatus.INTERNAL_SERVER_ERROR);
-                // don't expose e.getMessage() to client — security risk
+                log.error("Gateway Filter Exception: {}", e.getMessage(), e);
+                return onError(exchange, "Authentication error",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
             }
         };
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange,
+                               String err,
+                               HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         response.getHeaders().add("Content-Type", "application/json");
 
-        log.warn("Sending error response: {} (Status: {})", err, httpStatus);
-
-        // structured JSON error response
-        String jsonError = String.format(
+        String json = String.format(
                 "{\"success\":false,\"code\":\"%s\",\"message\":\"%s\",\"timestamp\":\"%s\"}",
-                httpStatus.name(),
-                err,
-                LocalDateTime.now()
+                httpStatus.name(), err, LocalDateTime.now()
         );
 
-        DataBufferFactory bufferFactory = response.bufferFactory();
-        DataBuffer dataBuffer = bufferFactory.wrap(jsonError.getBytes(StandardCharsets.UTF_8));
-
-        return response.writeWith(Mono.just(dataBuffer));
+        DataBufferFactory factory = response.bufferFactory();
+        DataBuffer buffer = factory.wrap(json.getBytes(StandardCharsets.UTF_8));
+        return response.writeWith(Mono.just(buffer));
     }
 
     private boolean isJwtValid(String jwt) {
         try {
-            String tokenSecret = env.getProperty("jwt.secret");
-
-            if (tokenSecret == null || tokenSecret.isBlank()) {
+            String secret = env.getProperty("jwt.secret");
+            if (secret == null || secret.isBlank()) {
                 log.error("JWT secret is null or empty");
                 return false;
             }
-
-            SecretKey signingKey = Keys.hmacShaKeyFor(
-                    tokenSecret.getBytes(StandardCharsets.UTF_8));
-
-            Jwts.parser()
-                    .verifyWith(signingKey)
-                    .build()
-                    .parseSignedClaims(jwt);
-
+            SecretKey key = Keys.hmacShaKeyFor(
+                    secret.getBytes(StandardCharsets.UTF_8));
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(jwt);
             return true;
-
         } catch (Exception ex) {
-            log.warn("JWT validation failed: {} — {}", ex.getClass().getName(), ex.getMessage());
+            log.warn("JWT validation failed: {}", ex.getMessage());
             return false;
         }
     }
 
     private Claims extractClaims(String jwt) {
-        String tokenSecret = env.getProperty("jwt.secret");
-        SecretKey signingKey = Keys.hmacShaKeyFor(
-                tokenSecret.getBytes(StandardCharsets.UTF_8));
-
+        String secret = env.getProperty("jwt.secret");
+        SecretKey key = Keys.hmacShaKeyFor(
+                secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.parser()
-                .verifyWith(signingKey)
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload();

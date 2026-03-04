@@ -30,7 +30,7 @@ public class UserResponseModel {
     @SafeOutput(sanitizeHtml = true)
     private String lastName;
 
-    @SafeOutput(masked = true, visibleChars = 4)
+    @SafeOutput(masked = true, visibleChars = 4, visibleToRoles = {"ADMIN"})
     private String phone;
 
     @SafeOutput(sanitizeHtml = true)

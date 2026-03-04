@@ -37,6 +37,7 @@ public class BankController {
 
     @PostMapping
     public Mono<ResponseEntity<BankResponseModel>> saveBank(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestHeader(value = "Authorization", required = true)
             @NotBlank(message = "Authorization header is required") String authHeader,
             @RequestBody @Valid BankRequestModel requestBody) {
@@ -46,12 +47,13 @@ public class BankController {
         BankRequestDto dto = modelMapper.map(requestBody, BankRequestDto.class);
         return bankService.saveBank(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, BankResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping
     public Mono<ResponseEntity<BankResponseModel>> updateBank(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestHeader(value = "Authorization", required = true)
             @NotBlank(message = "Authorization header is required") String authHeader,
             @RequestBody @Valid BankRequestModel requestBody) {
@@ -65,12 +67,13 @@ public class BankController {
         BankRequestDto dto = modelMapper.map(requestBody, BankRequestDto.class);
         return bankService.updateBank(authHeader, dto)
                 .map(responseDto -> modelMapper.map(responseDto, BankResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping
     public Mono<ResponseEntity<BankResponseModel>> bankDetails(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotNull(message = "Bank ID is required")
             @Positive(message = "Bank ID must be a positive number") Long id) {
@@ -79,12 +82,14 @@ public class BankController {
 
         return bankService.bankDetails(id)
                 .map(responseDto -> modelMapper.map(responseDto, BankResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .map(ResponseEntity::ok);
     }
 
     @PostMapping("/list")
     public Mono<ResponseEntity<Map<String, Object>>> bankList(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+
             @RequestHeader("X-User-Id")
             @NotNull(message = "X-User-Id header is required")
             @Positive(message = "X-User-Id must be a positive number") Long currentUserId,
@@ -116,7 +121,7 @@ public class BankController {
 
         return bankService.bankList(requestDto)
                 .map(dto -> modelMapper.map(dto, BankListResponseModel.class))
-                .map(responseSanitizer::sanitize)
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .collectList()
                 .zipWith(bankService.bankCount(requestDto))
                 .map(tuple -> {
@@ -141,6 +146,7 @@ public class BankController {
 
     @DeleteMapping
     public Mono<ResponseEntity<Boolean>> bankDelete(
+            @RequestHeader(value = "X-User-Role", required = false) String role,
             @RequestParam
             @NotNull(message = "Bank ID is required")
             @Positive(message = "Bank ID must be a positive number") Long id) {
@@ -149,6 +155,7 @@ public class BankController {
 
         return bankService.deleteBank(id)
                 .map(dto -> ResponseEntity.ok(true))
+                .map(model -> responseSanitizer.sanitize(model, role))
                 .defaultIfEmpty(ResponseEntity.ok(false));
     }
 }
