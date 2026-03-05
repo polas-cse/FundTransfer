@@ -1,0 +1,518 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Fund Transfer
+meta:
+  id: wrk_f35423ed86884173b2ef90e0b96f294b
+  created: 1763367248119
+  modified: 1763367277476
+  description: ""
+collection:
+  - name: Fund Transfer
+    meta:
+      id: fld_481b76884b074cbda8e973408743c8de
+      created: 1763367264575
+      modified: 1763367264575
+      sortKey: -1763367264575
+      description: ""
+    children:
+      - url: http://localhost:8080/user-service/auth/login
+        name: Login
+        meta:
+          id: req_c84bf4fe0edd46dca46021339818f867
+          created: 1763368134643
+          modified: 1772706904009
+          isPrivate: false
+          description: ""
+          sortKey: -1763671854117.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"userName":"1=1or1=1",
+            	"password":"1=1or1=1"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/user-service/auth/logout
+        name: Logout
+        meta:
+          id: req_c615bfba33fb4b5ab65f69bf2f339941
+          created: 1764053755591
+          modified: 1772618662951
+          isPrivate: false
+          description: ""
+          sortKey: -1763603077988.25
+        method: POST
+        parameters:
+          - name: userName
+            value: polas
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/12.0.0
+          - name: Authorization
+            value: Bearer
+              eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcyNjAwOTAzLCJleHAiOjE3NzI2ODczMDN9.G5jXDqHXLMP12Kpy3BekMXwO_2AZLHjjSsZffkFvmLiH3_2NR-nxo0Eh9CD0KPdK
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - name: Users
+        meta:
+          id: fld_c172781768484b9fa544bf3872047199
+          created: 1763367290673
+          modified: 1763367290673
+          sortKey: -1763367290673
+          description: ""
+        children:
+          - name: User
+            meta:
+              id: fld_8cb5ccb9658e47aca654ad8e5098fe52
+              created: 1763369196315
+              modified: 1763369200656
+              sortKey: -1763369200608
+              description: ""
+            children:
+              - url: http://localhost:8080/user-service/user
+                name: "User Details "
+                meta:
+                  id: req_5ccd4223b54644e9bbf77fb1e9257382
+                  created: 1763369196316
+                  modified: 1771231240194
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1763159285406
+                method: GET
+                parameters:
+                  - name: id
+                    value: "2"
+                    description: ""
+                    disabled: false
+                headers:
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcxMjMxMTMxLCJleHAiOjE3NzEzMTc1MzF9.nmBLiA_NxjYbe9VCPrIYwzIT289mpWdIVPHoadoPKqGskR4T2F8NytVYpubBEvG-
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/user-service/user/list
+                name: User List
+                meta:
+                  id: req_7d9adbcc0ece442e96aae7e27fd284cb
+                  created: 1768732109554
+                  modified: 1771230625602
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1763101609952.75
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                    	"createdBy":null
+                    }
+                parameters:
+                  - name: limit
+                    value: "10"
+                    description: ""
+                    disabled: false
+                  - name: offset
+                    value: "0"
+                    description: ""
+                    disabled: false
+                  - name: search
+                    value: Polas
+                    description: ""
+                    disabled: true
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzY5Njc4Njg4LCJleHAiOjE3Njk3NjUwODh9.UkujuZPNcRzlHZeF76uUdOQcPSwnF_Ye_yIhX5X0xUb2RawTICOGNamnH0lTr_1y
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/user-service/user
+                name: Save User
+                meta:
+                  id: req_96dd3da96d544b5e8b00fcea0ca47ad5
+                  created: 1768733236513
+                  modified: 1772618688198
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1763072772226.125
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: >-
+                    {
+                      "userName": "polashossain1",
+                      "password": "123456",
+                      "email": "john.doe1@example.com",
+                      "firstName": "John",
+                      "lastName": "Doe",
+                      "phone": "+8801712345678",
+                      "gender": "Male",
+                      "dateOfBirth": "1990-05-15",
+                      "imageUrl": "https://example.com/images/john-doe.jpg",
+                      "downloadUrl": "https://example.com/files/john-doe-profile.pdf",
+                    	"bankAccounts":{
+                    		"bankId": 1,
+                    		"accountNumber": "BD1234567890",
+                    		"accountType": "SAVINGS",
+                    		"balance": 0.0,
+                    		"currency": "BDT",
+                    		"isPrimary": true
+                    	}
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU4iLCJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcyNjE4NjY5LCJleHAiOjE3NzI3MDUwNjl9.2Dk23TiuyA9ArTfX_0h6dzDzYU6eyQnqsUGmyUBlav7O8k6gSI5eYRa4RNWy866v
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/user-service/user
+                name: Update User
+                meta:
+                  id: req_91043382d5d041d0b207903a338259d0
+                  created: 1768733261125
+                  modified: 1772619807696
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1763058353362.8125
+                method: PUT
+                body:
+                  mimeType: application/json
+                  text: >-
+                    {
+                    	"id":3,
+                      "userName": "polashossain1",
+                      "password": "123456",
+                      "email": "john.doe1@example.com",
+                      "firstName": "Polas",
+                      "lastName": "Hossain",
+                      "phone": "+8801712345678",
+                      "gender": "Male",
+                      "dateOfBirth": "1990-05-15",
+                      "imageUrl": "https://example.com/images/john-doe.jpg",
+                      "downloadUrl": "https://example.com/files/john-doe-profile.pdf",
+                    	"bankAccounts":{
+                    		"id":1,
+                    		"bankId": 1,
+                    		"accountNumber": "BD1234567890",
+                    		"accountType": "SAVINGS",
+                    		"balance": 1000,
+                    		"currency": "BDT",
+                    		"isPrimary": true
+                    	}
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU4iLCJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcyNjE4NjY5LCJleHAiOjE3NzI3MDUwNjl9.2Dk23TiuyA9ArTfX_0h6dzDzYU6eyQnqsUGmyUBlav7O8k6gSI5eYRa4RNWy866v
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/user-service/user
+                name: Delete User
+                meta:
+                  id: req_5f71910164084a4bbc6fc88d5393c119
+                  created: 1768733280188
+                  modified: 1771750335411
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1763051143931.1562
+                method: DELETE
+                headers:
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzY4NzMxMzgzLCJleHAiOjE3Njg4MTc3ODN9.LBscfSllE_jDnnDCr6ed-r7ZXFqT6--VoRKneH5CtLAmS93CQq0jho68pb4j0482
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+      - name: Bank Service
+        meta:
+          id: fld_013e8b21c73846c1b0af24cff8cc8f5f
+          created: 1763367307392
+          modified: 1763368028883
+          sortKey: -1763367307392
+          description: ""
+        children:
+          - name: Bank
+            meta:
+              id: fld_6f7cfe1104534850b2dfebe38fdf2bc0
+              created: 1763368036233
+              modified: 1763369262156
+              sortKey: -1763368036233
+              description: ""
+            children:
+              - url: http://localhost:8080/bank-service/bank
+                name: "Bank Details "
+                meta:
+                  id: req_1b8ceaa2c9234365ac22d554ef39bc63
+                  created: 1763976436708
+                  modified: 1771750263271
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1763043934499.5
+                method: GET
+                parameters:
+                  - name: id
+                    value: "1"
+                    description: ""
+                    disabled: false
+                headers:
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcxNzQ4NTkzLCJleHAiOjE3NzE4MzQ5OTN9.e0gYuCrIGb3W1klJEWxEj2-U7NHlTeStOr6kaPeFrXwwIHK485QM8ZgSr38sjiYe
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/bank-service/bank
+                name: Save Bank
+                meta:
+                  id: req_3bc1292b4abb4eac8da2cce68e36f53c
+                  created: 1771748707249
+                  modified: 1771749413121
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1762986259046.25
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                    		"bankName": "National Bank PLC",
+                    		"bankCode": "NBANK",
+                    		"swiftCode": "NBPLC",
+                    		"country": "Bangladesh",
+                    		"capitalAmount": 1.0E9,
+                    		"totalProfit": 0.0,
+                    		"totalExpense": 0.0,
+                    		"active": true,
+                    		"deleted": false
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcxNzQ4NTkzLCJleHAiOjE3NzE4MzQ5OTN9.e0gYuCrIGb3W1klJEWxEj2-U7NHlTeStOr6kaPeFrXwwIHK485QM8ZgSr38sjiYe
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/bank-service/bank
+                name: Update Bank
+                meta:
+                  id: req_dd8429a5a97f462c8c9a944029dc8d2a
+                  created: 1771748724448
+                  modified: 1771750007515
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1762957421319.625
+                method: PUT
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                    	"id": 3,
+                    	"bankName": "National Bank PLC",
+                    	"bankCode": "NBANK",
+                    	"swiftCode": "NBPLC",
+                    	"country": "Bangladesh",
+                    	"capitalAmount": 1.0E9,
+                    	"totalProfit": 0.0,
+                    	"totalExpense": 10.0,
+                    	"active": true,
+                    	"deleted": false
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcxNzQ4NTkzLCJleHAiOjE3NzE4MzQ5OTN9.e0gYuCrIGb3W1klJEWxEj2-U7NHlTeStOr6kaPeFrXwwIHK485QM8ZgSr38sjiYe
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/bank-service/bank/list
+                name: Bank List
+                meta:
+                  id: req_baf8cb8885084d53957fdc514303f9a5
+                  created: 1771748797854
+                  modified: 1771750029298
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1762943002456.3125
+                method: POST
+                headers:
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcxNzQ4NTkzLCJleHAiOjE3NzE4MzQ5OTN9.e0gYuCrIGb3W1klJEWxEj2-U7NHlTeStOr6kaPeFrXwwIHK485QM8ZgSr38sjiYe
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: http://localhost:8080/bank-service/bank
+                name: Delete Bank
+                meta:
+                  id: req_334858c8a61c4aeeb993e4eecc35e02e
+                  created: 1771748813808
+                  modified: 1771750400853
+                  isPrivate: false
+                  description: ""
+                  sortKey: -1762935793024.6562
+                method: DELETE
+                parameters:
+                  - name: id
+                    value: "3"
+                    description: ""
+                    disabled: false
+                headers:
+                  - name: User-Agent
+                    value: insomnia/12.0.0
+                  - name: Authorization
+                    value: Bearer
+                      eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjIsInN1YiI6InBvbGFzIiwiaWF0IjoxNzcxNzQ4NTkzLCJleHAiOjE3NzE4MzQ5OTN9.e0gYuCrIGb3W1klJEWxEj2-U7NHlTeStOr6kaPeFrXwwIHK485QM8ZgSr38sjiYe
+                    description: ""
+                    disabled: false
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+      - name: Test
+        meta:
+          id: fld_4a9a3168ffe34cada2f3a3463a84f796
+          created: 1763367319015
+          modified: 1763367319015
+          sortKey: -1763367319015
+          description: ""
+      - name: Auth
+        meta:
+          id: fld_b4c27180efc644ed835d023a5df4d9ab
+          created: 1763976389220
+          modified: 1763976389220
+          sortKey: -1763976389220
+          description: ""
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_e6fce605d5cce6d92b91275c463561e6bff45b25
+    created: 1763367248127
+    modified: 1763367248127
+environments:
+  name: Base Environment
+  meta:
+    id: env_e6fce605d5cce6d92b91275c463561e6bff45b25
+    created: 1763367248124
+    modified: 1763367248124
+    isPrivate: false
