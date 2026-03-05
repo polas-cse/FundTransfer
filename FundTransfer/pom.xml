@@ -124,7 +124,7 @@
     </dependencyManagement>
 
     <build>
-        <!-- ✅ os-maven-plugin in PARENT so all child modules inherit it -->
+        <!-- os-maven-plugin in PARENT so all child modules inherit it -->
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
