@@ -5,10 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <!-- Step 1 — create schema + all tables -->
-    <include file="/db/changelog/002-create-tables.xml"/>
+    <!-- Step 1 — create schema first -->
+    <include file="db/changelog/000-create-schema.xml"/>
 
-    <!-- Step 2 — insert seed/master data -->
-    <include file="db/changelog/master-data/users-insert-data.xml"/>
+    <!-- Step 2 — create tables -->
+    <include file="db/changelog/001-create-security-audit-log.xml"/>
 
 </databaseChangeLog>

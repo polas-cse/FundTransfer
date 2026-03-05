@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-create-security-audit-log"
+               author="fund-transfer-gateway">
+
+        <!-- ensure we're in the right schema -->
+        <sql>SET search_path TO gateway_service;</sql>
+
+        <createTable tableName="security_audit_log"
+                     schemaName="gateway_service">
+
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Request Info -->
+            <column name="request_id"     type="VARCHAR(100)"/>
+            <column name="ip_address"     type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_agent"     type="VARCHAR(1000)"/>
+            <column name="request_path"   type="VARCHAR(500)"/>
+            <column name="request_method" type="VARCHAR(20)"/>
+            <column name="query_string"   type="VARCHAR(2000)"/>
+            <column name="request_body"   type="TEXT"/>
+            <column name="referer"        type="VARCHAR(500)"/>
+            <column name="origin"         type="VARCHAR(200)"/>
+            <column name="content_length" type="BIGINT"/>
+            <column name="protocol"       type="VARCHAR(20)"/>
+
+            <!-- User Info -->
+            <column name="user_id"   type="VARCHAR(50)"/>
+            <column name="username"  type="VARCHAR(100)"/>
+            <column name="user_role" type="VARCHAR(50)"/>
+            <column name="session_id" type="VARCHAR(200)"/>
+
+            <!-- Threat Info -->
+            <column name="threat_type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="severity" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status"           type="VARCHAR(20)"/>
+            <column name="field_name"       type="VARCHAR(200)"/>
+            <column name="suspicious_value" type="TEXT"/>
+            <column name="message"          type="TEXT"/>
+            <column name="rule_triggered"   type="VARCHAR(200)"/>
+            <column name="blocked"          type="BOOLEAN"
+                    defaultValueBoolean="false"/>
+            <column name="block_reason"     type="VARCHAR(500)"/>
+
+            <!-- Meta -->
+            <column name="service_id"       type="VARCHAR(100)"/>
+            <column name="response_time_ms" type="BIGINT"/>
+            <column name="detected_at"      type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="NOW()"/>
+
+        </createTable>
+
+        <!-- indexes -->
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_ip">
+            <column name="ip_address"/>
+        </createIndex>
+
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_threat">
+            <column name="threat_type"/>
+        </createIndex>
+
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_severity">
+            <column name="severity"/>
+        </createIndex>
+
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_username">
+            <column name="username"/>
+        </createIndex>
+
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_detected_at">
+            <column name="detected_at"/>
+        </createIndex>
+
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_blocked">
+            <column name="blocked"/>
+        </createIndex>
+
+        <createIndex tableName="security_audit_log"
+                     schemaName="gateway_service"
+                     indexName="idx_sal_ip_threat_time">
+            <column name="ip_address"/>
+            <column name="threat_type"/>
+            <column name="detected_at"/>
+        </createIndex>
+
+        <rollback>
+            DROP TABLE IF EXISTS gateway_service.security_audit_log CASCADE;
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
