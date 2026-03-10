@@ -10,30 +10,32 @@
                runAlways="false"
                failOnError="false">
 
-        <!-- create schema -->
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.schemata
+                WHERE schema_name = 'user_service'
+            </sqlCheck>
+        </preConditions>
+
         <sql>CREATE SCHEMA IF NOT EXISTS user_service;</sql>
 
-        <!-- grant access to app user -->
         <sql>
             GRANT ALL PRIVILEGES ON SCHEMA user_service
             TO "fund-transfer";
         </sql>
 
-        <!-- future tables auto grant -->
         <sql>
             ALTER DEFAULT PRIVILEGES IN SCHEMA user_service
             GRANT ALL PRIVILEGES ON TABLES
             TO "fund-transfer";
         </sql>
 
-        <!-- future sequences auto grant (BIGSERIAL) -->
         <sql>
             ALTER DEFAULT PRIVILEGES IN SCHEMA user_service
             GRANT ALL PRIVILEGES ON SEQUENCES
             TO "fund-transfer";
         </sql>
 
-        <!-- set default search path -->
         <sql>
             ALTER ROLE "fund-transfer"
             SET search_path TO user_service, public;

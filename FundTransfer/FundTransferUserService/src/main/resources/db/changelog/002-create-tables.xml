@@ -6,24 +6,24 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <changeSet id="create-schema-0000" author="mdpolashossein">
-        <sql dbms="postgresql">
-            CREATE SCHEMA IF NOT EXISTS user_service;
-        </sql>
-        <rollback>
-            <sql dbms="postgresql">
-                DROP SCHEMA IF EXISTS user_service CASCADE;
-            </sql>
-        </rollback>
-    </changeSet>
-
+    <!-- ================= USERS ================= -->
     <changeSet id="users-table-0001" author="mdpolashossein">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"
+                             schemaName="user_service"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="users" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_users_id"/>
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="pk_users_id"/>
             </column>
             <column name="email" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_users_email"/>
+                <constraints nullable="false" unique="true"
+                             uniqueConstraintName="uk_users_email"/>
             </column>
             <column name="first_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -34,16 +34,19 @@
             <column name="phone" type="VARCHAR(18)"/>
             <column name="gender" type="VARCHAR(10)"/>
             <column name="date_of_birth" type="DATE"/>
-            <column name="balance" type="DECIMAL(18,2)" defaultValueNumeric="0.00">
+            <column name="balance" type="DECIMAL(18,2)"
+                    defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
             <column name="image_url" type="TEXT"/>
             <column name="download_url" type="TEXT"/>
-            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+            <column name="active" type="BOOLEAN"
+                    defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
             <column name="created_by" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="updated_by" type="BIGINT"/>
@@ -55,25 +58,39 @@
         </rollback>
     </changeSet>
 
+    <!-- ================= LOGINS ================= -->
     <changeSet id="users-table-0002" author="mdpolashossein">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="logins"
+                             schemaName="user_service"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="logins" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="pk_logins_id"/>
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_logins_id"/>
             </column>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="user_name" type="VARCHAR(60)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_logins_user_name"/>
+                <constraints nullable="false" unique="true"
+                             uniqueConstraintName="uk_logins_user_name"/>
             </column>
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="salt" type="VARCHAR(255)"/>
-            <column name="is_pwd_reset" type="BOOLEAN" defaultValueBoolean="false"/>
-            <column name="two_factor_enabled" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="is_pwd_reset" type="BOOLEAN"
+                    defaultValueBoolean="false"/>
+            <column name="two_factor_enabled" type="BOOLEAN"
+                    defaultValueBoolean="false"/>
             <column name="locked_until" type="TIMESTAMP"/>
-            <column name="login_attempts" type="INT" defaultValueNumeric="0"/>
+            <column name="login_attempts" type="INT"
+                    defaultValueNumeric="0"/>
             <column name="last_login_at" type="TIMESTAMP"/>
             <column name="login_time" type="TIMESTAMP"/>
             <column name="expire_at" type="TIMESTAMP"/>
@@ -83,19 +100,28 @@
             <column name="ip_address" type="VARCHAR(80)"/>
             <column name="location" type="TEXT"/>
             <column name="created_by" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
-        <addForeignKeyConstraint constraintName="fk_logins_user" baseTableSchemaName="user_service"
-                                 baseTableName="logins" baseColumnNames="user_id" referencedTableSchemaName="user_service"
-                                 referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"
-                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="fk_logins_user"
+                baseTableSchemaName="user_service"
+                baseTableName="logins"
+                baseColumnNames="user_id"
+                referencedTableSchemaName="user_service"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
 
-        <createIndex tableName="logins" indexName="idx_logins_user_id" schemaName="user_service">
+        <createIndex tableName="logins"
+                     indexName="idx_logins_user_id"
+                     schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
@@ -104,10 +130,20 @@
         </rollback>
     </changeSet>
 
+    <!-- ================= LOGIN LOGS ================= -->
     <changeSet id="users-table-0003" author="mdpolashossein">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="login_logs"
+                             schemaName="user_service"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="login_logs" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="pk_login_logs_id"/>
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_login_logs_id"/>
             </column>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -119,30 +155,50 @@
             <column name="location" type="TEXT"/>
             <column name="fail_reason" type="TEXT"/>
             <column name="created_by" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_login_logs_user" baseTableSchemaName="user_service"
-                baseTableName="login_logs" baseColumnNames="user_id"
-                referencedTableSchemaName="user_service" referencedTableName="users"
-                referencedColumnNames="id" onDelete="CASCADE"
+                constraintName="fk_login_logs_user"
+                baseTableSchemaName="user_service"
+                baseTableName="login_logs"
+                baseColumnNames="user_id"
+                referencedTableSchemaName="user_service"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
                 onUpdate="CASCADE"/>
-        <createIndex tableName="login_logs" indexName="idx_login_logs_user_id" schemaName="user_service">
+
+        <createIndex tableName="login_logs"
+                     indexName="idx_login_logs_user_id"
+                     schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="login_logs" schemaName="user_service"/>
+            <dropTable tableName="login_logs"
+                       schemaName="user_service"/>
         </rollback>
     </changeSet>
 
+    <!-- ================= PASSWORD RESET TOKENS ================= -->
     <changeSet id="users-table-0004" author="mdpolashossein">
-        <createTable tableName="password_reset_tokens" schemaName="user_service">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="password_reset_tokens"
+                             schemaName="user_service"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="password_reset_tokens"
+                     schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="pk_pwd_reset_id"/>
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_pwd_reset_id"/>
             </column>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -153,11 +209,13 @@
             <column name="expire_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
+            <column name="is_used" type="BOOLEAN"
+                    defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="created_by" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="updated_by" type="BIGINT"/>
@@ -165,25 +223,42 @@
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_pwd_reset_user" baseTableSchemaName="user_service"
-                baseTableName="password_reset_tokens" baseColumnNames="user_id"
-                referencedTableSchemaName="user_service" referencedTableName="users"
-                referencedColumnNames="id" onDelete="CASCADE"
+                constraintName="fk_pwd_reset_user"
+                baseTableSchemaName="user_service"
+                baseTableName="password_reset_tokens"
+                baseColumnNames="user_id"
+                referencedTableSchemaName="user_service"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
-        <createIndex tableName="password_reset_tokens" indexName="idx_pwd_reset_user_id" schemaName="user_service">
+        <createIndex tableName="password_reset_tokens"
+                     indexName="idx_pwd_reset_user_id"
+                     schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="password_reset_tokens" schemaName="user_service"/>
+            <dropTable tableName="password_reset_tokens"
+                       schemaName="user_service"/>
         </rollback>
     </changeSet>
 
+    <!-- ================= USER OTP ================= -->
     <changeSet id="users-table-0005" author="mdpolashossein">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_otp"
+                             schemaName="user_service"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="user_otp" schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="pk_user_otp_id"/>
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_user_otp_id"/>
             </column>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -197,23 +272,31 @@
             <column name="expire_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
+            <column name="is_used" type="BOOLEAN"
+                    defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="created_by" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_user_otp_user" baseTableSchemaName="user_service"
-                baseTableName="user_otp" baseColumnNames="user_id"
-                referencedTableSchemaName="user_service" referencedTableName="users"
-                referencedColumnNames="id" onDelete="CASCADE"
+                constraintName="fk_user_otp_user"
+                baseTableSchemaName="user_service"
+                baseTableName="user_otp"
+                baseColumnNames="user_id"
+                referencedTableSchemaName="user_service"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
-        <createIndex tableName="user_otp" indexName="idx_user_otp_user_id" schemaName="user_service">
+        <createIndex tableName="user_otp"
+                     indexName="idx_user_otp_user_id"
+                     schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
@@ -222,10 +305,21 @@
         </rollback>
     </changeSet>
 
+    <!-- ================= TRUSTED DEVICES ================= -->
     <changeSet id="users-table-0006" author="mdpolashossein">
-        <createTable tableName="trusted_devices" schemaName="user_service">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="trusted_devices"
+                             schemaName="user_service"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="trusted_devices"
+                     schemaName="user_service">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="pk_trusted_devices_id"/>
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_trusted_devices_id"/>
             </column>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -236,7 +330,8 @@
             <column name="device_name" type="VARCHAR(150)"/>
             <column name="ip_address" type="VARCHAR(80)"/>
             <column name="created_by" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="updated_by" type="BIGINT"/>
@@ -244,23 +339,33 @@
         </createTable>
 
         <addForeignKeyConstraint
-                constraintName="fk_trusted_devices_user" baseTableSchemaName="user_service"
-                baseTableName="trusted_devices" baseColumnNames="user_id"
-                referencedTableSchemaName="user_service" referencedTableName="users"
-                referencedColumnNames="id" onDelete="CASCADE"
+                constraintName="fk_trusted_devices_user"
+                baseTableSchemaName="user_service"
+                baseTableName="trusted_devices"
+                baseColumnNames="user_id"
+                referencedTableSchemaName="user_service"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
-        <createIndex tableName="trusted_devices" indexName="idx_trusted_devices_user_id" schemaName="user_service">
+        <createIndex tableName="trusted_devices"
+                     indexName="idx_trusted_devices_user_id"
+                     schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
-        <createIndex tableName="trusted_devices" indexName="uk_trusted_devices_user_fingerprint" schemaName="user_service" unique="true">
+        <createIndex tableName="trusted_devices"
+                     indexName="uk_trusted_devices_user_fingerprint"
+                     schemaName="user_service"
+                     unique="true">
             <column name="user_id"/>
             <column name="device_fingerprint"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="trusted_devices" schemaName="user_service"/>
+            <dropTable tableName="trusted_devices"
+                       schemaName="user_service"/>
         </rollback>
     </changeSet>
 

@@ -16,6 +16,7 @@ public class SecurityAuditEvent {
         // ── Input Attacks ─────────────────────────────────────────────
         XSS_ATTEMPT,
         SQL_INJECTION,
+        NOSQL_INJECTION,
         PATH_TRAVERSAL,
         COMMAND_INJECTION,
         LDAP_INJECTION,
@@ -24,6 +25,8 @@ public class SecurityAuditEvent {
         HTML_INJECTION,
         TEMPLATE_INJECTION,
         HEADER_INJECTION,
+        LOG4J_INJECTION,
+        DESERIALIZATION_ATTACK,
 
         // ── Auth Attacks ──────────────────────────────────────────────
         BRUTE_FORCE,
@@ -48,6 +51,8 @@ public class SecurityAuditEvent {
 
         // ── Protocol Attacks ──────────────────────────────────────────
         HTTP_METHOD_TAMPERING,
+        HTTP_SMUGGLING,
+        HOST_HEADER_INJECTION,
         SUSPICIOUS_HEADER,
         MISSING_HEADERS,
         CORS_VIOLATION,
@@ -79,7 +84,7 @@ public class SecurityAuditEvent {
     private String requestBody;
     private String referer;
     private String origin;
-    private Long contentLength;
+    private Long   contentLength;
     private String protocol;
 
     // ── User Info ─────────────────────────────────────────────────────
@@ -89,18 +94,18 @@ public class SecurityAuditEvent {
     private String sessionId;
 
     // ── Threat Info ───────────────────────────────────────────────────
-    private ThreatType threatType;
-    private Severity severity;
+    private ThreatType   threatType;
+    private Severity     severity;
     private AttackStatus status;
-    private String fieldName;
-    private String suspiciousValue;
-    private String message;
-    private String ruleTriggered;
-    private boolean blocked;
-    private String blockReason;
+    private String       fieldName;
+    private String       suspiciousValue;
+    private String       message;
+    private String       ruleTriggered;
+    private boolean      blocked;
+    private String       blockReason;
 
     // ── Meta ──────────────────────────────────────────────────────────
-    private String serviceId;
-    private Long responseTimeMs;
+    private String        serviceId;
+    private Long          responseTimeMs;
     private LocalDateTime detectedAt;
 }

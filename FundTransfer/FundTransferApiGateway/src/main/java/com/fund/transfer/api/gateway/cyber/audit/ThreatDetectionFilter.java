@@ -71,35 +71,31 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
     // ══════════════════════════════════════════════════════════════════
 
     private static final Set<String> PASSWORD_FIELDS = Set.of(
-            "password",
-            "confirmpassword",
-            "newpassword",
-            "oldpassword",
-            "currentpassword",
-            "repeatpassword",
-            "secret",
-            "pin"
+            "password", "confirmpassword", "newpassword",
+            "oldpassword", "currentpassword", "repeatpassword",
+            "secret", "pin"
     );
 
-    // headers that should NOT be scanned for attacks
+    // ══════════════════════════════════════════════════════════════════
+    // Safe Headers — skip attack scanning on these
+    // ══════════════════════════════════════════════════════════════════
+
     private static final Set<String> SAFE_HEADERS = Set.of(
-            "Accept",
-            "Accept-Encoding",
-            "Accept-Language",
-            "Cache-Control",
-            "Connection",
-            "Content-Length",
-            "Content-Type",
-            "Host",
-            "User-Agent",        // scanned separately in checkUserAgent()
-            "Authorization",     // JWT token — would cause false positives
-            "X-User-Id",         // internal forwarded headers
-            "X-User-Name",
-            "X-User-Role",
-            "X-Forwarded-For",
-            "X-Real-IP",
-            "CF-Connecting-IP"
+            "Accept", "Accept-Encoding", "Accept-Language",
+            "Cache-Control", "Connection", "Content-Length",
+            "Content-Type", "Host",
+            "User-Agent",       // scanned separately in checkUserAgent()
+            "Authorization",    // JWT — causes false positives
+            "X-User-Id", "X-User-Name", "X-User-Role",
+            "X-Forwarded-For", "X-Real-IP", "CF-Connecting-IP"
     );
+
+    // ══════════════════════════════════════════════════════════════════
+    // Allowed CORS Origins (configure via application.properties)
+    // ══════════════════════════════════════════════════════════════════
+
+    @Value("${security.cors.allowed-origins:}")
+    private String allowedOriginsConfig;
 
     // ══════════════════════════════════════════════════════════════════
     // Attack Patterns
@@ -123,41 +119,107 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
 
     // ── SQL Injection ─────────────────────────────────────────────────
     private static final Pattern SQL = Pattern.compile(
+            // DDL/DML keywords with context
             "(?i)\\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE|" +
                     "EXEC|EXECUTE|TRUNCATE|DECLARE|WAITFOR|SLEEP|BENCHMARK|" +
                     "LOAD_FILE|OUTFILE|DUMPFILE|REPLACE|MERGE)\\b\\s+\\w|" +
+                    // Comment sequences
                     "--|#\\s|/\\*[\\s\\S]*?\\*/|/\\*!|" +
+                    // Stored procedures
                     "xp_\\w+|sp_\\w+|" +
+                    // Hex encoding
                     "0x[0-9a-fA-F]{4,}|" +
+                    // Schema enumeration
                     "INFORMATION_SCHEMA|SYS\\.TABLES|SYS\\.COLUMNS|" +
                     "SYSOBJECTS|SYSCOLUMNS|PG_SLEEP|PG_TABLES|" +
+                    // Tautology with quotes
                     "'\\s*(?:OR|AND)\\s+'|" +
                     "\"\\s*(?:OR|AND)\\s+\"|" +
                     "\\)\\s*(?:OR|AND)\\s*\\(|" +
+                    // numeric tautologies — no spaces required (fixes 1=1or1=1)
+                    "\\d+\\s*=\\s*\\d+\\s*(?:or|and)\\s*\\d+|" +
+                    "(?:^|\\s|[\"'(])(?:or|and)\\s*\\d+\\s*=\\s*\\d+|" +
                     "\\b1\\s*=\\s*1\\b|\\b1\\s*=\\s*2\\b|" +
                     "\\b0\\s*=\\s*0\\b|\\bNULL\\s*=\\s*NULL\\b|" +
+                    // CHAR/ASCII injection
                     "CHAR\\s*\\(\\s*\\d|ASCII\\s*\\(|" +
+                    // UNION
                     "UNION\\s+(?:ALL\\s+)?SELECT|" +
-                    "AND\\s+\\d+\\s*=\\s*\\d+|OR\\s+\\d+\\s*=\\s*\\d+|" +
-                    "SLEEP\\s*\\(|WAITFOR\\s+DELAY|PG_SLEEP\\s*\\(|" +
-                    "BENCHMARK\\s*\\(|" +
+                    // Blind SQL — \s* not \s+
+                    "AND\\s*\\d+\\s*=\\s*\\d+|OR\\s*\\d+\\s*=\\s*\\d+|" +
+                    // Time-based blind
+                    "SLEEP\\s*\\(|WAITFOR\\s+DELAY|PG_SLEEP\\s*\\(|BENCHMARK\\s*\\(|" +
+                    // Error-based
                     "EXTRACTVALUE\\s*\\(|UPDATEXML\\s*\\(|" +
+                    // Stacked queries
                     ";\\s*(?:SELECT|INSERT|UPDATE|DELETE|DROP|EXEC)",
+            Pattern.CASE_INSENSITIVE);
+
+    // ── NoSQL Injection ───────────────────────────────────────────────
+    //catches MongoDB operator injection
+    private static final Pattern NOSQL_INJECTION = Pattern.compile(
+            // MongoDB operators in JSON
+            "\"\\s*\\$(?:where|gt|gte|lt|lte|ne|in|nin|" +
+                    "or|and|not|nor|exists|type|mod|regex|" +
+                    "text|search|elemMatch|all|size)\"\\s*:|" +
+                    // query string operator injection
+                    "\\[\\s*\\$(?:gt|gte|lt|lte|ne|in|nin|regex|where)\\s*\\]|" +
+                    // JavaScript execution in MongoDB
+                    "\\$where\\s*:\\s*[\"'].*function|" +
+                    "\\$where\\s*:\\s*[\"'].*this\\.|" +
+                    // mapReduce injection
+                    "\\$reduce\\s*:|\\$map\\s*:|\\$finalize\\s*:|" +
+                    // $function (MongoDB 4.4+)
+                    "\\$function\\s*:|\\$accumulator\\s*:",
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+
+    // ── Log4j / JNDI Injection ────────────────────────────────────────
+    //Log4Shell (CVE-2021-44228) and variants
+    private static final Pattern LOG4J_JNDI = Pattern.compile(
+            // Classic Log4Shell
+            "\\$\\{\\s*jndi\\s*:|" +
+                    // Obfuscated variants
+                    "\\$\\{\\s*[jJ]\\s*[nN]\\s*[dD]\\s*[iI]\\s*:|" +
+                    // Nested lookup bypass: ${${lower:j}ndi:}
+                    "\\$\\{[^}]*jndi[^}]*\\}|" +
+                    // Protocol handlers
+                    "jndi\\s*:\\s*(?:ldap|ldaps|rmi|dns|iiop|corba|nds|http|https)://|" +
+                    // URL encoded
+                    "%24%7[bB]jndi|%24%7Bjndi|" +
+                    // Spring4Shell
+                    "class\\.module\\.classLoader|" +
+                    "class\\.classLoader\\.urls|" +
+                    "\\bspring\\.beanFactory\\b",
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+
+    // ── Java Deserialization ──────────────────────────────────────────
+    //serialized Java object payloads
+    private static final Pattern DESERIALIZATION = Pattern.compile(
+            // Java serialized object magic bytes (base64)
+            "rO0AB|" +
+                    // Java serialized hex magic
+                    "aced0005|" +
+                    // PHP serialized objects
+                    "O:\\d+:|a:\\d+:|s:\\d+:|" +
+                    // Python pickle
+                    "\\bpickle\\b.*\\bload|cos\\nsystem\\n|" +
+                    // .NET ViewState tampering
+                    "__VIEWSTATE.*[A-Za-z0-9+/]{100,}|" +
+                    // XStream / Groovy
+                    "<java\\.lang\\.|<groovy\\.",
             Pattern.CASE_INSENSITIVE);
 
     // ── Path Traversal ────────────────────────────────────────────────
     private static final Pattern PATH_TRAVERSAL = Pattern.compile(
             "\\.{2}[/\\\\]|\\.{2}%2[fF]|\\.{2}%5[cC]|" +
                     "%2[eE]%2[eE][%2fF5cC]+|%252[eE]%252[eE]|" +
-                    "%25%32%65%25%32%65|" +
-                    "\\.\\.%c0%af|" +
+                    "%25%32%65%25%32%65|\\.\\.%c0%af|" +
                     "/etc/passwd|/etc/shadow|/etc/hosts|/etc/group|" +
                     "/etc/motd|/etc/issue|/proc/self|/proc/version|" +
                     "/var/www|/var/log|/root/|/home/\\w+/|" +
                     "c:/windows|c:\\\\windows|c:/boot\\.ini|" +
                     "c:/winnt|c:/inetpub|c:\\\\inetpub|" +
                     "windows/system32|winnt/system32|" +
-                    // fixed: \\x00 not \\u0000
                     "%00|\\x00",
             Pattern.CASE_INSENSITIVE);
 
@@ -185,8 +247,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     "objectClass=\\*|cn=\\*|uid=\\*|mail=\\*|" +
                     "sn=\\*|givenName=\\*|memberOf=|" +
                     "\\bldap://|\\bldaps://|\\bldapi://|" +
-                    "\\\\00|\\\\0a|\\\\0d|" +
-                    "\\\\2a|\\\\28|\\\\29|\\\\7c|\\\\26",
+                    "\\\\00|\\\\0a|\\\\0d|\\\\2a|\\\\28|\\\\29|\\\\7c|\\\\26",
             Pattern.CASE_INSENSITIVE);
 
     // ── XML / XXE Injection ───────────────────────────────────────────
@@ -196,36 +257,51 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     "<\\?xml[^>]*\\?>|" +
                     "file:///|file://|jar://|php://|expect://|" +
                     "gopher://|dict://|ftp://[^\\s]*passwd|" +
-                    "http://169\\.254\\.169\\.254|" +
-                    "http://metadata\\.google|" +
+                    "http://169\\.254\\.169\\.254|http://metadata\\.google|" +
                     "\\]\\]>|<!\\[IGNORE|<!\\[INCLUDE",
             Pattern.CASE_INSENSITIVE);
 
     // ── Template Injection (SSTI) ─────────────────────────────────────
     private static final Pattern TEMPLATE_INJECTION = Pattern.compile(
-            "\\$\\{.*?\\}|"              +
-                    "#\\{.*?\\}|"                +
-                    "\\{\\{.*?\\}\\}|"           +
-                    "<%[=\\-]?.*?%>|"            +
-                    "\\[\\[.*?\\]\\]|"           +
-                    "<#.*?>|<@.*?>|"             +
-                    "\\$\\{7\\s*\\*\\s*7\\}|"    +
-                    "\\{\\{7\\s*\\*\\s*7\\}\\}|" +
-                    "#\\{7\\s*\\*\\s*7\\}|"      +
-                    "\\{\\{config\\}\\}|"        +
+            "\\$\\{.*?\\}|#\\{.*?\\}|\\{\\{.*?\\}\\}|" +
+                    "<%[=\\-]?.*?%>|\\[\\[.*?\\]\\]|<#.*?>|<@.*?>|" +
+                    "\\$\\{7\\s*\\*\\s*7\\}|\\{\\{7\\s*\\*\\s*7\\}\\}|" +
+                    "#\\{7\\s*\\*\\s*7\\}|\\{\\{config\\}\\}|" +
                     "\\{\\{self\\._dict_\\}\\}|" +
                     "#\\{T\\(java\\.lang\\.Runtime\\)\\}|" +
-                    "\\$\\{Runtime\\.exec|"      +
-                    "@java\\.lang\\.Runtime",
+                    "\\$\\{Runtime\\.exec|@java\\.lang\\.Runtime",
             Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
     // ── Header Injection / CRLF ───────────────────────────────────────
     private static final Pattern HEADER_INJECTION = Pattern.compile(
             "%0[dD]%0[aA]|%0[dD]|%0[aA]|" +
-                    "%E5%98%8A%E5%98%8D|" +
-                    "\\\\r\\\\n|\\\\n|\\\\r",
-            // removed literal \r\n|\r|\n — Spring strips them already
-            // keeping only encoded versions to avoid false positives
+                    "%E5%98%8A%E5%98%8D|\\\\r\\\\n|\\\\n|\\\\r",
+            Pattern.CASE_INSENSITIVE);
+
+    // ── Host Header Injection ─────────────────────────────────────────
+    //password reset poisoning, cache poisoning via Host header
+    private static final Pattern HOST_INJECTION = Pattern.compile(
+            // multiple hosts via comma — e.g. "Host: real.com,evil.com"
+            ",[^,\\s]+\\.[a-z]{2,}|" +
+                    // credential injection before @ — e.g. "attacker.com@real.com"
+                    "[a-zA-Z0-9._-]+:[^@\\s]+@[a-zA-Z0-9._-]+|" +
+                    // whitespace + HTTP verb = request splitting / smuggling
+                    "\\s+(?:GET|POST|PUT|DELETE|PATCH|HTTP/)|" +
+                    // encoded CRLF in host value
+                    "%0[dD]|%0[aA]|%0[dD]%0[aA]|\\\\r|\\\\n",
+            Pattern.CASE_INSENSITIVE);
+
+    // ── HTTP Request Smuggling ────────────────────────────────────────
+    //Transfer-Encoding + Content-Length conflict
+    private static final Pattern HTTP_SMUGGLING = Pattern.compile(
+            // Obfuscated Transfer-Encoding values
+            "Transfer-Encoding\\s*:\\s*(?!chunked$)[^\\r\\n]+|" +
+                    "Transfer-Encoding\\s*:\\s*chunked\\s*,|" +
+                    // Chunked encoding abuse
+                    "0\\s*\\r?\\n\\s*\\r?\\n\\s*(?:GET|POST|PUT)|" +
+                    // Null byte in headers
+                    "Transfer-Encoding\\s*:[^\\r\\n]*\\x00|" +
+                    "Content-Length\\s*:[^\\r\\n]*\\x00",
             Pattern.CASE_INSENSITIVE);
 
     // ── Path Enumeration ──────────────────────────────────────────────
@@ -258,10 +334,9 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
     // ── Open Redirect ─────────────────────────────────────────────────
     private static final Pattern OPEN_REDIRECT = Pattern.compile(
             "(?i)(?:url|redirect|return|goto|next|continue|" +
-                    "dest|destination|redir|redirect_uri|" +
-                    "redirect_url|return_url|callback|back|link|" +
-                    "src|href|target|location)\\s*=\\s*" +
-                    "(?:https?://|//|\\\\\\\\|%2f%2f|%252f%252f)" +
+                    "dest|destination|redir|redirect_uri|redirect_url|" +
+                    "return_url|callback|back|link|src|href|target|location)" +
+                    "\\s*=\\s*(?:https?://|//|\\\\\\\\|%2f%2f|%252f%252f)" +
                     "(?!(?:localhost|127\\.0\\.0\\.1))",
             Pattern.CASE_INSENSITIVE);
 
@@ -272,11 +347,9 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     "10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|" +
                     "172\\.(?:1[6-9]|2\\d|3[01])\\.\\d{1,3}\\.\\d{1,3}|" +
                     "192\\.168\\.\\d{1,3}\\.\\d{1,3})|" +
-                    "169\\.254\\.169\\.254|" +
-                    "metadata\\.google\\.internal|" +
+                    "169\\.254\\.169\\.254|metadata\\.google\\.internal|" +
                     "100\\.100\\.100\\.200|" +
-                    "0177\\.0\\.0\\.1|0x7f\\.0\\.0\\.1|" +
-                    "2130706433|0x7f000001",
+                    "0177\\.0\\.0\\.1|0x7f\\.0\\.0\\.1|2130706433|0x7f000001",
             Pattern.CASE_INSENSITIVE);
 
     // ── JSON Injection ────────────────────────────────────────────────
@@ -285,21 +358,18 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     "isAdmin|is_admin|privilege|permission|access)\"\\s*:\\s*true|" +
                     "__proto__|prototype\\s*\\[|constructor\\s*\\[|" +
                     "__defineGetter__|__defineSetter__|__lookupGetter__|" +
-                    "\"(?:role|admin|isAdmin|is_admin|" +
-                    "privilege|permission|access_level)\"\\s*:\\s*" +
-                    "(?:true|1|\"admin\"|\"ADMIN\"|\"superuser\")",
+                    "\"(?:role|admin|isAdmin|is_admin|privilege|permission|" +
+                    "access_level)\"\\s*:\\s*(?:true|1|\"admin\"|\"ADMIN\"|\"superuser\")",
             Pattern.CASE_INSENSITIVE);
 
     // ── Suspicious Patterns ───────────────────────────────────────────
     private static final Pattern SUSPICIOUS = Pattern.compile(
-            // fixed: \\x00 not \\u0000
             "%00|\\x00|" +
                     "%25(?:%2[fFeE]|%5[cC])|%%|%2525|" +
                     "%ef%bc%8f|%e2%80%8f|%c0%ae|%c0%af|" +
                     "https?://0x[0-9a-fA-F]+|" +
                     "https?://[0-9]{8,10}(?:/|$)|" +
                     "application/x-www-form-urlencoded.*<script|" +
-                    // JWT tampering — only matches if alg=none or algo downgrade
                     "eyJ[A-Za-z0-9+/=]{10,}\\.[A-Za-z0-9+/=]{10,}" +
                     "\\.[A-Za-z0-9+/=_-]{0,}(?:alg.*none|HS256.*RS256)",
             Pattern.CASE_INSENSITIVE);
@@ -318,8 +388,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
             "arachni", "wapiti", "commix", "beef/",
             "python-requests", "go-http-client",
             "libwww-perl", "lwp-trivial",
-            "curl/7.1", "wget/1.1",
-            "shodan"
+            "curl/7.1", "wget/1.1", "shodan"
     );
 
     private static final long MAX_BODY_SIZE = 10 * 1024 * 1024; // 10MB
@@ -418,7 +487,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
         // ── 8. User-Agent checks ──────────────────────────────────────
         checkUserAgent(userAgent, ctx);
 
-        // ── 9. Header checks ──────────────────────────────────────────
+        // ── 9. Header checks (includes Host injection + smuggling) ────
         checkHeaders(request, ctx);
 
         // ── 10. Path checks ───────────────────────────────────────────
@@ -452,7 +521,6 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                         checkBody(body, ctx);
                     }
 
-                    // rebuild request with original body
                     DataBufferFactory factory = exchange
                             .getResponse().bufferFactory();
                     DataBuffer newBuffer = factory.wrap(bytes);
@@ -470,7 +538,6 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                 })
                 .doFinally(signal -> {
                     long elapsed = System.currentTimeMillis() - start;
-                    // use overloaded publish() with responseTimeMs
                     if (elapsed > 30_000) {
                         publish(
                                 SecurityAuditEvent.ThreatType.SLOW_LORIS,
@@ -479,7 +546,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                                 "response_time",
                                 "Slow request detected: " + elapsed + "ms",
                                 ctx,
-                                elapsed // saved to DB
+                                elapsed
                         );
                     }
                 });
@@ -559,6 +626,12 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     SecurityAuditEvent.Severity.HIGH,
                     path, "path", "XSS in URL", ctx);
 
+        // NEW
+        if (LOG4J_JNDI.matcher(path).find())
+            publish(SecurityAuditEvent.ThreatType.LOG4J_INJECTION,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    path, "path", "Log4j/JNDI injection in URL", ctx);
+
         if (SUSPICIOUS.matcher(path).find())
             publish(SecurityAuditEvent.ThreatType.SUSPICIOUS_PATTERN,
                     SecurityAuditEvent.Severity.MEDIUM,
@@ -598,8 +671,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
         if (SSRF.matcher(value).find())
             publish(SecurityAuditEvent.ThreatType.SUSPICIOUS_PATTERN,
                     SecurityAuditEvent.Severity.CRITICAL,
-                    value, "ssrf",
-                    "SSRF attempt detected", ctx);
+                    value, "ssrf", "SSRF attempt detected", ctx);
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -614,6 +686,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
             scanValue(body, "body", ctx);
         }
 
+        // always check full body regardless of format
         if (XML_INJECTION.matcher(body).find())
             publish(SecurityAuditEvent.ThreatType.XML_INJECTION,
                     SecurityAuditEvent.Severity.CRITICAL,
@@ -637,15 +710,34 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     SecurityAuditEvent.Severity.CRITICAL,
                     truncate(body), "body",
                     "SSRF attempt in body", ctx);
+
+        //full-body checks for new patterns
+        if (NOSQL_INJECTION.matcher(body).find())
+            publish(SecurityAuditEvent.ThreatType.NOSQL_INJECTION,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    truncate(body), "body",
+                    "NoSQL injection in body", ctx);
+
+        if (LOG4J_JNDI.matcher(body).find())
+            publish(SecurityAuditEvent.ThreatType.LOG4J_INJECTION,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    truncate(body), "body",
+                    "Log4j/JNDI injection in body", ctx);
+
+        if (DESERIALIZATION.matcher(body).find())
+            publish(SecurityAuditEvent.ThreatType.DESERIALIZATION_ATTACK,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    truncate(body), "body",
+                    "Deserialization attack payload in body", ctx);
     }
 
     private void scanJsonBody(String body, EventContext ctx) {
         try {
+            // flatten nested JSON — extract ALL string values recursively
             Pattern jsonField = Pattern.compile(
                     "\"([^\"]+)\"\\s*:\\s*" +
                             "(?:\"([^\"]*)\"|(-?\\d+\\.?\\d*)" +
-                            "|(true|false|null)" +
-                            "|([^,}\\]\"]+))");
+                            "|(true|false|null)|([^,}\\]\"]+))");
 
             Matcher m = jsonField.matcher(body);
             while (m.find()) {
@@ -664,10 +756,9 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                         || value.equals("true")
                         || value.equals("false")) continue;
 
-                // skip password fields
-                if (PASSWORD_FIELDS.contains(
-                        key.trim().toLowerCase())) {
-                    log.debug("[THREAT-FILTER] Skipping field: {}",
+                // skip password fields only
+                if (PASSWORD_FIELDS.contains(key.trim().toLowerCase())) {
+                    log.debug("[THREAT-FILTER] Skipping password field: {}",
                             key);
                     continue;
                 }
@@ -675,15 +766,22 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                 scanValue(value, key, ctx);
             }
 
+            // also scan full JSON string for NoSQL operators
+            // (they appear as keys like "$where" not values)
+            if (NOSQL_INJECTION.matcher(body).find())
+                publish(SecurityAuditEvent.ThreatType.NOSQL_INJECTION,
+                        SecurityAuditEvent.Severity.CRITICAL,
+                        truncate(body), "body",
+                        "NoSQL operator injection in body", ctx);
+
         } catch (Exception e) {
-            log.debug("[THREAT-FILTER] JSON parse failed, "
-                    + "scanning full body");
+            log.debug("[THREAT-FILTER] JSON parse failed, scanning full body");
             scanValue(body, "body", ctx);
         }
     }
 
     // ══════════════════════════════════════════════════════════════════
-    // Value Scanner
+    // Value Scanner — runs all patterns on a single value
     // ══════════════════════════════════════════════════════════════════
 
     private void scanValue(String value, String field,
@@ -698,8 +796,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
         if (SQL.matcher(value).find())
             publish(SecurityAuditEvent.ThreatType.SQL_INJECTION,
                     SecurityAuditEvent.Severity.CRITICAL,
-                    value, field,
-                    "SQL injection in: " + field, ctx);
+                    value, field, "SQL injection in: " + field, ctx);
 
         if (CMD_INJECTION.matcher(value).find())
             publish(SecurityAuditEvent.ThreatType.COMMAND_INJECTION,
@@ -734,8 +831,20 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
         if (SSRF.matcher(value).find())
             publish(SecurityAuditEvent.ThreatType.SUSPICIOUS_PATTERN,
                     SecurityAuditEvent.Severity.CRITICAL,
+                    value, field, "SSRF attempt in: " + field, ctx);
+
+        // NEW
+        if (LOG4J_JNDI.matcher(value).find())
+            publish(SecurityAuditEvent.ThreatType.LOG4J_INJECTION,
+                    SecurityAuditEvent.Severity.CRITICAL,
                     value, field,
-                    "SSRF attempt in: " + field, ctx);
+                    "Log4j/JNDI injection in: " + field, ctx);
+
+        if (DESERIALIZATION.matcher(value).find())
+            publish(SecurityAuditEvent.ThreatType.DESERIALIZATION_ATTACK,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    value, field,
+                    "Deserialization payload in: " + field, ctx);
 
         if (SUSPICIOUS.matcher(value).find())
             publish(SecurityAuditEvent.ThreatType.SUSPICIOUS_PATTERN,
@@ -763,18 +872,23 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                 .filter(lower::contains)
                 .findFirst()
                 .ifPresent(tool ->
-                        publish(SecurityAuditEvent.ThreatType
-                                        .SCANNER_DETECTED,
+                        publish(SecurityAuditEvent.ThreatType.SCANNER_DETECTED,
                                 SecurityAuditEvent.Severity.CRITICAL,
                                 userAgent, "User-Agent",
-                                "Attack tool detected: " + tool,
-                                ctx));
+                                "Attack tool detected: " + tool, ctx));
 
         if (HEADER_INJECTION.matcher(userAgent).find())
             publish(SecurityAuditEvent.ThreatType.HEADER_INJECTION,
                     SecurityAuditEvent.Severity.HIGH,
                     userAgent, "User-Agent",
                     "CRLF injection in User-Agent", ctx);
+
+        //Log4Shell in User-Agent (very common attack vector)
+        if (LOG4J_JNDI.matcher(userAgent).find())
+            publish(SecurityAuditEvent.ThreatType.LOG4J_INJECTION,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    userAgent, "User-Agent",
+                    "Log4j/JNDI injection in User-Agent", ctx);
     }
 
     private void checkHeaders(ServerHttpRequest request,
@@ -798,8 +912,39 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                     null, "Accept",
                     "Missing Accept header", ctx);
 
+        //Host header injection check
+        String host = request.getHeaders().getFirst("Host");
+        if (host != null && HOST_INJECTION.matcher(host).find())
+            publish(SecurityAuditEvent.ThreatType.HOST_HEADER_INJECTION,
+                    SecurityAuditEvent.Severity.HIGH,
+                    host, "Host",
+                    "Host header injection attempt", ctx);
+
+        //HTTP request smuggling via Transfer-Encoding
+        String transferEncoding = request.getHeaders()
+                .getFirst("Transfer-Encoding");
+        String contentLength = request.getHeaders()
+                .getFirst("Content-Length");
+
+        // Both TE + CL present = potential smuggling
+        if (transferEncoding != null && contentLength != null)
+            publish(SecurityAuditEvent.ThreatType.HTTP_SMUGGLING,
+                    SecurityAuditEvent.Severity.HIGH,
+                    "TE: " + transferEncoding + " | CL: " + contentLength,
+                    "Transfer-Encoding",
+                    "HTTP request smuggling — both TE and Content-Length present",
+                    ctx);
+
+        if (transferEncoding != null
+                && HTTP_SMUGGLING.matcher(transferEncoding).find())
+            publish(SecurityAuditEvent.ThreatType.HTTP_SMUGGLING,
+                    SecurityAuditEvent.Severity.CRITICAL,
+                    transferEncoding, "Transfer-Encoding",
+                    "HTTP request smuggling — obfuscated Transfer-Encoding",
+                    ctx);
+
+        // scan all non-safe headers
         request.getHeaders().forEach((name, values) -> {
-            // skip known safe headers — prevents false positives
             if (SAFE_HEADERS.contains(name)) return;
 
             String combined = String.join("", values);
@@ -829,6 +974,13 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                         SecurityAuditEvent.Severity.CRITICAL,
                         truncate(combined), name,
                         "SQL injection in header: " + name, ctx);
+
+            //Log4Shell in any header
+            if (LOG4J_JNDI.matcher(combined).find())
+                publish(SecurityAuditEvent.ThreatType.LOG4J_INJECTION,
+                        SecurityAuditEvent.Severity.CRITICAL,
+                        truncate(combined), name,
+                        "Log4j/JNDI injection in header: " + name, ctx);
         });
     }
 
@@ -839,13 +991,28 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
         String host = request.getHeaders().getFirst("Host");
         if (host == null) return;
 
+        // FIXED — check against configured allowed origins first
+        // to avoid false positives on legitimate SPA cross-origin requests
+        if (allowedOriginsConfig != null
+                && !allowedOriginsConfig.isBlank()) {
+            for (String allowed : allowedOriginsConfig.split(",")) {
+                if (origin.trim().equalsIgnoreCase(allowed.trim())) {
+                    return; // whitelisted origin — skip
+                }
+            }
+        }
+
         String hostBase = host.split(":")[0];
-        if (!origin.contains(hostBase))
+        // only flag if origin is completely unrelated to host
+        // and not a known safe pattern
+        if (!origin.contains(hostBase)
+                && !origin.equals("null")) { // null origin = file:// or Postman
             publish(SecurityAuditEvent.ThreatType.CORS_VIOLATION,
                     SecurityAuditEvent.Severity.MEDIUM,
                     origin, "Origin",
                     "CORS violation — origin: " + origin
                             + " | host: " + host, ctx);
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -863,7 +1030,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
     }
 
     // ══════════════════════════════════════════════════════════════════
-    // Publish — overloaded with responseTimeMs (for slow loris)
+    // Publish — overloaded with responseTimeMs (slow loris)
     // ══════════════════════════════════════════════════════════════════
 
     private void publish(SecurityAuditEvent.ThreatType type,
@@ -872,7 +1039,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                          String fieldName,
                          String message,
                          EventContext ctx,
-                         Long responseTimeMs) { // nullable
+                         Long responseTimeMs) {
 
         SecurityAuditEvent event = SecurityAuditEvent.builder()
                 .threatType(type)
@@ -882,7 +1049,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
                 .message(message)
                 .status(SecurityAuditEvent.AttackStatus.DETECTED)
                 .blocked(false)
-                .responseTimeMs(responseTimeMs) // saved to DB
+                .responseTimeMs(responseTimeMs)
                 .ipAddress(ctx.ip)
                 .requestPath(ctx.path)
                 .requestMethod(ctx.method)
@@ -915,8 +1082,7 @@ public class ThreatDetectionFilter implements GlobalFilter, Ordered {
         String realIp = request.getHeaders().getFirst("X-Real-IP");
         if (realIp != null && !realIp.isBlank()) return realIp;
 
-        String cfIp = request.getHeaders()
-                .getFirst("CF-Connecting-IP");
+        String cfIp = request.getHeaders().getFirst("CF-Connecting-IP");
         if (cfIp != null && !cfIp.isBlank()) return cfIp;
 
         if (request.getRemoteAddress() != null)

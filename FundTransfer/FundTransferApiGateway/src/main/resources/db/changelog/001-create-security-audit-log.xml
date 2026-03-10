@@ -8,8 +8,12 @@
     <changeSet id="001-create-security-audit-log"
                author="fund-transfer-gateway">
 
-        <!-- ensure we're in the right schema -->
-        <sql>SET search_path TO gateway_service;</sql>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="security_audit_log"
+                             schemaName="gateway_service"/>
+            </not>
+        </preConditions>
 
         <createTable tableName="security_audit_log"
                      schemaName="gateway_service">
@@ -34,9 +38,9 @@
             <column name="protocol"       type="VARCHAR(20)"/>
 
             <!-- User Info -->
-            <column name="user_id"   type="VARCHAR(50)"/>
-            <column name="username"  type="VARCHAR(100)"/>
-            <column name="user_role" type="VARCHAR(50)"/>
+            <column name="user_id"    type="VARCHAR(50)"/>
+            <column name="username"   type="VARCHAR(100)"/>
+            <column name="user_role"  type="VARCHAR(50)"/>
             <column name="session_id" type="VARCHAR(200)"/>
 
             <!-- Threat Info -->
@@ -66,7 +70,6 @@
 
         </createTable>
 
-        <!-- indexes -->
         <createIndex tableName="security_audit_log"
                      schemaName="gateway_service"
                      indexName="idx_sal_ip">
@@ -112,7 +115,8 @@
         </createIndex>
 
         <rollback>
-            DROP TABLE IF EXISTS gateway_service.security_audit_log CASCADE;
+            DROP TABLE IF EXISTS
+            gateway_service.security_audit_log CASCADE;
         </rollback>
 
     </changeSet>
