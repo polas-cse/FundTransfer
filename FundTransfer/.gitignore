@@ -1,33 +1,326 @@
-HELP.md
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║                    .gitignore — FUND TRANSFER                       ║
+# ║                                                                      ║
+# ║  Stack : Spring Boot, Maven, Java, PostgreSQL, RabbitMQ, Redis      ║
+# ║  IDE   : IntelliJ IDEA, VS Code, Eclipse                            ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+# ══════════════════════════════════════════════════════════════════════
+# SECRETS & ENVIRONMENT — NEVER COMMIT THESE
+# ══════════════════════════════════════════════════════════════════════
+
+# environment variable files — contain DB passwords, JWT secrets, API keys
+.env
+.env.*
+.env.local
+.env.dev
+.env.prod
+.env.staging
+
+# production properties — contain real credentials
+application-prod.properties
+application-prod.yml
+application-staging.properties
+application-staging.yml
+
+# SSL/TLS certificates and keys
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.jks
+*.keystore
+*.truststore
+certs/
+ssl/
+
+# ══════════════════════════════════════════════════════════════════════
+# JAVA — COMPILED OUTPUT
+# ══════════════════════════════════════════════════════════════════════
+
+# compiled class files
+*.class
+
+# JAR, WAR, EAR archives
+*.jar
+*.war
+*.ear
+*.nar
+
+# java crash logs
+hs_err_pid*
+replay_pid*
+
+# ══════════════════════════════════════════════════════════════════════
+# MAVEN — BUILD OUTPUT
+# ══════════════════════════════════════════════════════════════════════
+
+# build output folder — contains compiled code and JARs
 target/
+
+# maven wrapper jar — download automatically on first run
 .mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# maven local repo cache (when embedded)
+.mvn/repository/
 
-### IntelliJ IDEA ###
-.idea
+# release backup files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# ══════════════════════════════════════════════════════════════════════
+# LOGS — NEVER COMMIT LOG FILES
+# ══════════════════════════════════════════════════════════════════════
+
+# all log files in any folder
+logs/
+*.log
+*.log.*
+
+# rolling log archives
+*.log.gz
+*.log.zip
+
+# service-specific log folders
+api-gateway/logs/
+user-service/logs/
+bank-service/logs/
+discovery-service/logs/
+
+# spring boot log files
+spring.log
+
+# ══════════════════════════════════════════════════════════════════════
+# INTELLIJ IDEA
+# ══════════════════════════════════════════════════════════════════════
+
+# IntelliJ project files — IDE-specific, not needed by others
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# IntelliJ shelf (uncommitted change stash)
+.idea/shelf/
 
-### VS Code ###
+# IntelliJ workspace (personal IDE layout)
+.idea/workspace.xml
+
+# IntelliJ task manager
+.idea/tasks.xml
+
+# IntelliJ dictionaries
+.idea/dictionaries/
+
+# IntelliJ usage statistics
+.idea/usage.statistics.xml
+
+# IntelliJ run configurations — keep only shared ones
+# .idea/runConfigurations/   ← uncomment to ignore run configs too
+
+# ══════════════════════════════════════════════════════════════════════
+# VS CODE
+# ══════════════════════════════════════════════════════════════════════
+
+# VS Code workspace settings — personal preferences
 .vscode/
+*.code-workspace
+
+# ══════════════════════════════════════════════════════════════════════
+# ECLIPSE
+# ══════════════════════════════════════════════════════════════════════
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+.factorypath
+bin/
+
+# Eclipse build output
+/bin/
+
+# ══════════════════════════════════════════════════════════════════════
+# SPRING BOOT — SPECIFIC FILES
+# ══════════════════════════════════════════════════════════════════════
+
+# spring boot devtools restart trigger file
+.reloadtrigger
+
+# spring boot fat jar layers (docker build artifacts)
+**/layers.idx
+**/classpath.idx
+
+# spring boot buildinfo (generated at build time)
+**/build-info.properties
+
+# ══════════════════════════════════════════════════════════════════════
+# DATABASE — LOCAL DATA
+# ══════════════════════════════════════════════════════════════════════
+
+# PostgreSQL local data dump
+*.sql.backup
+*.dump
+*.pgdump
+pgdata/
+
+# H2 embedded database files (if used in tests)
+*.db
+*.mv.db
+*.trace.db
+
+# Liquibase generated files
+liquibase.properties
+
+# ══════════════════════════════════════════════════════════════════════
+# DOCKER
+# ══════════════════════════════════════════════════════════════════════
+
+# docker environment override files — contain local credentials
+docker-compose.override.yml
+docker-compose.local.yml
+docker-compose.prod.yml
+
+# docker volumes (local data)
+docker/volumes/
+docker/data/
+
+# ══════════════════════════════════════════════════════════════════════
+# OPERATING SYSTEM
+# ══════════════════════════════════════════════════════════════════════
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ══════════════════════════════════════════════════════════════════════
+# TEST OUTPUT
+# ══════════════════════════════════════════════════════════════════════
+
+# test reports generated by Maven Surefire
+**/surefire-reports/
+
+# test coverage reports (JaCoCo)
+**/jacoco.exec
+**/jacoco/
+
+# Allure test reports
+allure-results/
+allure-report/
+
+# ══════════════════════════════════════════════════════════════════════
+# TEMPORARY FILES
+# ══════════════════════════════════════════════════════════════════════
+
+# temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# backup files
+*.bak
+*.backup
+*.orig
+
+# ══════════════════════════════════════════════════════════════════════
+# PROTOBUF — gRPC GENERATED CODE
+# ══════════════════════════════════════════════════════════════════════
+
+# protobuf generated Java files — auto-generated from .proto files
+# generated/
+# **/generated-sources/protobuf/
+
+# ✅ keep .proto source files — commit these
+# ❌ do not commit generated Java code from .proto
+
+# ══════════════════════════════════════════════════════════════════════
+# NODE / FRONTEND (if any frontend module exists)
+# ══════════════════════════════════════════════════════════════════════
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn
+dist/
+build/
+
+# ══════════════════════════════════════════════════════════════════════
+# MONITORING / OBSERVABILITY
+# ══════════════════════════════════════════════════════════════════════
+
+# Prometheus local data
+prometheus/data/
+
+# Grafana local data
+grafana/data/
+
+# ══════════════════════════════════════════════════════════════════════
+# KEEP THESE — FORCE INCLUDE IMPORTANT FILES
+# (overrides any above rules)
+# ══════════════════════════════════════════════════════════════════════
+
+# ✅ keep maven wrapper scripts — needed to build without Maven installed
+!.mvn/wrapper/maven-wrapper.properties
+!mvnw
+!mvnw.cmd
+
+# ✅ keep dev/test application properties — no real credentials
+!application.properties
+!application.yml
+!application-dev.properties
+!application-dev.yml
+!application-test.properties
+!application-test.yml
+
+# ✅ keep Liquibase changelog files — these are migration scripts
+!**/db/changelog/**
+
+# ✅ keep .proto files — gRPC service definitions
+!**/*.proto
+
+# ✅ keep Dockerfile — needed for deployment
+!Dockerfile
+!docker-compose.yml
+```
+
+---
+
+## Put it in Root of Your Project
+```
+fund-transfer/          ← root
+├── .gitignore          ← here
+├── api-gateway/
+├── user-service/
+├── bank-service/
+├── discovery-service/
+└── pom.xml
