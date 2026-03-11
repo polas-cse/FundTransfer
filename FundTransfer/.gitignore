@@ -88,6 +88,7 @@ logs/
 *.log.zip
 
 # service-specific log folders
+logs/
 api-gateway/logs/
 user-service/logs/
 bank-service/logs/
