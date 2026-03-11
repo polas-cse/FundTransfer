@@ -1,0 +1,763 @@
+2026-03-11 11:39:46.127 INFO  [main] c.f.t.a.g.FundTransferApiGatewayApplication : Starting FundTransferApiGatewayApplication using Java 21.0.9 with PID 13032 (D:\Learning\FundTransfer\FundTransfer\FundTransferApiGateway\target\classes started by CRYSTAL TECHNOLOGY in D:\Learning\FundTransfer\FundTransfer)
+2026-03-11 11:39:46.130 DEBUG [main] c.f.t.a.g.FundTransferApiGatewayApplication : Running with Spring Boot v3.4.1, Spring v6.2.1
+2026-03-11 11:39:46.131 INFO  [main] c.f.t.a.g.FundTransferApiGatewayApplication : The following 1 profile is active: "dev"
+2026-03-11 11:39:46.799 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2026-03-11 11:39:46.910 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 104 ms. Found 1 R2DBC repository interface.
+2026-03-11 11:39:47.111 INFO  [main] o.s.cloud.context.scope.GenericScope : BeanFactory id=bea20ced-a943-38ab-a2de-3ece748550e8
+2026-03-11 11:39:47.386 DEBUG [main] io.r2dbc.postgresql.Extensions : Discovering Extensions using ServiceLoader
+2026-03-11 11:39:47.388 DEBUG [main] io.r2dbc.postgresql.Extensions : Registering extension io.r2dbc.postgresql.codec.BuiltinDynamicCodecs
+2026-03-11 11:39:47.742 INFO  [main] c.f.t.a.g.schema.SchemaInitializer : ╔══════════════════════════════════════════╗
+2026-03-11 11:39:47.742 INFO  [main] c.f.t.a.g.schema.SchemaInitializer : ║   Gateway Schema Initialization...       ║
+2026-03-11 11:39:47.743 INFO  [main] c.f.t.a.g.schema.SchemaInitializer : ╚══════════════════════════════════════════╝
+2026-03-11 11:39:47.743 INFO  [main] c.f.t.a.g.schema.SchemaInitializer : Checking schema 'gateway_service'...
+2026-03-11 11:39:47.871 INFO  [main] c.f.t.a.g.schema.SchemaInitializer : Schema 'gateway_service' already exists — skipping
+2026-03-11 11:39:47.899 INFO  [main] c.f.t.a.g.schema.LiquibaseConfig : Liquibase configured — schema: gateway_service, changelog: classpath:db/changelog/db.changelog-master.xml
+2026-03-11 11:39:48.677 DEBUG [main] liquibase.executor : Changelog query completed.
+2026-03-11 11:39:48.682 INFO  [main] liquibase.changelog : Reading from gateway_service.databasechangelog
+2026-03-11 11:39:48.685 DEBUG [main] liquibase.executor : Changelog query completed.
+2026-03-11 11:39:48.691 DEBUG [main] liquibase.executor : Changelog query completed.
+2026-03-11 11:39:48.724 DEBUG [main] liquibase.changelog : Fast check found no un-run changesets
+2026-03-11 11:39:48.725 INFO  [main] liquibase.ui : Database is up to date, no changesets to execute
+2026-03-11 11:39:48.726 INFO  [main] liquibase.changelog : Reading from gateway_service.databasechangelog
+2026-03-11 11:39:48.726 DEBUG [main] liquibase.executor : Changelog query completed.
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : UPDATE SUMMARY
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : Run:                          0
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : Previously run:               2
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : Filtered out:                 0
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : -------------------------------
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : Total change sets:            2
+2026-03-11 11:39:48.731 INFO  [main] liquibase.util : Update summary generated
+2026-03-11 11:39:48.732 INFO  [main] liquibase.command : Command execution complete
+2026-03-11 11:39:48.750 INFO  [main] o.s.b.a.s.r.ReactiveUserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 6abf087a-1e7d-4d2b-92e6-4f23bb4d70ce
+
+2026-03-11 11:39:49.030 DEBUG [main] o.s.c.g.config.GatewayProperties : Routes supplied from Gateway Properties: [RouteDefinition{id='user-login', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/user-service/auth/login}}], filters=[FilterDefinition{name='StripPrefix', args={_genkey_0=1}}], uri=lb://user-service, order=0, metadata={}, enabled=true}, RouteDefinition{id='user-register', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/user-service/auth/register}}], filters=[FilterDefinition{name='StripPrefix', args={_genkey_0=1}}], uri=lb://user-service, order=0, metadata={}, enabled=true}, RouteDefinition{id='user-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/user-service/**}}], filters=[FilterDefinition{name='StripPrefix', args={_genkey_0=1}}, FilterDefinition{name='AuthorizationHeaderFilter', args={}}], uri=lb://user-service, order=0, metadata={}, enabled=true}, RouteDefinition{id='bank-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/bank-service/**}}], filters=[FilterDefinition{name='StripPrefix', args={_genkey_0=1}}, FilterDefinition{name='AuthorizationHeaderFilter', args={}}], uri=lb://bank-service, order=0, metadata={}, enabled=true}]
+2026-03-11 11:39:49.163 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [After]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Before]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Between]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Cookie]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Header]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Host]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Method]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Path]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Query]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [ReadBody]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [RemoteAddr]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [Weight]
+2026-03-11 11:39:49.164 INFO  [main] o.s.c.g.r.RouteDefinitionRouteLocator : Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-03-11 11:39:49.244 DEBUG [main] o.s.w.r.r.m.a.ControllerMethodResolver : ControllerAdvice beans: none
+2026-03-11 11:39:49.402 INFO  [main] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2026-03-11 11:39:49.431 WARN  [main] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-11 11:39:49.478 INFO  [main] o.s.c.n.eureka.InstanceInfoFactory : Setting initial instance status as: STARTING
+2026-03-11 11:39:49.494 INFO  [main] c.netflix.discovery.DiscoveryClient : Initializing Eureka in region us-east-1
+2026-03-11 11:39:49.496 INFO  [main] c.n.d.s.r.aws.ConfigClusterResolver : Resolving eureka endpoints via configuration
+2026-03-11 11:39:49.502 INFO  [main] c.netflix.discovery.DiscoveryClient : Disable delta property : false
+2026-03-11 11:39:49.502 INFO  [main] c.netflix.discovery.DiscoveryClient : Single vip registry refresh property : null
+2026-03-11 11:39:49.502 INFO  [main] c.netflix.discovery.DiscoveryClient : Force full registry fetch : false
+2026-03-11 11:39:49.502 INFO  [main] c.netflix.discovery.DiscoveryClient : Application is null : false
+2026-03-11 11:39:49.503 INFO  [main] c.netflix.discovery.DiscoveryClient : Registered Applications size is zero : true
+2026-03-11 11:39:49.503 INFO  [main] c.netflix.discovery.DiscoveryClient : Application version is -1: true
+2026-03-11 11:39:49.503 INFO  [main] c.netflix.discovery.DiscoveryClient : Getting all instance registry info from the eureka server
+2026-03-11 11:39:49.755 INFO  [main] c.netflix.discovery.DiscoveryClient : The response status is 200
+2026-03-11 11:39:49.756 INFO  [main] c.netflix.discovery.DiscoveryClient : Starting heartbeat executor: renew interval is: 15
+2026-03-11 11:39:49.758 INFO  [main] c.n.discovery.InstanceInfoReplicator : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-11 11:39:49.761 INFO  [main] c.netflix.discovery.DiscoveryClient : Discovery Client initialized at timestamp 1773207589760 with initial instances count: 0
+2026-03-11 11:39:49.764 INFO  [main] o.s.c.n.e.s.EurekaServiceRegistry : Registering application API-GATEWAY with eureka with status UP
+2026-03-11 11:39:49.765 INFO  [main] c.netflix.discovery.DiscoveryClient : Saw local status change event StatusChangeEvent [timestamp=1773207589765, current=UP, previous=STARTING]
+2026-03-11 11:39:49.766 INFO  [DiscoveryClient-InstanceInfoReplicator-%d] c.netflix.discovery.DiscoveryClient : DiscoveryClient_API-GATEWAY/api-gateway:8080: registering service...
+2026-03-11 11:39:49.784 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:39:49.797 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.802 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:39:49.802 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:39:49.803 INFO  [DiscoveryClient-InstanceInfoReplicator-%d] c.netflix.discovery.DiscoveryClient : DiscoveryClient_API-GATEWAY/api-gateway:8080 - registration status: 204
+2026-03-11 11:39:49.803 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.803 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:39:49.804 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:39:49.804 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.804 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:39:49.805 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:39:49.805 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:39:49.806 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.806 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:39:49.806 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:39:49.884 INFO  [main] o.s.b.w.e.netty.NettyWebServer : Netty started on port 8080 (http)
+2026-03-11 11:39:49.885 INFO  [main] o.s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8080
+2026-03-11 11:39:49.896 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:39:49.897 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.897 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Failed login counters reset — cleared 0
+2026-03-11 11:39:49.897 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:39:49.897 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:39:49.897 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:39:49.898 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.898 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:39:49.898 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:39:49.898 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.899 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:39:49.899 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:39:49.899 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:39:49.899 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:39:49.900 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:39:49.900 DEBUG [main] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:39:49.902 INFO  [main] c.f.t.a.g.FundTransferApiGatewayApplication : Started FundTransferApiGatewayApplication in 4.204 seconds (process running for 5.038)
+2026-03-11 11:40:19.764 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Disable delta property : false
+2026-03-11 11:40:19.764 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Single vip registry refresh property : null
+2026-03-11 11:40:19.764 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Force full registry fetch : false
+2026-03-11 11:40:19.765 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Application is null : false
+2026-03-11 11:40:19.765 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Registered Applications size is zero : true
+2026-03-11 11:40:19.765 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Application version is -1: false
+2026-03-11 11:40:19.765 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : Getting all instance registry info from the eureka server
+2026-03-11 11:40:19.793 INFO  [DiscoveryClient-CacheRefreshExecutor-%d] c.netflix.discovery.DiscoveryClient : The response status is 200
+2026-03-11 11:40:19.793 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:40:19.795 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:19.795 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:40:19.795 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:40:19.796 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:19.796 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:40:19.796 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:40:19.797 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:19.797 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:40:19.797 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:40:19.797 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:40:19.798 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:19.798 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:40:19.798 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:40:49.827 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:40:49.827 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:49.828 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:40:49.828 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:40:49.828 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:49.829 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:40:49.829 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:40:49.829 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:49.830 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:40:49.830 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:40:49.830 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:40:49.830 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:40:49.831 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:40:49.831 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:40:49.900 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:41:19.863 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:41:19.864 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:19.864 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:41:19.864 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:41:19.865 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:19.865 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:41:19.865 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:41:19.866 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:19.866 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:41:19.866 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:41:19.867 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:41:19.867 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:19.867 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:41:19.868 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:41:49.891 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:41:49.892 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:49.892 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:41:49.892 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:41:49.893 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:49.893 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:41:49.893 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:41:49.893 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:49.894 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:41:49.894 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:41:49.894 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:41:49.894 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:41:49.895 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:41:49.895 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:41:49.900 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:42:18.763 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] New http connection, requesting read
+2026-03-11 11:42:18.788 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Increasing pending responses count: 1
+2026-03-11 11:42:18.800 DEBUG [reactor-http-nio-2] r.netty.http.server.HttpServer : [cd040e7d-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@4be0ef49
+2026-03-11 11:42:18.857 DEBUG [parallel-2] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-11 11:42:18.859 DEBUG [parallel-2] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'POST /user-service/auth/login' doesn't match 'POST /logout'
+2026-03-11 11:42:18.859 DEBUG [parallel-2] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-11 11:42:18.862 DEBUG [parallel-2] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/user-service/auth/login' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x0000028901735f08@427367ae
+2026-03-11 11:42:18.863 DEBUG [parallel-2] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-11 11:42:18.873 DEBUG [parallel-2] o.s.c.g.h.RoutePredicateHandlerMapping : Route matched: user-login
+2026-03-11 11:42:18.878 DEBUG [parallel-2] o.s.c.g.h.RoutePredicateHandlerMapping : Mapping [Exchange: POST http://localhost:8080/user-service/auth/login] to Route{id='user-login', uri=lb://user-service, order=0, predicate=Paths: [/user-service/auth/login], match trailing slash: true, gatewayFilters=[[[StripPrefix parts = 1], order = 1]], metadata={}}
+2026-03-11 11:42:18.878 DEBUG [parallel-2] o.s.c.g.h.RoutePredicateHandlerMapping : [cd040e7d-1] Mapped to org.springframework.cloud.gateway.handler.FilteringWebHandler@1c14d24d
+2026-03-11 11:42:18.879 DEBUG [parallel-2] o.s.c.g.handler.FilteringWebHandler : Sorted gatewayFilterFactories: [[GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.security.SecurityResponseFilter@49122853}, order = -2147483648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RemoveCachedBodyFilter@1ddc8fc}, order = -2147483648], [GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.cyber.audit.ThreatDetectionFilter@5beb6be2}, order = -2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.AdaptCachedBodyGlobalFilter@32ddcca}, order = -2147482648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyWriteResponseFilter@5718e77c}, order = -1], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardPathFilter@738ed8f5}, order = 0], [[StripPrefix parts = 1], order = 1], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter@77d58f3a}, order = 10000], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter@f9de1fd}, order = 10150], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.LoadBalancerServiceInstanceCookieFilter@7c871ce4}, order = 10151], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.WebsocketRoutingFilter@490fbeaa}, order = 2147483646], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyRoutingFilter@22cb8e5f}, order = 2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardRoutingFilter@1e288c76}, order = 2147483647]]
+2026-03-11 11:42:18.926 DEBUG [reactor-http-nio-2] c.f.t.a.g.c.a.ThreatDetectionFilter : [THREAT-FILTER] Skipping password field: password
+2026-03-11 11:42:19.120 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Request:  StartupMessage{, database='fund-transfer', username='fund-transfer'}
+2026-03-11 11:42:19.178 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientConnect : [4bdb7c81-1, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Handler is being applied: {uri=http://192.168.1.136:9090/auth/login, method=POST}
+2026-03-11 11:42:19.203 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: AuthenticationSASL{authenticationMechanisms=[SCRAM-SHA-256]}
+2026-03-11 11:42:19.219 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Request:  SASLInitialResponse{initialResponse=java.nio.HeapByteBuffer[pos=0 lim=45 cap=49], name='SCRAM-SHA-256'}
+2026-03-11 11:42:19.221 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: AuthenticationSASLContinue{data=java.nio.HeapByteBuffer[pos=0 lim=84 cap=84]}
+2026-03-11 11:42:19.235 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Request:  SASLResponse{data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=114]}
+2026-03-11 11:42:19.239 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: AuthenticationSASLFinal{additionalData=java.nio.HeapByteBuffer[pos=0 lim=46 cap=46]}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: AuthenticationOk{}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='in_hot_standby', value='off'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='integer_datetimes', value='on'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='TimeZone', value='Asia/Dhaka'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='IntervalStyle', value='postgres'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='search_path', value='gateway_service'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='is_superuser', value='off'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='application_name', value='r2dbc-postgresql'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='default_transaction_read_only', value='off'}
+2026-03-11 11:42:19.240 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='scram_iterations', value='4096'}
+2026-03-11 11:42:19.241 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='DateStyle', value='ISO, MDY'}
+2026-03-11 11:42:19.241 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='standard_conforming_strings', value='on'}
+2026-03-11 11:42:19.241 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='session_authorization', value='fund-transfer'}
+2026-03-11 11:42:19.241 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='client_encoding', value='UTF8'}
+2026-03-11 11:42:19.241 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='server_version', value='18.0'}
+2026-03-11 11:42:19.241 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: ParameterStatus{name='server_encoding', value='UTF8'}
+2026-03-11 11:42:19.242 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1] Response: BackendKeyData{processId=21600, secretKey=735593004}
+2026-03-11 11:42:19.242 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.305 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.QUERY : [cid: 0x1][pid: 21600] Executing query: SHOW TRANSACTION ISOLATION LEVEL
+2026-03-11 11:42:19.305 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Request:  Query{query='SHOW TRANSACTION ISOLATION LEVEL'}
+2026-03-11 11:42:19.307 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: RowDescription{fields=[Field{column=0, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='transaction_isolation', table=0}]}
+2026-03-11 11:42:19.311 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 14, cap: 14/14, unwrapped: PooledUnsafeDirectByteBuf(ridx: 72, widx: 88, cap: 1024))]}
+2026-03-11 11:42:19.313 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: CommandComplete{command=SHOW, rowId=null, rows=null}
+2026-03-11 11:42:19.314 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.317 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.QUERY : [cid: 0x1][pid: 21600] Executing query: SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')
+2026-03-11 11:42:19.318 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Request:  Query{query='SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')'}
+2026-03-11 11:42:19.324 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: RowDescription{fields=[Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=2, dataType=19, dataTypeModifier=-1, dataTypeSize=64, format=FORMAT_TEXT, name='typname', table=1247}, Field{column=3, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typnamespace', table=1247}, Field{column=4, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typowner', table=1247}, Field{column=5, dataType=21, dataTypeModifier=-1, dataTypeSize=2, format=FORMAT_TEXT, name='typlen', table=1247}, Field{column=6, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typbyval', table=1247}, Field{column=7, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typtype', table=1247}, Field{column=8, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typcategory', table=1247}, Field{column=9, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typispreferred', table=1247}, Field{column=10, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typisdefined', table=1247}, Field{column=11, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typdelim', table=1247}, Field{column=12, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typrelid', table=1247}, Field{column=13, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsubscript', table=1247}, Field{column=14, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typelem', table=1247}, Field{column=15, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typarray', table=1247}, Field{column=16, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typinput', table=1247}, Field{column=17, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typoutput', table=1247}, Field{column=18, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typreceive', table=1247}, Field{column=19, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsend', table=1247}, Field{column=20, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodin', table=1247}, Field{column=21, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodout', table=1247}, Field{column=22, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typanalyze', table=1247}, Field{column=23, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typalign', table=1247}, Field{column=24, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typstorage', table=1247}, Field{column=25, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typnotnull', table=1247}, Field{column=26, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typbasetype', table=1247}, Field{column=27, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typtypmod', table=1247}, Field{column=28, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typndims', table=1247}, Field{column=29, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typcollation', table=1247}, Field{column=30, dataType=194, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefaultbin', table=1247}, Field{column=31, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefault', table=1247}, Field{column=32, dataType=1034, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typacl', table=1247}]}
+2026-03-11 11:42:19.325 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: CommandComplete{command=SELECT, rowId=null, rows=0}
+2026-03-11 11:42:19.325 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.329 DEBUG [reactor-tcp-nio-1] io.r2dbc.pool.ConnectionPool : Obtaining new connection from the pool
+2026-03-11 11:42:19.331 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Request:  StartupMessage{, database='fund-transfer', username='fund-transfer'}
+2026-03-11 11:42:19.332 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.QUERY : [cid: 0x1][pid: 21600] Executing query: SELECT 1
+2026-03-11 11:42:19.332 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Request:  Query{query='SELECT 1'}
+2026-03-11 11:42:19.334 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: RowDescription{fields=[Field{column=0, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='?column?', table=0}]}
+2026-03-11 11:42:19.335 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 1, cap: 1/1, unwrapped: PooledUnsafeDirectByteBuf(ridx: 46, widx: 66, cap: 1024))]}
+2026-03-11 11:42:19.337 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: CommandComplete{command=SELECT, rowId=null, rows=1}
+2026-03-11 11:42:19.337 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.352 DEBUG [reactor-tcp-nio-1] o.s.r2dbc.core.DefaultDatabaseClient : Executing SQL statement [INSERT INTO security_audit_log (ip_address, user_agent, request_path, request_method, content_length, protocol, threat_type, severity, status, field_name, suspicious_value, message, blocked, service_id, detected_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)]
+2026-03-11 11:42:19.353 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [0] to: 127.0.0.1
+2026-03-11 11:42:19.354 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: AuthenticationSASL{authenticationMechanisms=[SCRAM-SHA-256]}
+2026-03-11 11:42:19.354 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Request:  SASLInitialResponse{initialResponse=java.nio.HeapByteBuffer[pos=0 lim=45 cap=49], name='SCRAM-SHA-256'}
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: AuthenticationSASLContinue{data=java.nio.HeapByteBuffer[pos=0 lim=84 cap=84]}
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [1] to: insomnia/12.0.0
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [2] to: /user-service/auth/login
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [3] to: POST
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [4] to: 54
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [5] to: http
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [6] to: SQL_INJECTION
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [7] to: CRITICAL
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [8] to: DETECTED
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [9] to: userName
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [10] to: 1=1 or 1=1
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [11] to: SQL injection in: userName
+2026-03-11 11:42:19.355 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [12] to: false
+2026-03-11 11:42:19.356 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [13] to: api-gateway
+2026-03-11 11:42:19.356 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.PARAM : [cid: 0x1][pid: 21600] Bind parameter [14] to: 2026-03-11T11:42:18.920295800
+2026-03-11 11:42:19.365 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Request:  SASLResponse{data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=114]}
+2026-03-11 11:42:19.369 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: AuthenticationSASLFinal{additionalData=java.nio.HeapByteBuffer[pos=0 lim=46 cap=46]}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: AuthenticationOk{}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='in_hot_standby', value='off'}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='integer_datetimes', value='on'}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='TimeZone', value='Asia/Dhaka'}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='IntervalStyle', value='postgres'}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='search_path', value='gateway_service'}
+2026-03-11 11:42:19.370 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='is_superuser', value='off'}
+2026-03-11 11:42:19.371 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='application_name', value='r2dbc-postgresql'}
+2026-03-11 11:42:19.371 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='default_transaction_read_only', value='off'}
+2026-03-11 11:42:19.371 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='scram_iterations', value='4096'}
+2026-03-11 11:42:19.371 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='DateStyle', value='ISO, MDY'}
+2026-03-11 11:42:19.371 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='standard_conforming_strings', value='on'}
+2026-03-11 11:42:19.371 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='session_authorization', value='fund-transfer'}
+2026-03-11 11:42:19.372 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='client_encoding', value='UTF8'}
+2026-03-11 11:42:19.372 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='server_version', value='18.0'}
+2026-03-11 11:42:19.372 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: ParameterStatus{name='server_encoding', value='UTF8'}
+2026-03-11 11:42:19.372 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2] Response: BackendKeyData{processId=18512, secretKey=-95698885}
+2026-03-11 11:42:19.372 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.374 DEBUG [reactor-tcp-nio-2] io.r2dbc.postgresql.QUERY : [cid: 0x2][pid: 18512] Executing query: SHOW TRANSACTION ISOLATION LEVEL
+2026-03-11 11:42:19.374 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Request:  Query{query='SHOW TRANSACTION ISOLATION LEVEL'}
+2026-03-11 11:42:19.375 DEBUG [reactor-tcp-nio-1] io.r2dbc.postgresql.QUERY : [cid: 0x1][pid: 21600] Executing query: INSERT INTO security_audit_log (ip_address, user_agent, request_path, request_method, content_length, protocol, threat_type, severity, status, field_name, suspicious_value, message, blocked, service_id, detected_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id
+2026-03-11 11:42:19.375 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: RowDescription{fields=[Field{column=0, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='transaction_isolation', table=0}]}
+2026-03-11 11:42:19.376 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 14, cap: 14/14, unwrapped: PooledUnsafeDirectByteBuf(ridx: 72, widx: 88, cap: 1024))]}
+2026-03-11 11:42:19.376 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Request:  [Parse{name='S_0', parameters=[1043, 1043, 1043, 1043, 20, 1043, 1043, 1043, 1043, 1043, 1043, 1043, 16, 1043, 1114], query='INSERT INTO security_audit_log (ip_address, user_agent, request_path, request_method, content_length, protocol, threat_type, severity, status, field_name, suspicious_value, message, blocked, service_id, detected_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id'}, Bind{name='B_0', parameterFormats=[FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_BINARY, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT, FORMAT_TEXT], parameters=[CompositeByteBuf(ridx: 0, widx: 9, cap: 9, components=1), CompositeByteBuf(ridx: 0, widx: 15, cap: 15, components=1), CompositeByteBuf(ridx: 0, widx: 24, cap: 24, components=1), CompositeByteBuf(ridx: 0, widx: 4, cap: 4, components=1), CompositeByteBuf(ridx: 0, widx: 8, cap: 8, components=1), CompositeByteBuf(ridx: 0, widx: 4, cap: 4, components=1), CompositeByteBuf(ridx: 0, widx: 13, cap: 13, components=1), CompositeByteBuf(ridx: 0, widx: 8, cap: 8, components=1), CompositeByteBuf(ridx: 0, widx: 8, cap: 8, components=1), CompositeByteBuf(ridx: 0, widx: 8, cap: 8, components=1), CompositeByteBuf(ridx: 0, widx: 10, cap: 10, components=1), CompositeByteBuf(ridx: 0, widx: 26, cap: 26, components=1), CompositeByteBuf(ridx: 0, widx: 1, cap: 1, components=1), CompositeByteBuf(ridx: 0, widx: 11, cap: 11, components=1), CompositeByteBuf(ridx: 0, widx: 26, cap: 26, components=1)], resultFormats=[], source='S_0'}, Describe{name='B_0', type=PORTAL}, Execute{name='B_0', rows=0}, Close{name='B_0', type=PORTAL}, Sync{}]
+2026-03-11 11:42:19.376 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: CommandComplete{command=SHOW, rowId=null, rows=null}
+2026-03-11 11:42:19.376 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.376 DEBUG [reactor-tcp-nio-2] io.r2dbc.postgresql.QUERY : [cid: 0x2][pid: 18512] Executing query: SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')
+2026-03-11 11:42:19.376 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Request:  Query{query='SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')'}
+2026-03-11 11:42:19.379 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: RowDescription{fields=[Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=2, dataType=19, dataTypeModifier=-1, dataTypeSize=64, format=FORMAT_TEXT, name='typname', table=1247}, Field{column=3, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typnamespace', table=1247}, Field{column=4, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typowner', table=1247}, Field{column=5, dataType=21, dataTypeModifier=-1, dataTypeSize=2, format=FORMAT_TEXT, name='typlen', table=1247}, Field{column=6, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typbyval', table=1247}, Field{column=7, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typtype', table=1247}, Field{column=8, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typcategory', table=1247}, Field{column=9, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typispreferred', table=1247}, Field{column=10, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typisdefined', table=1247}, Field{column=11, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typdelim', table=1247}, Field{column=12, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typrelid', table=1247}, Field{column=13, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsubscript', table=1247}, Field{column=14, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typelem', table=1247}, Field{column=15, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typarray', table=1247}, Field{column=16, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typinput', table=1247}, Field{column=17, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typoutput', table=1247}, Field{column=18, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typreceive', table=1247}, Field{column=19, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsend', table=1247}, Field{column=20, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodin', table=1247}, Field{column=21, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodout', table=1247}, Field{column=22, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typanalyze', table=1247}, Field{column=23, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typalign', table=1247}, Field{column=24, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typstorage', table=1247}, Field{column=25, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typnotnull', table=1247}, Field{column=26, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typbasetype', table=1247}, Field{column=27, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typtypmod', table=1247}, Field{column=28, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typndims', table=1247}, Field{column=29, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typcollation', table=1247}, Field{column=30, dataType=194, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefaultbin', table=1247}, Field{column=31, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefault', table=1247}, Field{column=32, dataType=1034, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typacl', table=1247}]}
+2026-03-11 11:42:19.379 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: CommandComplete{command=SELECT, rowId=null, rows=0}
+2026-03-11 11:42:19.379 DEBUG [reactor-tcp-nio-2] i.r.p.client.ReactorNettyClient : [cid: 0x2][pid: 18512] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.381 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Request:  StartupMessage{, database='fund-transfer', username='fund-transfer'}
+2026-03-11 11:42:19.387 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: ParseComplete{}
+2026-03-11 11:42:19.387 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: BindComplete{}
+2026-03-11 11:42:19.388 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: RowDescription{fields=[Field{column=1, dataType=20, dataTypeModifier=-1, dataTypeSize=8, format=FORMAT_TEXT, name='id', table=113281}]}
+2026-03-11 11:42:19.388 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 2, cap: 2/2, unwrapped: PooledUnsafeDirectByteBuf(ridx: 51, widx: 78, cap: 512))]}
+2026-03-11 11:42:19.389 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: CommandComplete{command=INSERT, rowId=0, rows=1}
+2026-03-11 11:42:19.390 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: CloseComplete{}
+2026-03-11 11:42:19.390 DEBUG [reactor-tcp-nio-1] i.r.p.client.ReactorNettyClient : [cid: 0x1][pid: 21600] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.392 DEBUG [reactor-tcp-nio-1] io.r2dbc.pool.PooledConnection : Releasing connection
+2026-03-11 11:42:19.404 WARN  [reactor-tcp-nio-1] c.f.t.a.g.c.s.SecurityAuditService : 
+[1m[31m  ╔════════════════════════════════════════════════════════════════╗[0m
+[31m  ║  [0m[1m[31m🔴  SQL_INJECTION                 [0m[1m[31m  [CRITICAL]  ⚠️  DETECTED[0m
+[31m  ║════════════════════════════════════════════════════════════════║[0m
+[31m  ║  [0m[1m[36m📡 REQUEST[0m
+[31m  ║  [0m[36m     Method   : [0m[1m[37mPOST[0m
+[31m  ║  [0m[36m     Path     : [0m[1m[37m/user-service/auth/login[0m
+[31m  ║  [0m[36m     IP       : [0m[1m[37m127.0.0.1[0m
+[31m  ║  [0m[36m     Protocol : [0m[1m[37mhttp[0m
+[31m  ║════════════════════════════════════════════════════════════════║[0m
+[31m  ║  [0m[1m[35m👤 USER[0m
+[31m  ║  [0m[35m     Username : [0m[1m[37m-[0m
+[31m  ║  [0m[35m     User ID  : [0m[1m[37m-[0m
+[31m  ║  [0m[35m     Role     : [0m[1m[37m-[0m
+[31m  ║  [0m[35m     Agent    : [0m[1m[37minsomnia/12.0.0[0m
+[31m  ║════════════════════════════════════════════════════════════════║[0m
+[31m  ║  [0m[1m[31m🛡️  THREAT[0m
+[31m  ║  [0m[31m     Field    : [0m[1m[31muserName[0m
+[31m  ║  [0m[31m     Payload  : [0m[1m[31m1=1 or 1=1[0m
+[31m  ║  [0m[31m     Message  : [0m[1m[37mSQL injection in: userName[0m
+[31m  ║════════════════════════════════════════════════════════════════║[0m
+[31m  ║  [0m[1m[32m🕐 META[0m
+[31m  ║  [0m[32m     Time     : [0m[1m[37m2026-03-11T11:42:18.920295800[0m
+[31m  ║  [0m[32m     Service  : [0m[1m[37mapi-gateway[0m
+[1m[31m  ╚════════════════════════════════════════════════════════════════╝[0m
+
+2026-03-11 11:42:19.405 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: AuthenticationSASL{authenticationMechanisms=[SCRAM-SHA-256]}
+2026-03-11 11:42:19.406 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Request:  SASLInitialResponse{initialResponse=java.nio.HeapByteBuffer[pos=0 lim=45 cap=49], name='SCRAM-SHA-256'}
+2026-03-11 11:42:19.406 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: AuthenticationSASLContinue{data=java.nio.HeapByteBuffer[pos=0 lim=84 cap=84]}
+2026-03-11 11:42:19.418 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Request:  SASLResponse{data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=114]}
+2026-03-11 11:42:19.423 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: AuthenticationSASLFinal{additionalData=java.nio.HeapByteBuffer[pos=0 lim=46 cap=46]}
+2026-03-11 11:42:19.423 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: AuthenticationOk{}
+2026-03-11 11:42:19.423 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='in_hot_standby', value='off'}
+2026-03-11 11:42:19.423 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='integer_datetimes', value='on'}
+2026-03-11 11:42:19.423 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='TimeZone', value='Asia/Dhaka'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='IntervalStyle', value='postgres'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='search_path', value='gateway_service'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='is_superuser', value='off'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='application_name', value='r2dbc-postgresql'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='default_transaction_read_only', value='off'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='scram_iterations', value='4096'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='DateStyle', value='ISO, MDY'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='standard_conforming_strings', value='on'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='session_authorization', value='fund-transfer'}
+2026-03-11 11:42:19.424 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='client_encoding', value='UTF8'}
+2026-03-11 11:42:19.425 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='server_version', value='18.0'}
+2026-03-11 11:42:19.425 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: ParameterStatus{name='server_encoding', value='UTF8'}
+2026-03-11 11:42:19.425 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3] Response: BackendKeyData{processId=16872, secretKey=-1325493565}
+2026-03-11 11:42:19.425 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.427 DEBUG [reactor-tcp-nio-3] io.r2dbc.postgresql.QUERY : [cid: 0x3][pid: 16872] Executing query: SHOW TRANSACTION ISOLATION LEVEL
+2026-03-11 11:42:19.427 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Request:  Query{query='SHOW TRANSACTION ISOLATION LEVEL'}
+2026-03-11 11:42:19.428 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: RowDescription{fields=[Field{column=0, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='transaction_isolation', table=0}]}
+2026-03-11 11:42:19.429 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 14, cap: 14/14, unwrapped: PooledUnsafeDirectByteBuf(ridx: 72, widx: 88, cap: 1024))]}
+2026-03-11 11:42:19.429 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: CommandComplete{command=SHOW, rowId=null, rows=null}
+2026-03-11 11:42:19.429 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.430 DEBUG [reactor-tcp-nio-3] io.r2dbc.postgresql.QUERY : [cid: 0x3][pid: 16872] Executing query: SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')
+2026-03-11 11:42:19.430 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Request:  Query{query='SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')'}
+2026-03-11 11:42:19.435 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: RowDescription{fields=[Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=2, dataType=19, dataTypeModifier=-1, dataTypeSize=64, format=FORMAT_TEXT, name='typname', table=1247}, Field{column=3, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typnamespace', table=1247}, Field{column=4, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typowner', table=1247}, Field{column=5, dataType=21, dataTypeModifier=-1, dataTypeSize=2, format=FORMAT_TEXT, name='typlen', table=1247}, Field{column=6, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typbyval', table=1247}, Field{column=7, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typtype', table=1247}, Field{column=8, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typcategory', table=1247}, Field{column=9, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typispreferred', table=1247}, Field{column=10, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typisdefined', table=1247}, Field{column=11, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typdelim', table=1247}, Field{column=12, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typrelid', table=1247}, Field{column=13, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsubscript', table=1247}, Field{column=14, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typelem', table=1247}, Field{column=15, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typarray', table=1247}, Field{column=16, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typinput', table=1247}, Field{column=17, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typoutput', table=1247}, Field{column=18, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typreceive', table=1247}, Field{column=19, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsend', table=1247}, Field{column=20, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodin', table=1247}, Field{column=21, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodout', table=1247}, Field{column=22, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typanalyze', table=1247}, Field{column=23, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typalign', table=1247}, Field{column=24, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typstorage', table=1247}, Field{column=25, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typnotnull', table=1247}, Field{column=26, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typbasetype', table=1247}, Field{column=27, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typtypmod', table=1247}, Field{column=28, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typndims', table=1247}, Field{column=29, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typcollation', table=1247}, Field{column=30, dataType=194, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefaultbin', table=1247}, Field{column=31, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefault', table=1247}, Field{column=32, dataType=1034, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typacl', table=1247}]}
+2026-03-11 11:42:19.436 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: CommandComplete{command=SELECT, rowId=null, rows=0}
+2026-03-11 11:42:19.436 DEBUG [reactor-tcp-nio-3] i.r.p.client.ReactorNettyClient : [cid: 0x3][pid: 16872] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.438 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Request:  StartupMessage{, database='fund-transfer', username='fund-transfer'}
+2026-03-11 11:42:19.456 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientOperations : [4bdb7c81-1, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Received response (auto-read:false) : RESPONSE(decodeResult: success, version: HTTP/1.1)
+HTTP/1.1 400 Bad Request
+Content-Type: <filtered>
+Content-Length: <filtered>
+X-Content-Type-Options: <filtered>
+X-Frame-Options: <filtered>
+X-XSS-Protection: <filtered>
+Content-Security-Policy: <filtered>
+Cache-Control: <filtered>
+Pragma: <filtered>
+Strict-Transport-Security: <filtered>
+Referrer-Policy: <filtered>
+Permissions-Policy: <filtered>
+2026-03-11 11:42:19.460 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientOperations : [4bdb7c81-1, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Received last HTTP packet
+2026-03-11 11:42:19.470 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: AuthenticationSASL{authenticationMechanisms=[SCRAM-SHA-256]}
+2026-03-11 11:42:19.470 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Request:  SASLInitialResponse{initialResponse=java.nio.HeapByteBuffer[pos=0 lim=45 cap=49], name='SCRAM-SHA-256'}
+2026-03-11 11:42:19.471 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: AuthenticationSASLContinue{data=java.nio.HeapByteBuffer[pos=0 lim=84 cap=84]}
+2026-03-11 11:42:19.471 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Last HTTP response frame
+2026-03-11 11:42:19.471 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Decreasing pending responses count: 0
+2026-03-11 11:42:19.472 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Last HTTP packet was sent, terminating the channel
+2026-03-11 11:42:19.485 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Request:  SASLResponse{data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=114]}
+2026-03-11 11:42:19.491 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: AuthenticationSASLFinal{additionalData=java.nio.HeapByteBuffer[pos=0 lim=46 cap=46]}
+2026-03-11 11:42:19.491 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: AuthenticationOk{}
+2026-03-11 11:42:19.491 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='in_hot_standby', value='off'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='integer_datetimes', value='on'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='TimeZone', value='Asia/Dhaka'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='IntervalStyle', value='postgres'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='search_path', value='gateway_service'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='is_superuser', value='off'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='application_name', value='r2dbc-postgresql'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='default_transaction_read_only', value='off'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='scram_iterations', value='4096'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='DateStyle', value='ISO, MDY'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='standard_conforming_strings', value='on'}
+2026-03-11 11:42:19.492 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='session_authorization', value='fund-transfer'}
+2026-03-11 11:42:19.493 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='client_encoding', value='UTF8'}
+2026-03-11 11:42:19.493 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='server_version', value='18.0'}
+2026-03-11 11:42:19.493 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: ParameterStatus{name='server_encoding', value='UTF8'}
+2026-03-11 11:42:19.493 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4] Response: BackendKeyData{processId=21308, secretKey=449846019}
+2026-03-11 11:42:19.493 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.496 DEBUG [reactor-tcp-nio-4] io.r2dbc.postgresql.QUERY : [cid: 0x4][pid: 21308] Executing query: SHOW TRANSACTION ISOLATION LEVEL
+2026-03-11 11:42:19.496 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Request:  Query{query='SHOW TRANSACTION ISOLATION LEVEL'}
+2026-03-11 11:42:19.497 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: RowDescription{fields=[Field{column=0, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='transaction_isolation', table=0}]}
+2026-03-11 11:42:19.497 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 14, cap: 14/14, unwrapped: PooledUnsafeDirectByteBuf(ridx: 72, widx: 88, cap: 1024))]}
+2026-03-11 11:42:19.498 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: CommandComplete{command=SHOW, rowId=null, rows=null}
+2026-03-11 11:42:19.498 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.499 DEBUG [reactor-tcp-nio-4] io.r2dbc.postgresql.QUERY : [cid: 0x4][pid: 21308] Executing query: SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')
+2026-03-11 11:42:19.499 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Request:  Query{query='SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')'}
+2026-03-11 11:42:19.505 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: RowDescription{fields=[Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=2, dataType=19, dataTypeModifier=-1, dataTypeSize=64, format=FORMAT_TEXT, name='typname', table=1247}, Field{column=3, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typnamespace', table=1247}, Field{column=4, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typowner', table=1247}, Field{column=5, dataType=21, dataTypeModifier=-1, dataTypeSize=2, format=FORMAT_TEXT, name='typlen', table=1247}, Field{column=6, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typbyval', table=1247}, Field{column=7, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typtype', table=1247}, Field{column=8, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typcategory', table=1247}, Field{column=9, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typispreferred', table=1247}, Field{column=10, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typisdefined', table=1247}, Field{column=11, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typdelim', table=1247}, Field{column=12, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typrelid', table=1247}, Field{column=13, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsubscript', table=1247}, Field{column=14, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typelem', table=1247}, Field{column=15, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typarray', table=1247}, Field{column=16, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typinput', table=1247}, Field{column=17, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typoutput', table=1247}, Field{column=18, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typreceive', table=1247}, Field{column=19, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsend', table=1247}, Field{column=20, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodin', table=1247}, Field{column=21, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodout', table=1247}, Field{column=22, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typanalyze', table=1247}, Field{column=23, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typalign', table=1247}, Field{column=24, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typstorage', table=1247}, Field{column=25, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typnotnull', table=1247}, Field{column=26, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typbasetype', table=1247}, Field{column=27, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typtypmod', table=1247}, Field{column=28, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typndims', table=1247}, Field{column=29, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typcollation', table=1247}, Field{column=30, dataType=194, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefaultbin', table=1247}, Field{column=31, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefault', table=1247}, Field{column=32, dataType=1034, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typacl', table=1247}]}
+2026-03-11 11:42:19.505 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: CommandComplete{command=SELECT, rowId=null, rows=0}
+2026-03-11 11:42:19.506 DEBUG [reactor-tcp-nio-4] i.r.p.client.ReactorNettyClient : [cid: 0x4][pid: 21308] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.509 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Request:  StartupMessage{, database='fund-transfer', username='fund-transfer'}
+2026-03-11 11:42:19.646 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: AuthenticationSASL{authenticationMechanisms=[SCRAM-SHA-256]}
+2026-03-11 11:42:19.647 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Request:  SASLInitialResponse{initialResponse=java.nio.HeapByteBuffer[pos=0 lim=45 cap=49], name='SCRAM-SHA-256'}
+2026-03-11 11:42:19.648 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: AuthenticationSASLContinue{data=java.nio.HeapByteBuffer[pos=0 lim=84 cap=84]}
+2026-03-11 11:42:19.659 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Request:  SASLResponse{data=java.nio.HeapByteBuffer[pos=0 lim=104 cap=114]}
+2026-03-11 11:42:19.665 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: AuthenticationSASLFinal{additionalData=java.nio.HeapByteBuffer[pos=0 lim=46 cap=46]}
+2026-03-11 11:42:19.666 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: AuthenticationOk{}
+2026-03-11 11:42:19.666 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='in_hot_standby', value='off'}
+2026-03-11 11:42:19.666 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='integer_datetimes', value='on'}
+2026-03-11 11:42:19.666 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='TimeZone', value='Asia/Dhaka'}
+2026-03-11 11:42:19.666 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='IntervalStyle', value='postgres'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='search_path', value='gateway_service'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='is_superuser', value='off'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='application_name', value='r2dbc-postgresql'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='default_transaction_read_only', value='off'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='scram_iterations', value='4096'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='DateStyle', value='ISO, MDY'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='standard_conforming_strings', value='on'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='session_authorization', value='fund-transfer'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='client_encoding', value='UTF8'}
+2026-03-11 11:42:19.667 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='server_version', value='18.0'}
+2026-03-11 11:42:19.668 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: ParameterStatus{name='server_encoding', value='UTF8'}
+2026-03-11 11:42:19.668 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5] Response: BackendKeyData{processId=22420, secretKey=2083944107}
+2026-03-11 11:42:19.668 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.670 DEBUG [reactor-tcp-nio-5] io.r2dbc.postgresql.QUERY : [cid: 0x5][pid: 22420] Executing query: SHOW TRANSACTION ISOLATION LEVEL
+2026-03-11 11:42:19.670 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Request:  Query{query='SHOW TRANSACTION ISOLATION LEVEL'}
+2026-03-11 11:42:19.675 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: RowDescription{fields=[Field{column=0, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='transaction_isolation', table=0}]}
+2026-03-11 11:42:19.676 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: DataRow{columns=[PooledSlicedByteBuf(ridx: 0, widx: 14, cap: 14/14, unwrapped: PooledUnsafeDirectByteBuf(ridx: 72, widx: 88, cap: 1024))]}
+2026-03-11 11:42:19.676 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: CommandComplete{command=SHOW, rowId=null, rows=null}
+2026-03-11 11:42:19.676 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.678 DEBUG [reactor-tcp-nio-5] io.r2dbc.postgresql.QUERY : [cid: 0x5][pid: 22420] Executing query: SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')
+2026-03-11 11:42:19.678 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Request:  Query{query='SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')'}
+2026-03-11 11:42:19.682 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: RowDescription{fields=[Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=1, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='oid', table=1247}, Field{column=2, dataType=19, dataTypeModifier=-1, dataTypeSize=64, format=FORMAT_TEXT, name='typname', table=1247}, Field{column=3, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typnamespace', table=1247}, Field{column=4, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typowner', table=1247}, Field{column=5, dataType=21, dataTypeModifier=-1, dataTypeSize=2, format=FORMAT_TEXT, name='typlen', table=1247}, Field{column=6, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typbyval', table=1247}, Field{column=7, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typtype', table=1247}, Field{column=8, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typcategory', table=1247}, Field{column=9, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typispreferred', table=1247}, Field{column=10, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typisdefined', table=1247}, Field{column=11, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typdelim', table=1247}, Field{column=12, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typrelid', table=1247}, Field{column=13, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsubscript', table=1247}, Field{column=14, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typelem', table=1247}, Field{column=15, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typarray', table=1247}, Field{column=16, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typinput', table=1247}, Field{column=17, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typoutput', table=1247}, Field{column=18, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typreceive', table=1247}, Field{column=19, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typsend', table=1247}, Field{column=20, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodin', table=1247}, Field{column=21, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typmodout', table=1247}, Field{column=22, dataType=24, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typanalyze', table=1247}, Field{column=23, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typalign', table=1247}, Field{column=24, dataType=18, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typstorage', table=1247}, Field{column=25, dataType=16, dataTypeModifier=-1, dataTypeSize=1, format=FORMAT_TEXT, name='typnotnull', table=1247}, Field{column=26, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typbasetype', table=1247}, Field{column=27, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typtypmod', table=1247}, Field{column=28, dataType=23, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typndims', table=1247}, Field{column=29, dataType=26, dataTypeModifier=-1, dataTypeSize=4, format=FORMAT_TEXT, name='typcollation', table=1247}, Field{column=30, dataType=194, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefaultbin', table=1247}, Field{column=31, dataType=25, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typdefault', table=1247}, Field{column=32, dataType=1034, dataTypeModifier=-1, dataTypeSize=-1, format=FORMAT_TEXT, name='typacl', table=1247}]}
+2026-03-11 11:42:19.682 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: CommandComplete{command=SELECT, rowId=null, rows=0}
+2026-03-11 11:42:19.682 DEBUG [reactor-tcp-nio-5] i.r.p.client.ReactorNettyClient : [cid: 0x5][pid: 22420] Response: ReadyForQuery{transactionStatus=IDLE}
+2026-03-11 11:42:19.928 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:42:19.929 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:19.930 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:42:19.930 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:42:19.931 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:19.931 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:42:19.931 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:42:19.932 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:19.932 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:42:19.933 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:42:19.933 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:42:19.933 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:19.934 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:42:19.934 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:42:49.899 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 1 IPs, 0 users
+2026-03-11 11:42:49.965 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:42:49.966 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:49.966 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:42:49.966 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:42:49.966 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:49.967 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:42:49.967 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:42:49.967 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:49.967 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:42:49.968 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:42:49.968 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:42:49.968 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:42:49.968 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:42:49.969 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:43:19.990 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:43:19.991 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:19.991 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:43:19.991 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:43:19.991 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:19.992 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:43:19.992 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:43:19.992 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:19.993 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:43:19.993 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:43:19.993 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:43:19.993 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:19.993 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:43:19.993 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:43:29.991 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Increasing pending responses count: 1
+2026-03-11 11:43:29.991 DEBUG [reactor-http-nio-2] r.netty.http.server.HttpServer : [cd040e7d-2, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@4be0ef49
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'POST /user-service/auth/login' doesn't match 'POST /logout'
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/user-service/auth/login' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x0000028901735f08@427367ae
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.c.g.h.RoutePredicateHandlerMapping : Route matched: user-login
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.c.g.h.RoutePredicateHandlerMapping : Mapping [Exchange: POST http://localhost:8080/user-service/auth/login] to Route{id='user-login', uri=lb://user-service, order=0, predicate=Paths: [/user-service/auth/login], match trailing slash: true, gatewayFilters=[[[StripPrefix parts = 1], order = 1]], metadata={}}
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.c.g.h.RoutePredicateHandlerMapping : [cd040e7d-2] Mapped to org.springframework.cloud.gateway.handler.FilteringWebHandler@1c14d24d
+2026-03-11 11:43:29.993 DEBUG [parallel-5] o.s.c.g.handler.FilteringWebHandler : Sorted gatewayFilterFactories: [[GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.security.SecurityResponseFilter@49122853}, order = -2147483648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RemoveCachedBodyFilter@1ddc8fc}, order = -2147483648], [GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.cyber.audit.ThreatDetectionFilter@5beb6be2}, order = -2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.AdaptCachedBodyGlobalFilter@32ddcca}, order = -2147482648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyWriteResponseFilter@5718e77c}, order = -1], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardPathFilter@738ed8f5}, order = 0], [[StripPrefix parts = 1], order = 1], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter@77d58f3a}, order = 10000], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter@f9de1fd}, order = 10150], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.LoadBalancerServiceInstanceCookieFilter@7c871ce4}, order = 10151], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.WebsocketRoutingFilter@490fbeaa}, order = 2147483646], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyRoutingFilter@22cb8e5f}, order = 2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardRoutingFilter@1e288c76}, order = 2147483647]]
+2026-03-11 11:43:29.994 DEBUG [reactor-http-nio-2] c.f.t.a.g.c.a.ThreatDetectionFilter : [THREAT-FILTER] Skipping password field: password
+2026-03-11 11:43:29.996 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientConnect : [4bdb7c81-2, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Handler is being applied: {uri=http://192.168.1.136:9090/auth/login, method=POST}
+2026-03-11 11:43:30.613 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientOperations : [4bdb7c81-2, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Received response (auto-read:false) : RESPONSE(decodeResult: success, version: HTTP/1.1)
+HTTP/1.1 200 OK
+Content-Type: <filtered>
+Content-Length: <filtered>
+X-Content-Type-Options: <filtered>
+X-Frame-Options: <filtered>
+X-XSS-Protection: <filtered>
+Content-Security-Policy: <filtered>
+Cache-Control: <filtered>
+Pragma: <filtered>
+Strict-Transport-Security: <filtered>
+Referrer-Policy: <filtered>
+Permissions-Policy: <filtered>
+2026-03-11 11:43:30.613 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientOperations : [4bdb7c81-2, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Received last HTTP packet
+2026-03-11 11:43:30.614 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-2, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Last HTTP response frame
+2026-03-11 11:43:30.614 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-2, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Decreasing pending responses count: 0
+2026-03-11 11:43:30.614 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-2, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Last HTTP packet was sent, terminating the channel
+2026-03-11 11:43:49.909 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 1 IPs, 0 users
+2026-03-11 11:43:50.022 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:43:50.023 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:50.023 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:43:50.023 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:43:50.024 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:50.024 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:43:50.024 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:43:50.024 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:50.025 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:43:50.025 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:43:50.025 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:43:50.025 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:43:50.025 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:43:50.026 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:44:20.055 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:44:20.056 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:20.056 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:44:20.056 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:44:20.057 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:20.057 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:44:20.057 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:44:20.058 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:20.058 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:44:20.058 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:44:20.058 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:44:20.058 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:20.059 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:44:20.059 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:44:49.505 INFO  [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver : Resolving eureka endpoints via configuration
+2026-03-11 11:44:49.909 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:44:50.080 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:44:50.081 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:50.082 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:44:50.082 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:44:50.082 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:50.082 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:44:50.082 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:44:50.083 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:50.083 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:44:50.083 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:44:50.083 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:44:50.084 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:44:50.084 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:44:50.084 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:44:58.920 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Increasing pending responses count: 1
+2026-03-11 11:44:58.920 DEBUG [reactor-http-nio-2] r.netty.http.server.HttpServer : [cd040e7d-3, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@4be0ef49
+2026-03-11 11:44:58.923 DEBUG [parallel-7] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-11 11:44:58.923 DEBUG [parallel-7] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'POST /user-service/user' doesn't match 'POST /logout'
+2026-03-11 11:44:58.923 DEBUG [parallel-7] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-11 11:44:58.923 DEBUG [parallel-7] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/user-service/user' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x0000028901735f08@427367ae
+2026-03-11 11:44:58.923 DEBUG [parallel-7] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-11 11:44:58.923 DEBUG [parallel-7] o.s.c.g.h.RoutePredicateHandlerMapping : Route matched: user-service
+2026-03-11 11:44:58.924 DEBUG [parallel-7] o.s.c.g.h.RoutePredicateHandlerMapping : Mapping [Exchange: POST http://localhost:8080/user-service/user] to Route{id='user-service', uri=lb://user-service, order=0, predicate=Paths: [/user-service/**], match trailing slash: true, gatewayFilters=[[[StripPrefix parts = 1], order = 1], [com.fund.transfer.api.gateway.security.AuthorizationHeaderFilter$$Lambda/0x0000028901901b00@6e412e44, order = 2]], metadata={}}
+2026-03-11 11:44:58.924 DEBUG [parallel-7] o.s.c.g.h.RoutePredicateHandlerMapping : [cd040e7d-3] Mapped to org.springframework.cloud.gateway.handler.FilteringWebHandler@1c14d24d
+2026-03-11 11:44:58.924 DEBUG [parallel-7] o.s.c.g.handler.FilteringWebHandler : Sorted gatewayFilterFactories: [[GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.security.SecurityResponseFilter@49122853}, order = -2147483648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RemoveCachedBodyFilter@1ddc8fc}, order = -2147483648], [GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.cyber.audit.ThreatDetectionFilter@5beb6be2}, order = -2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.AdaptCachedBodyGlobalFilter@32ddcca}, order = -2147482648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyWriteResponseFilter@5718e77c}, order = -1], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardPathFilter@738ed8f5}, order = 0], [[StripPrefix parts = 1], order = 1], [com.fund.transfer.api.gateway.security.AuthorizationHeaderFilter$$Lambda/0x0000028901901b00@6e412e44, order = 2], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter@77d58f3a}, order = 10000], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter@f9de1fd}, order = 10150], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.LoadBalancerServiceInstanceCookieFilter@7c871ce4}, order = 10151], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.WebsocketRoutingFilter@490fbeaa}, order = 2147483646], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyRoutingFilter@22cb8e5f}, order = 2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardRoutingFilter@1e288c76}, order = 2147483647]]
+2026-03-11 11:44:58.925 DEBUG [reactor-http-nio-2] c.f.t.a.g.c.a.ThreatDetectionFilter : [THREAT-FILTER] Skipping password field: password
+2026-03-11 11:44:58.927 INFO  [reactor-http-nio-2] c.f.t.a.g.s.AuthorizationHeaderFilter : Gateway Filter - Processing: /user
+2026-03-11 11:44:59.015 INFO  [reactor-http-nio-2] c.f.t.a.g.s.AuthorizationHeaderFilter : JWT valid — userId: 2, username: polas, role: ADMIN
+2026-03-11 11:44:59.017 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientConnect : [4bdb7c81-3, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Handler is being applied: {uri=http://192.168.1.136:9090/user, method=POST}
+2026-03-11 11:44:59.089 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientOperations : [4bdb7c81-3, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Received response (auto-read:false) : RESPONSE(decodeResult: success, version: HTTP/1.1)
+HTTP/1.1 500 Internal Server Error
+Content-Type: <filtered>
+Content-Length: <filtered>
+X-Content-Type-Options: <filtered>
+X-Frame-Options: <filtered>
+X-XSS-Protection: <filtered>
+Content-Security-Policy: <filtered>
+Cache-Control: <filtered>
+Pragma: <filtered>
+Strict-Transport-Security: <filtered>
+Referrer-Policy: <filtered>
+Permissions-Policy: <filtered>
+2026-03-11 11:44:59.092 DEBUG [reactor-http-nio-2] r.n.http.client.HttpClientOperations : [4bdb7c81-3, L:/192.168.1.136:9565 - R:/192.168.1.136:9090] Received last HTTP packet
+2026-03-11 11:44:59.093 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-3, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Last HTTP response frame
+2026-03-11 11:44:59.093 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-3, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Decreasing pending responses count: 0
+2026-03-11 11:44:59.093 DEBUG [reactor-http-nio-2] r.n.http.server.HttpServerOperations : [cd040e7d-3, L:/127.0.0.1:8080 - R:/127.0.0.1:9563] Last HTTP packet was sent, terminating the channel
+2026-03-11 11:45:20.117 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:45:20.119 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:20.120 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:45:20.120 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:45:20.120 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:20.121 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:45:20.121 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:45:20.121 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:20.121 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:45:20.122 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:45:20.122 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:45:20.122 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:20.122 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:45:20.122 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:45:49.897 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 1 IPs, 0 users
+2026-03-11 11:45:50.148 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:45:50.149 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:50.149 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:45:50.149 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:45:50.150 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:50.150 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:45:50.150 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:45:50.151 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:50.151 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:45:50.151 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:45:50.151 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:45:50.152 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:45:50.153 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:45:50.153 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:46:20.178 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:46:20.179 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:20.180 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:46:20.180 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:46:20.180 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:20.180 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:46:20.180 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:46:20.181 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:20.181 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:46:20.181 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:46:20.181 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:46:20.182 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:20.182 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:46:20.182 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:46:49.897 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:46:50.207 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:46:50.208 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:50.208 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:46:50.209 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:46:50.209 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:50.209 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:46:50.209 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:46:50.210 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:50.210 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:46:50.210 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:46:50.210 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:46:50.211 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:46:50.211 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:46:50.212 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:47:20.235 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:47:20.235 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:20.236 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:47:20.236 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:47:20.236 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:20.236 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:47:20.236 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:47:20.237 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:20.237 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:47:20.237 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:47:20.237 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:47:20.237 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:20.238 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:47:20.238 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:47:49.910 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:47:50.269 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:47:50.270 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:50.270 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:47:50.270 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:47:50.271 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:50.271 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:47:50.271 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:47:50.272 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:50.272 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:47:50.272 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:47:50.272 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:47:50.272 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:47:50.273 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:47:50.273 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:48:10.680 DEBUG [reactor-http-nio-3] r.n.http.server.HttpServerOperations : [564551b2, L:/127.0.0.1:8080 - R:/127.0.0.1:9853] New http connection, requesting read
+2026-03-11 11:48:10.681 DEBUG [reactor-http-nio-3] r.n.http.server.HttpServerOperations : [564551b2, L:/127.0.0.1:8080 - R:/127.0.0.1:9853] Increasing pending responses count: 1
+2026-03-11 11:48:10.682 DEBUG [reactor-http-nio-3] r.netty.http.server.HttpServer : [564551b2-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9853] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@4be0ef49
+2026-03-11 11:48:10.683 DEBUG [parallel-9] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'POST /user-service/user' doesn't match 'POST /logout'
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/user-service/user' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x0000028901735f08@427367ae
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.c.g.h.RoutePredicateHandlerMapping : Route matched: user-service
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.c.g.h.RoutePredicateHandlerMapping : Mapping [Exchange: POST http://localhost:8080/user-service/user] to Route{id='user-service', uri=lb://user-service, order=0, predicate=Paths: [/user-service/**], match trailing slash: true, gatewayFilters=[[[StripPrefix parts = 1], order = 1], [com.fund.transfer.api.gateway.security.AuthorizationHeaderFilter$$Lambda/0x0000028901901b00@212c4bc0, order = 2]], metadata={}}
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.c.g.h.RoutePredicateHandlerMapping : [564551b2-4] Mapped to org.springframework.cloud.gateway.handler.FilteringWebHandler@1c14d24d
+2026-03-11 11:48:10.684 DEBUG [parallel-9] o.s.c.g.handler.FilteringWebHandler : Sorted gatewayFilterFactories: [[GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.security.SecurityResponseFilter@49122853}, order = -2147483648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RemoveCachedBodyFilter@1ddc8fc}, order = -2147483648], [GatewayFilterAdapter{delegate=com.fund.transfer.api.gateway.cyber.audit.ThreatDetectionFilter@5beb6be2}, order = -2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.AdaptCachedBodyGlobalFilter@32ddcca}, order = -2147482648], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyWriteResponseFilter@5718e77c}, order = -1], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardPathFilter@738ed8f5}, order = 0], [[StripPrefix parts = 1], order = 1], [com.fund.transfer.api.gateway.security.AuthorizationHeaderFilter$$Lambda/0x0000028901901b00@212c4bc0, order = 2], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter@77d58f3a}, order = 10000], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter@f9de1fd}, order = 10150], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.LoadBalancerServiceInstanceCookieFilter@7c871ce4}, order = 10151], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.WebsocketRoutingFilter@490fbeaa}, order = 2147483646], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.NettyRoutingFilter@22cb8e5f}, order = 2147483647], [GatewayFilterAdapter{delegate=org.springframework.cloud.gateway.filter.ForwardRoutingFilter@1e288c76}, order = 2147483647]]
+2026-03-11 11:48:10.685 DEBUG [reactor-http-nio-3] c.f.t.a.g.c.a.ThreatDetectionFilter : [THREAT-FILTER] Skipping password field: password
+2026-03-11 11:48:10.686 INFO  [reactor-http-nio-3] c.f.t.a.g.s.AuthorizationHeaderFilter : Gateway Filter - Processing: /user
+2026-03-11 11:48:10.687 INFO  [reactor-http-nio-3] c.f.t.a.g.s.AuthorizationHeaderFilter : JWT valid — userId: 2, username: polas, role: ADMIN
+2026-03-11 11:48:10.691 DEBUG [reactor-http-nio-3] r.n.http.client.HttpClientConnect : [453fa9de-1, L:/192.168.1.136:9854 - R:/192.168.1.136:9090] Handler is being applied: {uri=http://192.168.1.136:9090/user, method=POST}
+2026-03-11 11:48:19.009 DEBUG [reactor-http-nio-3] r.n.http.client.HttpClientOperations : [453fa9de-1, L:/192.168.1.136:9854 - R:/192.168.1.136:9090] Received response (auto-read:false) : RESPONSE(decodeResult: success, version: HTTP/1.1)
+HTTP/1.1 200 OK
+Content-Type: <filtered>
+Content-Length: <filtered>
+X-Content-Type-Options: <filtered>
+X-Frame-Options: <filtered>
+X-XSS-Protection: <filtered>
+Content-Security-Policy: <filtered>
+Cache-Control: <filtered>
+Pragma: <filtered>
+Strict-Transport-Security: <filtered>
+Referrer-Policy: <filtered>
+Permissions-Policy: <filtered>
+2026-03-11 11:48:19.009 DEBUG [reactor-http-nio-3] r.n.http.client.HttpClientOperations : [453fa9de-1, L:/192.168.1.136:9854 - R:/192.168.1.136:9090] Received last HTTP packet
+2026-03-11 11:48:19.010 DEBUG [reactor-http-nio-3] r.n.http.server.HttpServerOperations : [564551b2-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9853] Last HTTP response frame
+2026-03-11 11:48:19.010 DEBUG [reactor-http-nio-3] r.n.http.server.HttpServerOperations : [564551b2-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9853] Decreasing pending responses count: 0
+2026-03-11 11:48:19.012 DEBUG [reactor-http-nio-3] r.n.http.server.HttpServerOperations : [564551b2-1, L:/127.0.0.1:8080 - R:/127.0.0.1:9853] Last HTTP packet was sent, terminating the channel
+2026-03-11 11:48:20.302 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:48:20.302 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:20.303 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:48:20.303 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:48:20.304 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:20.304 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:48:20.304 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:48:20.305 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:20.305 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:48:20.305 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:48:20.305 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:48:20.305 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:20.306 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:48:20.306 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:48:49.897 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 1 IPs, 0 users
+2026-03-11 11:48:50.335 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:48:50.335 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:50.336 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:48:50.336 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:48:50.336 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:50.336 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:48:50.336 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:48:50.337 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:50.337 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:48:50.337 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:48:50.337 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:48:50.338 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:48:50.338 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:48:50.338 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:49:20.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:49:20.379 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:20.379 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:49:20.379 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:49:20.379 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:20.380 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:49:20.380 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:49:20.380 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:20.380 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:49:20.380 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:49:20.381 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:49:20.381 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:20.381 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:49:20.381 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-11 11:49:49.512 INFO  [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver : Resolving eureka endpoints via configuration
+2026-03-11 11:49:49.900 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-11 11:49:50.414 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-11 11:49:50.415 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:50.415 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-11 11:49:50.415 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-11 11:49:50.416 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:50.417 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-11 11:49:50.417 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-11 11:49:50.417 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:50.417 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:49:50.418 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-11 11:49:50.418 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-11 11:49:50.418 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-11 11:49:50.418 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-11 11:49:50.418 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service

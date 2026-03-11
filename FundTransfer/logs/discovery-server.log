@@ -1,0 +1,121 @@
+2026-03-11 11:39:42.188 INFO  [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : Starting FundTransferDiscoveryServerApplication using Java 21.0.9 with PID 20768 (D:\Learning\FundTransfer\FundTransfer\FundTransferDiscoveryServer\target\classes started by CRYSTAL TECHNOLOGY in D:\Learning\FundTransfer\FundTransfer)
+2026-03-11 11:39:42.190 DEBUG [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : Running with Spring Boot v3.4.1, Spring v6.2.1
+2026-03-11 11:39:42.191 INFO  [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : The following 1 profile is active: "dev"
+2026-03-11 11:39:43.530 INFO  [main] o.s.cloud.context.scope.GenericScope : BeanFactory id=bff4a3a4-0f51-3ece-9e4d-548262ddb3e7
+2026-03-11 11:39:43.829 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer : Tomcat initialized with port 8761 (http)
+2026-03-11 11:39:43.917 INFO  [main] o.s.b.w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1673 ms
+2026-03-11 11:39:45.019 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON encoding codec LegacyJacksonJson
+2026-03-11 11:39:45.021 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON decoding codec LegacyJacksonJson
+2026-03-11 11:39:45.214 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML encoding codec XStreamXml
+2026-03-11 11:39:45.214 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML decoding codec XStreamXml
+2026-03-11 11:39:45.373 INFO  [main] o.s.v.b.OptionalValidatorFactoryBean : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2026-03-11 11:39:46.277 WARN  [main] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-11 11:39:46.309 INFO  [main] o.s.c.n.eureka.InstanceInfoFactory : Setting initial instance status as: STARTING
+2026-03-11 11:39:46.332 INFO  [main] c.netflix.discovery.DiscoveryClient : Initializing Eureka in region us-east-1
+2026-03-11 11:39:46.333 INFO  [main] c.netflix.discovery.DiscoveryClient : Client configured to neither register nor query for data.
+2026-03-11 11:39:46.334 INFO  [main] c.netflix.discovery.DiscoveryClient : Discovery Client initialized at timestamp 1773207586333 with initial instances count: 0
+2026-03-11 11:39:46.368 INFO  [main] c.n.e.DefaultEurekaServerContext : Initializing ...
+2026-03-11 11:39:46.370 INFO  [main] c.n.eureka.cluster.PeerEurekaNodes : Adding new peer nodes [http://localhost:8761/eureka/]
+2026-03-11 11:39:46.459 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON encoding codec LegacyJacksonJson
+2026-03-11 11:39:46.459 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON decoding codec LegacyJacksonJson
+2026-03-11 11:39:46.459 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML encoding codec XStreamXml
+2026-03-11 11:39:46.459 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML decoding codec XStreamXml
+2026-03-11 11:39:46.493 INFO  [main] c.n.eureka.cluster.PeerEurekaNodes : Replica node URL:  http://localhost:8761/eureka/
+2026-03-11 11:39:46.503 INFO  [main] c.n.e.r.AbstractInstanceRegistry : Finished initializing remote region registries. All known remote regions: []
+2026-03-11 11:39:46.504 INFO  [main] c.n.e.DefaultEurekaServerContext : Initialized
+2026-03-11 11:39:46.554 INFO  [main] o.s.c.n.e.s.EurekaServiceRegistry : Registering application DISCOVERY-SERVER with eureka with status UP
+2026-03-11 11:39:46.565 INFO  [Thread-9] o.s.c.n.e.s.EurekaServerBootstrap : isAws returned false
+2026-03-11 11:39:46.566 INFO  [Thread-9] o.s.c.n.e.s.EurekaServerBootstrap : Initialized server context
+2026-03-11 11:39:46.566 INFO  [Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl : Got 1 instances from neighboring DS node
+2026-03-11 11:39:46.566 INFO  [Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl : Renew threshold is: 0
+2026-03-11 11:39:46.566 INFO  [Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl : Changing status to UP
+2026-03-11 11:39:46.568 INFO  [Thread-9] o.s.c.n.e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2026-03-11 11:39:46.576 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer : Tomcat started on port 8761 (http) with context path '/'
+2026-03-11 11:39:46.577 INFO  [main] o.s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8761
+2026-03-11 11:39:46.634 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer : Tomcat initialized with port 8762 (http)
+2026-03-11 11:39:46.662 INFO  [main] o.s.b.w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 80 ms
+2026-03-11 11:39:46.676 INFO  [main] o.s.b.a.e.web.EndpointLinksResolver : Exposing 3 endpoints beneath base path '/internal/actuator'
+2026-03-11 11:39:46.695 INFO  [main] o.s.v.b.OptionalValidatorFactoryBean : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2026-03-11 11:39:46.706 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer : Tomcat started on port 8762 (http) with context path '/'
+2026-03-11 11:39:46.722 INFO  [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : Started FundTransferDiscoveryServerApplication in 5.054 seconds (process running for 8.565)
+2026-03-11 11:39:46.727 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╔══════════════════════════════════════════╗
+2026-03-11 11:39:46.728 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ║    Database Initialization Starting...   ║
+2026-03-11 11:39:46.728 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╚══════════════════════════════════════════╝
+2026-03-11 11:39:46.728 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Checking database 'fund-transfer'...
+2026-03-11 11:39:46.843 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Database 'fund-transfer' already exists — skipping
+2026-03-11 11:39:46.844 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Checking user 'fund-transfer'...
+2026-03-11 11:39:46.880 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : User 'fund-transfer' already exists — skipping
+2026-03-11 11:39:46.880 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Granting privileges to user 'fund-transfer'...
+2026-03-11 11:39:47.052 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Privileges granted to 'fund-transfer'
+2026-03-11 11:39:47.052 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╔══════════════════════════════════════════╗
+2026-03-11 11:39:47.052 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ║    Database Initialization Complete   ║
+2026-03-11 11:39:47.052 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╚══════════════════════════════════════════╝
+2026-03-11 11:39:49.028 INFO  [http-nio-8761-exec-1] o.s.web.servlet.DispatcherServlet : Initializing Servlet 'dispatcherServlet'
+2026-03-11 11:39:49.029 INFO  [http-nio-8761-exec-1] o.s.web.servlet.DispatcherServlet : Completed initialization in 1 ms
+2026-03-11 11:39:49.238 INFO  [http-nio-8761-exec-3] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status UP (replication=false)
+2026-03-11 11:39:49.238 INFO  [http-nio-8761-exec-4] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status UP (replication=false)
+2026-03-11 11:39:49.802 INFO  [http-nio-8761-exec-6] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status UP (replication=false)
+2026-03-11 11:39:49.879 INFO  [http-nio-8761-exec-7] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status UP (replication=true)
+2026-03-11 11:39:49.880 INFO  [http-nio-8761-exec-7] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status UP (replication=true)
+2026-03-11 11:39:50.315 INFO  [http-nio-8761-exec-8] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status UP (replication=true)
+2026-03-11 11:40:01.567 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:40:16.568 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:40:31.568 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:40:46.576 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 7ms
+2026-03-11 11:41:01.582 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 6ms
+2026-03-11 11:41:16.582 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:41:31.593 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 11ms
+2026-03-11 11:41:46.604 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 10ms
+2026-03-11 11:42:01.617 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 13ms
+2026-03-11 11:42:16.620 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 2ms
+2026-03-11 11:42:31.620 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:42:46.626 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 5ms
+2026-03-11 11:43:01.634 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 7ms
+2026-03-11 11:43:16.634 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:43:31.635 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:43:46.649 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 14ms
+2026-03-11 11:44:01.649 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:44:16.659 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 10ms
+2026-03-11 11:44:31.665 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 5ms
+2026-03-11 11:44:43.248 INFO  [http-nio-8761-exec-8] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status DOWN (replication=false)
+2026-03-11 11:44:43.772 INFO  [http-nio-8761-exec-3] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status DOWN (replication=true)
+2026-03-11 11:44:46.668 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 2ms
+2026-03-11 11:44:49.630 INFO  [http-nio-8761-exec-5] c.n.e.r.AbstractInstanceRegistry : Cancelled instance BANK-SERVICE/bank-service:9091 (replication=false)
+2026-03-11 11:44:50.157 WARN  [http-nio-8761-exec-1] c.n.e.r.AbstractInstanceRegistry : DS: Registry: cancel failed because Lease is not registered for: BANK-SERVICE/bank-service:9091
+2026-03-11 11:44:50.157 INFO  [http-nio-8761-exec-1] c.n.e.resources.InstanceResource : Not Found (Cancel): BANK-SERVICE - bank-service:9091
+2026-03-11 11:44:50.158 WARN  [TaskBatchingWorker-target_localhost-16] c.n.eureka.cluster.ReplicationTask : The replication of task BANK-SERVICE/bank-service:9091:Cancel@localhost failed with response code 404
+2026-03-11 11:44:50.158 WARN  [TaskBatchingWorker-target_localhost-16] c.n.eureka.cluster.PeerEurekaNode : BANK-SERVICE/bank-service:9091:Cancel@localhost: missing entry.
+2026-03-11 11:45:01.672 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 4ms
+2026-03-11 11:45:16.677 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 5ms
+2026-03-11 11:45:31.680 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 2ms
+2026-03-11 11:45:46.681 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 1ms
+2026-03-11 11:46:01.690 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 8ms
+2026-03-11 11:46:16.698 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 7ms
+2026-03-11 11:46:31.704 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 6ms
+2026-03-11 11:46:46.704 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:47:01.713 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 8ms
+2026-03-11 11:47:16.721 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 8ms
+2026-03-11 11:47:31.728 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 6ms
+2026-03-11 11:47:46.742 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 14ms
+2026-03-11 11:47:50.110 INFO  [http-nio-8761-exec-9] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status DOWN (replication=false)
+2026-03-11 11:47:50.550 INFO  [http-nio-8761-exec-8] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status DOWN (replication=true)
+2026-03-11 11:47:50.551 WARN  [TaskBatchingWorker-target_localhost-13] c.n.eureka.cluster.ReplicationTask : The replication of task USER-SERVICE/user-service:9090:Heartbeat@localhost failed with response code 409
+2026-03-11 11:47:50.551 WARN  [TaskBatchingWorker-target_localhost-13] c.n.eureka.cluster.PeerEurekaNode : Peer wants us to take the instance information from it, since the timestamp differs,Id : user-service:9090 My Timestamp : 1773207589127, Peer's timestamp: 1773208070107
+2026-03-11 11:47:50.551 INFO  [TaskBatchingWorker-target_localhost-13] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status DOWN (replication=true)
+2026-03-11 11:47:55.225 INFO  [http-nio-8761-exec-4] c.n.e.r.AbstractInstanceRegistry : Cancelled instance USER-SERVICE/user-service:9090 (replication=false)
+2026-03-11 11:47:55.749 WARN  [http-nio-8761-exec-7] c.n.e.r.AbstractInstanceRegistry : DS: Registry: cancel failed because Lease is not registered for: USER-SERVICE/user-service:9090
+2026-03-11 11:47:55.749 INFO  [http-nio-8761-exec-7] c.n.e.resources.InstanceResource : Not Found (Cancel): USER-SERVICE - user-service:9090
+2026-03-11 11:47:55.749 WARN  [TaskBatchingWorker-target_localhost-3] c.n.eureka.cluster.ReplicationTask : The replication of task USER-SERVICE/user-service:9090:Cancel@localhost failed with response code 404
+2026-03-11 11:47:55.749 WARN  [TaskBatchingWorker-target_localhost-3] c.n.eureka.cluster.PeerEurekaNode : USER-SERVICE/user-service:9090:Cancel@localhost: missing entry.
+2026-03-11 11:48:01.547 INFO  [http-nio-8761-exec-9] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status UP (replication=false)
+2026-03-11 11:48:01.752 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 10ms
+2026-03-11 11:48:02.078 INFO  [http-nio-8761-exec-1] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status UP (replication=true)
+2026-03-11 11:48:16.767 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 14ms
+2026-03-11 11:48:31.782 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 15ms
+2026-03-11 11:48:46.782 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:48:52.800 INFO  [http-nio-8761-exec-9] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status UP (replication=false)
+2026-03-11 11:48:53.305 INFO  [http-nio-8761-exec-1] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status UP (replication=true)
+2026-03-11 11:49:01.783 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:49:16.783 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:49:31.783 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-11 11:49:46.792 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 8ms

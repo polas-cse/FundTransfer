@@ -46,7 +46,7 @@ public class DatabaseInitializer implements ApplicationRunner {
         grantPrivileges();
 
         log.info("╔══════════════════════════════════════════╗");
-        log.info("║    Database Initialization Complete   ║");
+        log.info("║    Database Initialization Complete      ║");
         log.info("╚══════════════════════════════════════════╝");
     }
 
