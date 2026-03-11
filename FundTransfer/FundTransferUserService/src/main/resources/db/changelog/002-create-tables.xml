@@ -1,14 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║         LIQUIBASE CHANGELOG — USER SERVICE TABLE DEFINITIONS         ║
+║                                                                      ║
+║  Schema  : user_service                                              ║
+║  Author  : mdpolashossein                                            ║
+║  Tables  : users, logins, login_logs, password_reset_tokens,         ║
+║            user_otp, trusted_devices                                 ║
+║                                                                      ║
+║  Execution Order:                                                    ║
+║  0001 → users (parent — no FK)                                       ║
+║  0002 → logins          (FK → users)                                 ║
+║  0003 → login_logs      (FK → users)                                 ║
+║  0004 → password_reset_tokens (FK → users)                           ║
+║  0005 → user_otp        (FK → users)                                 ║
+║  0006 → trusted_devices (FK → users)                                 ║
+║                                                                      ║
+║  Safe    : YES — preConditions prevent duplicate execution           ║
+║  Rollback: YES — each changeSet has rollback defined                 ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
             http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
+                        gives autocomplete + red underlines for typos
+    -->
 
-    <!-- ================= USERS ================= -->
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0001 — USERS TABLE                                    ║
+    ║  Core user profile table — parent of all other tables            ║
+    ║  All other tables reference this via FK → users.id               ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+    id         → unique key — NEVER change after first run
+                 Liquibase stores id + author + filename in databasechangelog
+    author     → who created this changeset — for auditing only
+    runAlways  → not set = defaults to false — runs only once
+    failOnError→ not set = defaults to true — stops on error
+    -->
     <changeSet id="users-table-0001" author="mdpolashossein">
 
+        <!--
+        ── PRECONDITION ─────────────────────────────────────────────────
+        Checks if the table already exists BEFORE trying to create it.
+        Prevents "relation already exists" error on app restart.
+
+        onFail options:
+        ┌─────────────┬────────────────────────────────────────────────┐
+        │ MARK_RAN    │ skip silently — record as ran in changelog     │
+        │ HALT        │ stop entire migration with error               │
+        │ WARN        │ log a warning but continue migration           │
+        │ CONTINUE    │ skip this changeset, keep going silently       │
+        └─────────────┴────────────────────────────────────────────────┘
+
+        <not> → inverts the check
+          tableExists → true if table exists
+          <not><tableExists> → true if table does NOT exist → run changeset
+          if table EXISTS → preCondition fails → MARK_RAN → skip
+        -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="users"
@@ -16,51 +75,115 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: users ───────────────────────────────────────────
+        Core user profile table.
+        Stores personal information about each registered user.
+        All other tables (logins, otp, devices) reference this table.
+        -->
         <createTable tableName="users" schemaName="user_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
+            <!-- autoIncrement → uses PostgreSQL BIGSERIAL (sequence) -->
+            <!-- primaryKeyName → named constraint for easier debugging -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"
                              primaryKeyName="pk_users_id"/>
             </column>
+
+            <!-- UNIQUE email — used for login and communication -->
+            <!-- VARCHAR(255) → standard email max length -->
+            <!-- uniqueConstraintName → named for easier constraint drops -->
             <column name="email" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"
                              uniqueConstraintName="uk_users_email"/>
             </column>
+
+            <!-- user's legal first name — required field -->
             <column name="first_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- user's legal last name — required field -->
             <column name="last_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- optional contact number — VARCHAR(18) supports international format -->
+            <!-- e.g. +880 1712-345678 = 16 chars + spaces/dashes -->
             <column name="phone" type="VARCHAR(18)"/>
+
+            <!-- optional — MALE / FEMALE / OTHER / PREFER_NOT_TO_SAY -->
             <column name="gender" type="VARCHAR(10)"/>
+
+            <!-- optional — DATE only, no time component -->
             <column name="date_of_birth" type="DATE"/>
+
+            <!-- user wallet balance — DECIMAL(18,2) supports large amounts -->
+            <!-- 18 total digits, 2 decimal places → max: 9,999,999,999,999,999.99 -->
+            <!-- defaultValueNumeric="0.00" → new users start with zero balance -->
             <column name="balance" type="DECIMAL(18,2)"
                     defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- optional — URL to profile image in cloud storage (S3/GCS) -->
             <column name="image_url" type="TEXT"/>
+
+            <!-- optional — pre-signed download URL for the profile image -->
             <column name="download_url" type="TEXT"/>
+
+            <!-- soft delete flag — false = deactivated, true = active -->
+            <!-- defaultValueBoolean="true" → all new users start active -->
             <column name="active" type="BOOLEAN"
                     defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- AUDIT FIELDS — who created and when -->
+            <!-- created_by → FK to users.id (the admin who created this user) -->
+            <!-- nullable → null means self-registered -->
             <column name="created_by" type="BIGINT"/>
+
+            <!-- defaultValueComputed="CURRENT_TIMESTAMP" → auto-set by DB -->
+            <!-- not set by application — always accurate regardless of timezone -->
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- updated_by → FK to users.id (who last modified this record) -->
             <column name="updated_by" type="BIGINT"/>
+
+            <!-- null until first update — application sets this on save -->
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Executed on: mvn liquibase:rollback
+        Drops the entire users table and all its data.
+          All child tables (logins, otp etc) must be rolled back first
+            due to FK constraints — rollback in reverse order of creation
+        -->
         <rollback>
             <dropTable tableName="users" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= LOGINS ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0002 — LOGINS TABLE                                  ║
+    ║  Stores active session credentials and login state per user     ║
+    ║  One row per user — tracks current token, device, IP, attempts  ║
+    ║  FK → users.id (CASCADE delete — login removed with user)       ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="users-table-0002" author="mdpolashossein">
 
+        <!-- skip if logins table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="logins"
@@ -68,37 +191,90 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: logins ──────────────────────────────────────────
+        Tracks authentication state for each user.
+        Stores current JWT tokens, device info, login attempts.
+        One active login record per user.
+        -->
         <createTable tableName="logins" schemaName="user_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"
                              primaryKeyName="pk_logins_id"/>
             </column>
+
+            <!-- FK reference to users.id — which user owns this login -->
+            <!-- indexed below for fast JOIN performance -->
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- login username — separate from email, e.g. "john_doe" -->
+            <!-- UNIQUE — no two users can share the same username -->
             <column name="user_name" type="VARCHAR(60)">
                 <constraints nullable="false" unique="true"
                              uniqueConstraintName="uk_logins_user_name"/>
             </column>
+
+            <!-- BCrypt hashed password — never store plain text -->
+            <!-- VARCHAR(255) → BCrypt output is always 60 chars, 255 is safe -->
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- optional cryptographic salt — used with custom hashing -->
+            <!-- not needed if using BCrypt (BCrypt has built-in salt) -->
             <column name="salt" type="VARCHAR(255)"/>
+
+            <!-- true → user must reset password on next login -->
+            <!-- set by admin when creating accounts or after breach -->
             <column name="is_pwd_reset" type="BOOLEAN"
                     defaultValueBoolean="false"/>
+
+            <!-- true → requires TOTP/SMS code in addition to password -->
             <column name="two_factor_enabled" type="BOOLEAN"
                     defaultValueBoolean="false"/>
+
+            <!-- null = not locked | timestamp = locked until this time -->
+            <!-- set after max failed login attempts exceeded -->
             <column name="locked_until" type="TIMESTAMP"/>
+
+            <!-- count of consecutive failed login attempts -->
+            <!-- reset to 0 on successful login -->
+            <!-- used with locked_until for brute force protection -->
             <column name="login_attempts" type="INT"
                     defaultValueNumeric="0"/>
+
+            <!-- timestamp of the most recent successful login -->
             <column name="last_login_at" type="TIMESTAMP"/>
+
+            <!-- timestamp when current session started -->
             <column name="login_time" type="TIMESTAMP"/>
+
+            <!-- when the current access token expires -->
             <column name="expire_at" type="TIMESTAMP"/>
+
+            <!-- current active JWT access token (short-lived, ~24h) -->
+            <!-- TEXT → JWT tokens can be 500-1000+ chars -->
             <column name="access_token" type="TEXT"/>
+
+            <!-- current JWT refresh token (long-lived, ~7 days) -->
+            <!-- used to get new access token without re-login -->
             <column name="refresh_token" type="TEXT"/>
+
+            <!-- device type/name — e.g. "Chrome/Windows", "iPhone 15" -->
             <column name="device" type="VARCHAR(150)"/>
+
+            <!-- IP address of last login — IPv6 max = 45 chars -->
+            <!-- VARCHAR(80) gives comfortable room -->
             <column name="ip_address" type="VARCHAR(80)"/>
+
+            <!-- geographic location resolved from IP — e.g. "Dhaka, BD" -->
             <column name="location" type="TEXT"/>
+
+            <!-- AUDIT FIELDS -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -106,8 +282,15 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── FOREIGN KEY: logins → users ───────────────────────────────────
+        onDelete="CASCADE" → when user is deleted, login record is deleted
+        onUpdate="CASCADE" → when users.id changes, logins.user_id updates
+        Named constraint → easier to find in pg_constraints for debugging
+        -->
         <addForeignKeyConstraint
                 constraintName="fk_logins_user"
                 baseTableSchemaName="user_service"
@@ -119,20 +302,36 @@
                 onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
+        <!--
+        ── INDEX: logins.user_id ─────────────────────────────────────────
+        Speeds up: SELECT * FROM logins WHERE user_id = ?
+        Without index → full table scan on every auth check
+        With index    → direct lookup in O(log n) time
+        -->
         <createIndex tableName="logins"
                      indexName="idx_logins_user_id"
                      schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
+        <!-- rollback — drop logins table and its data -->
         <rollback>
             <dropTable tableName="logins" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= LOGIN LOGS ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0003 — LOGIN LOGS TABLE                              ║
+    ║  Audit trail of every login attempt (success + failure)         ║
+    ║  Immutable — rows are never updated, only inserted              ║
+    ║  FK → users.id (CASCADE delete)                                 ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="users-table-0003" author="mdpolashossein">
 
+        <!-- skip if login_logs table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="login_logs"
@@ -140,27 +339,61 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: login_logs ──────────────────────────────────────
+        Immutable audit log of all login attempts.
+        One row per attempt — never updated, only inserted.
+        Used for security monitoring, fraud detection, compliance.
+        -->
         <createTable tableName="login_logs" schemaName="user_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"
                              primaryKeyName="pk_login_logs_id"/>
             </column>
+
+            <!-- which user attempted login — FK to users.id -->
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- JWT access token issued on successful login -->
+            <!-- null on failed attempts -->
             <column name="access_token" type="TEXT"/>
+
+            <!-- JWT refresh token issued on successful login -->
+            <!-- null on failed attempts -->
             <column name="refresh_token" type="TEXT"/>
+
+            <!-- device info at time of attempt -->
+            <!-- e.g. "Mozilla/5.0 Chrome/120" -->
             <column name="device" type="VARCHAR(150)"/>
+
+            <!-- IP address of the login attempt -->
             <column name="ip_address" type="VARCHAR(80)"/>
+
+            <!-- resolved location from IP at time of attempt -->
             <column name="location" type="TEXT"/>
+
+            <!-- null on success | reason on failure -->
+            <!-- e.g. "INVALID_PASSWORD", "ACCOUNT_LOCKED", "OTP_EXPIRED" -->
             <column name="fail_reason" type="TEXT"/>
+
+            <!-- AUDIT FIELDS — no updated_at (immutable log) -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
         </createTable>
 
+        <!--
+        ── FOREIGN KEY: login_logs → users ───────────────────────────────
+        CASCADE delete → login history removed when user is deleted
+        Useful for GDPR compliance — user deletion removes all their data
+        -->
         <addForeignKeyConstraint
                 constraintName="fk_login_logs_user"
                 baseTableSchemaName="user_service"
@@ -172,21 +405,36 @@
                 onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
+        <!--
+        ── INDEX: login_logs.user_id ─────────────────────────────────────
+        Speeds up: SELECT * FROM login_logs WHERE user_id = ?
+        Critical for login history queries — this table grows very fast
+        -->
         <createIndex tableName="login_logs"
                      indexName="idx_login_logs_user_id"
                      schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
+        <!-- rollback — drop login_logs table and its data -->
         <rollback>
             <dropTable tableName="login_logs"
                        schemaName="user_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= PASSWORD RESET TOKENS ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0004 — PASSWORD RESET TOKENS TABLE                   ║
+    ║  Stores one-time tokens for password reset flow                 ║
+    ║  Token sent via email → user clicks link → password updated     ║
+    ║  FK → users.id (CASCADE delete)                                 ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="users-table-0004" author="mdpolashossein">
 
+        <!-- skip if password_reset_tokens table already exists -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="password_reset_tokens"
@@ -194,25 +442,52 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: password_reset_tokens ───────────────────────────
+        Each row = one password reset request.
+        Token is emailed to user. User clicks link → token validated.
+        Token is single-use (is_used) and time-limited (expire_at).
+
+        Flow:
+          user requests reset → insert row (is_used=false)
+          user clicks email   → validate token + expire_at
+          password changed    → update is_used=true
+        -->
         <createTable tableName="password_reset_tokens"
                      schemaName="user_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"
                              primaryKeyName="pk_pwd_reset_id"/>
             </column>
+
+            <!-- which user requested the reset -->
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- the actual reset token — UUID or signed JWT -->
+            <!-- TEXT → no length limit (signed tokens can be long) -->
             <column name="token" type="TEXT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- when this token stops being valid -->
+            <!-- typically: created_at + 15 minutes or + 1 hour -->
             <column name="expire_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- false = token not yet used (valid for reset) -->
+            <!-- true  = token already used (cannot reset again with same token) -->
+            <!-- prevents token replay attacks -->
             <column name="is_used" type="BOOLEAN"
                     defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- AUDIT FIELDS -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -220,8 +495,13 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── FOREIGN KEY: password_reset_tokens → users ────────────────────
+        CASCADE delete → reset tokens removed when user account is deleted
+        -->
         <addForeignKeyConstraint
                 constraintName="fk_pwd_reset_user"
                 baseTableSchemaName="user_service"
@@ -233,21 +513,36 @@
                 onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
+        <!--
+        ── INDEX: password_reset_tokens.user_id ─────────────────────────
+        Speeds up: SELECT * FROM password_reset_tokens
+                   WHERE user_id = ? AND is_used = false AND expire_at > NOW()
+        -->
         <createIndex tableName="password_reset_tokens"
                      indexName="idx_pwd_reset_user_id"
                      schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
+        <!-- rollback — drop password_reset_tokens table and its data -->
         <rollback>
             <dropTable tableName="password_reset_tokens"
                        schemaName="user_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= USER OTP ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0005 — USER OTP TABLE                                ║
+    ║  One-time passwords for 2FA, login verification, phone verify   ║
+    ║  Each OTP has a channel (SMS/EMAIL) and expiry time             ║
+    ║  FK → users.id (CASCADE delete)                                 ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="users-table-0005" author="mdpolashossein">
 
+        <!-- skip if user_otp table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="user_otp"
@@ -255,34 +550,70 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: user_otp ────────────────────────────────────────
+        Stores generated OTP codes for 2FA and verification flows.
+        Each row = one OTP generation event.
+        OTP is single-use (is_used) and time-limited (expire_at).
+
+        Flow:
+          login with 2FA enabled → generate OTP → insert row
+          user enters OTP        → validate code + expire_at + is_used
+          OTP correct            → update is_used=true → allow access
+        -->
         <createTable tableName="user_otp" schemaName="user_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"
                              primaryKeyName="pk_user_otp_id"/>
             </column>
+
+            <!-- which user this OTP belongs to -->
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- the actual OTP code — typically 6 digits -->
+            <!-- VARCHAR(10) → supports longer codes if needed -->
             <column name="otp_code" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- delivery channel — how was OTP sent to user -->
+            <!-- values: SMS | EMAIL | AUTHENTICATOR_APP -->
+            <!-- VARCHAR(20) → enough for all channel type names -->
             <column name="channel" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- when this OTP stops being valid -->
+            <!-- typically: created_at + 5 minutes -->
             <column name="expire_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- false = OTP not yet consumed (still valid) -->
+            <!-- true  = OTP already used (cannot reuse same code) -->
+            <!-- prevents OTP replay attacks -->
             <column name="is_used" type="BOOLEAN"
                     defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- AUDIT FIELDS — no updated_at (OTP is mostly immutable) -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
         </createTable>
 
+        <!--
+        ── FOREIGN KEY: user_otp → users ─────────────────────────────────
+        CASCADE delete → all OTPs removed when user is deleted
+        -->
         <addForeignKeyConstraint
                 constraintName="fk_user_otp_user"
                 baseTableSchemaName="user_service"
@@ -294,20 +625,36 @@
                 onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
+        <!--
+        ── INDEX: user_otp.user_id ───────────────────────────────────────
+        Speeds up: SELECT * FROM user_otp
+                   WHERE user_id = ? AND is_used = false AND expire_at > NOW()
+        Critical — called on every 2FA verification
+        -->
         <createIndex tableName="user_otp"
                      indexName="idx_user_otp_user_id"
                      schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
+        <!-- rollback — drop user_otp table and its data -->
         <rollback>
             <dropTable tableName="user_otp" schemaName="user_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= TRUSTED DEVICES ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0006 — TRUSTED DEVICES TABLE                         ║
+    ║  Stores devices the user has marked as trusted                  ║
+    ║  Trusted device = skip 2FA on next login from same device       ║
+    ║  FK → users.id (CASCADE delete)                                 ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="users-table-0006" author="mdpolashossein">
 
+        <!-- skip if trusted_devices table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="trusted_devices"
@@ -315,20 +662,47 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: trusted_devices ────────────────────────────────
+        Tracks devices the user has explicitly trusted.
+        When a trusted device logs in → skip 2FA prompt.
+        Identified by device_fingerprint (browser/device unique hash).
+
+        Flow:
+          2FA passed → ask "Trust this device?" → yes → insert row
+          next login → check fingerprint → found → skip 2FA
+                                         → not found → require 2FA
+        -->
         <createTable tableName="trusted_devices"
                      schemaName="user_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"
                              primaryKeyName="pk_trusted_devices_id"/>
             </column>
+
+            <!-- which user owns this trusted device -->
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- unique hash identifying this device/browser combination -->
+            <!-- generated from: userAgent + screen resolution + timezone + fonts -->
+            <!-- e.g. SHA256 hash of browser fingerprint data -->
             <column name="device_fingerprint" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- human-readable device name for user's device list UI -->
+            <!-- e.g. "Chrome on Windows", "Safari on iPhone 15" -->
             <column name="device_name" type="VARCHAR(150)"/>
+
+            <!-- IP address when device was trusted -->
+            <!-- useful for security audit — was it trusted from home IP? -->
             <column name="ip_address" type="VARCHAR(80)"/>
+
+            <!-- AUDIT FIELDS -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -336,8 +710,14 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── FOREIGN KEY: trusted_devices → users ──────────────────────────
+        CASCADE delete → all trusted devices removed when user is deleted
+        GDPR compliant — deleting user removes all their device records
+        -->
         <addForeignKeyConstraint
                 constraintName="fk_trusted_devices_user"
                 baseTableSchemaName="user_service"
@@ -349,12 +729,29 @@
                 onDelete="CASCADE"
                 onUpdate="CASCADE"/>
 
+        <!--
+        ── INDEX: trusted_devices.user_id ───────────────────────────────
+        Speeds up: SELECT * FROM trusted_devices WHERE user_id = ?
+        Called on every login to check if device is already trusted
+        -->
         <createIndex tableName="trusted_devices"
                      indexName="idx_trusted_devices_user_id"
                      schemaName="user_service">
             <column name="user_id"/>
         </createIndex>
 
+        <!--
+        ── UNIQUE INDEX: user_id + device_fingerprint ────────────────────
+        Composite unique constraint — one user cannot trust the same
+        device fingerprint twice (prevents duplicate trust entries).
+
+        unique="true" → enforced at DB level, not just app level
+        Covers both columns together → same fingerprint allowed for
+        different users (only one per user per fingerprint)
+
+        Speeds up: SELECT * FROM trusted_devices
+                   WHERE user_id = ? AND device_fingerprint = ?
+        -->
         <createIndex tableName="trusted_devices"
                      indexName="uk_trusted_devices_user_fingerprint"
                      schemaName="user_service"
@@ -363,6 +760,7 @@
             <column name="device_fingerprint"/>
         </createIndex>
 
+        <!-- rollback — drop trusted_devices table and its data -->
         <rollback>
             <dropTable tableName="trusted_devices"
                        schemaName="user_service"/>

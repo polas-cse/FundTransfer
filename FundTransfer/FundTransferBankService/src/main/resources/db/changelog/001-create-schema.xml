@@ -1,46 +1,205 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║         LIQUIBASE CHANGELOG — BANK SERVICE SCHEMA SETUP              ║
+║                                                                      ║
+║  Purpose : Create banking_service schema in fund-transfer database   ║
+║  Schema  : banking_service                                           ║
+║  User    : fund-transfer                                             ║
+║  Safe    : YES — preConditions prevent duplicate execution           ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
+                        gives autocomplete + red underlines for typos
+    -->
 
+    <!--
+    ════════════════════════════════════════════════════════════════════
+    CHANGESET — 001
+    Runs only ONCE — tracked in databasechangelog table
+    Safe to restart app — preCondition skips if schema already exists
+
+    id         → unique identifier — NEVER change after first run
+                 Liquibase uses id + author + filename as a unique key
+                 changing id = Liquibase thinks it's a brand new changeset
+
+    author     → who wrote this changeset — stored in databasechangelog
+                 does not affect execution — used for auditing only
+
+    runAlways  → false = run only once (skip if already in databasechangelog)
+                 true  = run every app startup (used for procedures/views)
+
+    failOnError→ false = if this changeset errors, continue migration
+                 true  = stop entire migration on any error
+    ════════════════════════════════════════════════════════════════════
+    -->
     <changeSet id="001-create-banking-service-schema"
                author="fund-transfer-bank-service"
                runAlways="false"
                failOnError="false">
 
+        <!--
+        ── PRECONDITION ─────────────────────────────────────────────────
+        Runs a CHECK before executing the changeset body.
+        If the check FAILS → onFail action is triggered instead.
+
+        onFail options:
+        ┌─────────────┬────────────────────────────────────────────────┐
+        │ MARK_RAN    │ skip silently — record as ran in changelog     │
+        │ HALT        │ stop entire migration with error               │
+        │ WARN        │ log a warning but continue migration           │
+        │ CONTINUE    │ skip this changeset, keep going silently       │
+        └─────────────┴────────────────────────────────────────────────┘
+
+        onFail="MARK_RAN" chosen here because:
+        → schema may already exist from a previous run
+        → we don't want the app to crash on restart
+        → just skip silently and continue to next changeset
+        ─────────────────────────────────────────────────────────────────
+        -->
         <preConditions onFail="MARK_RAN">
+
+            <!--
+            Queries PostgreSQL system catalog of all schemas.
+            information_schema.schemata → built-in view listing every schema.
+
+            expectedResult="0" → condition PASSES when COUNT = 0
+                                  meaning schema does NOT exist yet
+                                  → safe to create → execute changeset body
+
+            if COUNT = 1       → schema already exists
+                                  → preCondition FAILS
+                                  → onFail="MARK_RAN" → skip changeset
+
+            Flow:
+              COUNT = 0 (schema missing)  → run SQL below
+              COUNT = 1 (schema exists)   → MARK_RAN → skip
+            -->
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM information_schema.schemata
                 WHERE schema_name = 'banking_service'
             </sqlCheck>
+
         </preConditions>
 
+        <!--
+        ── STEP 1: CREATE SCHEMA ─────────────────────────────────────────
+        Creates the banking_service schema inside fund-transfer database.
+        IF NOT EXISTS is a second safety net on top of preCondition.
+        All bank/transaction/account tables will live inside this schema.
+
+        Before:  fund-transfer DB → [ public ] [ user_service ]
+        After:   fund-transfer DB → [ public ] [ user_service ] [ banking_service ] ← new
+        -->
         <sql>CREATE SCHEMA IF NOT EXISTS banking_service;</sql>
 
+        <!--
+        ── STEP 2: GRANT SCHEMA ACCESS ───────────────────────────────────
+        Gives fund-transfer user permission to USE the schema.
+        Without this → app user cannot see or create objects inside it.
+
+        GRANT ALL PRIVILEGES ON SCHEMA → allows:
+          USAGE  → can reference and access objects inside the schema
+          CREATE → can create new tables, indexes, sequences inside schema
+        -->
         <sql>
             GRANT ALL PRIVILEGES ON SCHEMA banking_service
             TO "fund-transfer";
         </sql>
 
+        <!--
+        ── STEP 3: GRANT FUTURE TABLE PERMISSIONS ────────────────────────
+        ALTER DEFAULT PRIVILEGES → applies to ALL FUTURE tables created
+        inside banking_service schema automatically.
+
+        Without this → every new table Liquibase creates would need
+        a manual GRANT or the app user can't SELECT/INSERT/UPDATE/DELETE.
+
+        Covers: SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES
+        Applied to: banks, bank_accounts, transactions, transaction_logs
+                    and any future tables added to banking_service
+        -->
         <sql>
             ALTER DEFAULT PRIVILEGES IN SCHEMA banking_service
             GRANT ALL PRIVILEGES ON TABLES
             TO "fund-transfer";
         </sql>
 
+        <!--
+        ── STEP 4: GRANT FUTURE SEQUENCE PERMISSIONS ─────────────────────
+        Same as above but for SEQUENCES — the auto-increment counters
+        behind SERIAL, BIGSERIAL, GENERATED ALWAYS AS IDENTITY columns.
+
+        Without this → INSERT with auto-generated IDs will FAIL:
+          ERROR: permission denied for sequence banks_id_seq
+          ERROR: permission denied for sequence bank_accounts_id_seq
+
+        Example:
+          bank_accounts table → id BIGSERIAL
+                                    │
+                                    └── backed by: bank_accounts_id_seq
+                                        fund-transfer needs USAGE + SELECT
+                                        to generate the next account ID
+        -->
         <sql>
             ALTER DEFAULT PRIVILEGES IN SCHEMA banking_service
             GRANT ALL PRIVILEGES ON SEQUENCES
             TO "fund-transfer";
         </sql>
 
+        <!--
+        ── STEP 5: SET DEFAULT SEARCH PATH ──────────────────────────────
+        Sets which schemas PostgreSQL searches when no schema prefix
+        is given in a query.
+
+        Without this → must write: SELECT * FROM banking_service.banks
+        With this    → can write:  SELECT * FROM banks
+
+        Search order: banking_service → public
+          query: SELECT * FROM bank_accounts
+            ├── look in banking_service.bank_accounts → found → use it
+            └── look in public.bank_accounts          → only if not found above
+
+        Applies to the fund-transfer role permanently.
+
+        ⚠️  NOTE: this overrides the search_path set by user_service
+            Each service sets its own schema as the primary search path
+            Gateway and other services should use fully qualified names
+        -->
         <sql>
             ALTER ROLE "fund-transfer"
             SET search_path TO banking_service, public;
         </sql>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Executed when running: mvn liquibase:rollback
+        Drops the schema AND everything inside it (CASCADE).
+
+        CASCADE → drops all tables, sequences, indexes inside the schema:
+          - banks
+          - bank_accounts
+          - transactions
+          - bank_daily_summary
+          - transaction_logs
+          and all their indexes, sequences, constraints
+
+        IF EXISTS → no error if schema was already dropped manually
+
+        ⚠️  WARNING — this deletes ALL banking and transaction data
+            ONLY use rollback in local development
+            NEVER run rollback in production — irreversible data loss
+        -->
         <rollback>
             DROP SCHEMA IF EXISTS banking_service CASCADE;
         </rollback>

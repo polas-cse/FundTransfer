@@ -1,25 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║         LIQUIBASE CHANGELOG — USER SERVICE SEED DATA                 ║
+║                                                                      ║
+║  Purpose : Insert initial/default users and login credentials        ║
+║  Schema  : user_service                                              ║
+║  Author  : mdpolashossein                                            ║
+║                                                                      ║
+║  Changesets:                                                         ║
+║  0001 → insert 2 users + 2 login records (admin + polas)             ║
+║  0002 → reset sequences to MAX(id) after manual ID inserts           ║
+║                                                                      ║
+║    WARNING — passwords are plain text here                           ║
+║       MUST be BCrypt hashed before production use                    ║
+║    WARNING — upgrade XSD from 3.8 → 4.20 (outdated below)            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
        http://www.liquibase.org/xml/ns/dbchangelog
-       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ upgraded to 4.20 XSD (was 3.8 — outdated)
+                        gives autocomplete + red underlines for typos
+    -->
 
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0001 — SEED USERS + LOGINS                            ║
+    ║                                                                  ║
+    ║  Inserts 2 default users:                                        ║
+    ║    id=1 → System Admin  (username: admin)                        ║
+    ║    id=2 → Polas Hossain (username: polas)                        ║
+    ║                                                                  ║
+    ║  Insert order matters due to FK constraint:                      ║
+    ║    1. users must exist BEFORE logins (FK logins.user_id → users) ║
+    ║                                                                  ║
+    ║  No preCondition here — if data already exists, DB will throw    ║
+    ║  a duplicate key error. Add preCondition if re-runs are needed.  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+    id         → unique key — NEVER change after first run
+    author     → who created this changeset — for auditing only
+    runAlways  → not set = defaults to false — runs only once
+    failOnError→ not set = defaults to true — stops on any error
+    -->
     <changeSet id="users-insert-0001" author="mdpolashossein">
+
+        <!--
+        ══════════════════════════════════════════════════════════════
+        INSERT 1 — System Admin User
+        The main administrator account.
+        id=1 is hardcoded — sequence reset in changeset 0002 below.
+        ══════════════════════════════════════════════════════════════
+        -->
         <insert tableName="users" schemaName="user_service">
+
+            <!-- hardcoded ID — sequence will be reset in changeset 0002 -->
+            <!--  always reset sequence after manual ID inserts -->
             <column name="id" valueNumeric="1"/>
+
+            <!-- admin's display name -->
             <column name="first_name" value="System"/>
             <column name="last_name" value="Admin"/>
+
+            <!-- contact number — BD format -->
             <column name="phone" value="01710000001"/>
+
+            <!-- email — used for notifications and password reset -->
             <column name="email" value="admin@gmail.com"/>
+
+            <!-- optional profile fields -->
             <column name="gender" value="Male"/>
             <column name="date_of_birth" value="1999-03-05"/>
+
+            <!-- starting wallet balance — 10,000.00 -->
             <column name="balance" value="10000.00"/>
+
+            <!-- active=true → account is enabled and can login -->
             <column name="active" valueBoolean="true"/>
+
+            <!-- valueDate="CURRENT_TIMESTAMP" → set by DB at insert time -->
+            <!-- more reliable than application timestamp -->
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+
         </insert>
 
+        <!--
+        ══════════════════════════════════════════════════════════════
+        INSERT 2 — Polas Hossain (Regular User)
+        A standard user account for testing and development.
+        ══════════════════════════════════════════════════════════════
+        -->
         <insert tableName="users" schemaName="user_service">
+
             <column name="id" valueNumeric="2"/>
             <column name="first_name" value="Polas"/>
             <column name="last_name" value="Hossain"/>
@@ -30,66 +110,183 @@
             <column name="balance" value="10000.00"/>
             <column name="active" valueBoolean="true"/>
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+
         </insert>
 
+        <!--
+        ══════════════════════════════════════════════════════════════
+        INSERT 3 — Login record for System Admin
+        Must come AFTER users inserts — FK logins.user_id → users.id
+        user_id=1 references the admin user inserted above.
+
+          SECURITY WARNING:
+            password="123456" is PLAIN TEXT — never do this in production
+            All passwords must be BCrypt hashed before insertion:
+            BCrypt("123456") = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+        ══════════════════════════════════════════════════════════════
+        -->
         <insert tableName="logins" schemaName="user_service">
+
+            <!-- hardcoded ID — sequence reset in changeset 0002 -->
             <column name="id" valueNumeric="1"/>
+
+            <!-- FK → users.id=1 (System Admin) -->
             <column name="user_id" valueNumeric="1"/>
+
+            <!-- login username — used with password to authenticate -->
+            <!-- separate from email — user can login with either -->
             <column name="user_name" value="admin"/>
+
+            <!--  PLAIN TEXT — replace with BCrypt hash in production -->
+            <!-- BCrypt hash example: $2a$10$... -->
             <column name="password" value="123456"/>
+
+            <!-- false → user does NOT need to reset password on next login -->
+            <!-- true  → forced password change on next login (e.g. first login) -->
             <column name="is_pwd_reset" valueBoolean="false"/>
+
+            <!-- false → 2FA is disabled for this account -->
+            <!-- true  → requires OTP on every login -->
             <column name="two_factor_enabled" valueBoolean="false"/>
+
+            <!-- 0 → no failed attempts recorded -->
+            <!-- increments on each wrong password attempt -->
+            <!-- account locks when this exceeds max threshold -->
             <column name="login_attempts" valueNumeric="0"/>
+
+            <!-- seed values — set to CURRENT_TIMESTAMP for initial data -->
             <column name="last_login_at" valueDate="CURRENT_TIMESTAMP"/>
-            <column name="login_time" valueDate="CURRENT_TIMESTAMP"/>
-            <column name="access_token" value=""/>
+            <column name="login_time"    valueDate="CURRENT_TIMESTAMP"/>
+
+            <!-- empty string → no active token yet (not logged in) -->
+            <column name="access_token"  value=""/>
             <column name="refresh_token" value=""/>
-            <column name="device" value="Initial"/>
+
+            <!-- device/IP/location — placeholder values for seed data -->
+            <!-- these will be overwritten on first real login -->
+            <column name="device"     value="Initial"/>
             <column name="ip_address" value="127.0.0.1"/>
-            <column name="location" value="Localhost"/>
+            <column name="location"   value="Localhost"/>
+
             <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+
         </insert>
 
+        <!--
+        ══════════════════════════════════════════════════════════════
+        INSERT 4 — Login record for Polas Hossain
+        user_id=2 references Polas Hossain user inserted above.
+        ══════════════════════════════════════════════════════════════
+        -->
         <insert tableName="logins" schemaName="user_service">
+
             <column name="id" valueNumeric="2"/>
+
+            <!-- FK → users.id=2 (Polas Hossain) -->
             <column name="user_id" valueNumeric="2"/>
+
             <column name="user_name" value="polas"/>
+
+            <!--  PLAIN TEXT — replace with BCrypt hash in production -->
             <column name="password" value="123456"/>
-            <column name="is_pwd_reset" valueBoolean="false"/>
+
+            <column name="is_pwd_reset"       valueBoolean="false"/>
             <column name="two_factor_enabled" valueBoolean="false"/>
-            <column name="login_attempts" valueNumeric="0"/>
-            <column name="last_login_at" valueDate="CURRENT_TIMESTAMP"/>
-            <column name="login_time" valueDate="CURRENT_TIMESTAMP"/>
-            <column name="access_token" value=""/>
-            <column name="refresh_token" value=""/>
-            <column name="device" value="Initial"/>
-            <column name="ip_address" value="127.0.0.1"/>
-            <column name="location" value="Localhost"/>
-            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="login_attempts"     valueNumeric="0"/>
+            <column name="last_login_at"      valueDate="CURRENT_TIMESTAMP"/>
+            <column name="login_time"         valueDate="CURRENT_TIMESTAMP"/>
+            <column name="access_token"       value=""/>
+            <column name="refresh_token"      value=""/>
+            <column name="device"             value="Initial"/>
+            <column name="ip_address"         value="127.0.0.1"/>
+            <column name="location"           value="Localhost"/>
+            <column name="created_at"         valueDate="CURRENT_TIMESTAMP"/>
+
         </insert>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Executed on: mvn liquibase:rollback
+        Deletes seed data in REVERSE order — logins first, then users.
+        Order matters — cannot delete users while logins FK still exists.
+
+        Rollback order:
+          1. DELETE logins WHERE user_id IN (1,2)   ← FK child first
+          2. DELETE users  WHERE id     IN (1,2)    ← parent second
+        -->
         <rollback>
+            <!-- delete logins FIRST — child table (has FK to users) -->
             <delete tableName="logins" schemaName="user_service">
                 <where>user_id IN (1,2)</where>
             </delete>
+            <!-- delete users SECOND — parent table -->
             <delete tableName="users" schemaName="user_service">
                 <where>id IN (1,2)</where>
             </delete>
         </rollback>
+
     </changeSet>
 
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0002 — RESET SEQUENCES AFTER MANUAL ID INSERTS        ║
+    ║                                                                  ║
+    ║  WHY THIS IS NEEDED:                                             ║
+    ║  When you manually set id=1, id=2 in INSERT statements,          ║
+    ║  PostgreSQL sequences (BIGSERIAL auto-increment) are NOT         ║
+    ║  updated automatically — they still start from 1.                ║
+    ║                                                                  ║
+    ║  Without this fix:                                               ║
+    ║    next INSERT without id → sequence gives id=1                  ║
+    ║    → DUPLICATE KEY ERROR (id=1 already exists)                   ║
+    ║                                                                  ║
+    ║  With this fix:                                                  ║
+    ║    sequence reset to MAX(id) → next INSERT gets id=3             ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+    dbms="postgresql" → this SQL only runs on PostgreSQL
+                        skipped on other databases (H2 in tests etc)
+    -->
     <changeSet id="users-insert-0002-reset-sequences" author="mdpolashossein">
+
         <sql dbms="postgresql">
+
+            <!--
+            RESET users sequence
+            setval(sequence_name, value) → sets sequence current value
+
+            COALESCE(SELECT MAX(id), 0):
+              → if table has rows  → use MAX(id) as new sequence value
+              → if table is empty  → use 0 (next call returns 1)
+
+            Result: next auto-generated users.id = MAX(id) + 1 = 3
+            -->
             SELECT setval(
                            'user_service.users_id_seq',
                            COALESCE((SELECT MAX(id) FROM user_service.users), 0)
                    );
+
+            <!--
+            RESET logins sequence
+            Same logic — next auto-generated logins.id = MAX(id) + 1 = 3
+
+            Sequence name pattern: {schema}.{table}_id_seq
+            PostgreSQL creates this automatically for BIGSERIAL columns
+            -->
             SELECT setval(
                            'user_service.logins_id_seq',
                            COALESCE((SELECT MAX(id) FROM user_service.logins), 0)
                    );
-        </sql>
-    </changeSet>
 
+        </sql>
+
+        <!--
+        No rollback needed here — sequences are not transactional.
+        Rolling back seed data (changeset 0001) will delete the rows,
+        and sequences will naturally be correct after re-insertion.
+        -->
+
+    </changeSet>
 
 </databaseChangeLog>

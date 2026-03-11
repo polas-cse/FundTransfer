@@ -1,37 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║         LIQUIBASE CHANGELOG — BANK SERVICE SEED DATA                 ║
+║                                                                      ║
+║  Purpose : Insert initial/default banks into the system              ║
+║  Schema  : banking_service                                           ║
+║  Author  : mdpolashossein                                            ║
+║                                                                      ║
+║  Changesets:                                                         ║
+║  0001 → insert 2 banks (Sonali Bank + Dutch Bangla Bank)             ║
+║  0002 → reset banks sequence to MAX(id) after manual ID inserts      ║
+║                                                                      ║
+║  Hardcoded IDs require sequence reset (changeset 0002)               ║
+║      Without reset → next INSERT gets id=1 → DUPLICATE KEY ERROR     ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
+                        gives autocomplete + red underlines for typos
+    -->
 
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0001 — SEED BANKS                                     ║
+    ║                                                                  ║
+    ║  Inserts 2 default banks:                                        ║
+    ║    id=1 → Sonali Bank Ltd       capital: 1,000,000,000.00 BDT    ║
+    ║    id=2 → Dutch Bangla Bank Ltd capital: 1,500,000,000.00 BDT    ║
+    ║                                                                  ║
+    ║  created_by=1 → references System Admin user (users.id=1)        ║
+    ║  active and is_deleted use table defaults (true/false)           ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+    id         → unique key — NEVER change after first run
+                 Liquibase stores id + author + filename in databasechangelog
+    author     → who created this changeset — for auditing only
+    runAlways  → not set = defaults to false — runs only once
+    failOnError→ not set = defaults to true — stops on any error
+    -->
     <changeSet id="banks-insert-0001" author="mdpolashossein">
 
+        <!--
+        ══════════════════════════════════════════════════════════════
+        INSERT 1 — Sonali Bank Ltd
+        Bangladesh's largest state-owned commercial bank.
+        Capital: 1 Billion BDT (1,000,000,000.00)
+
+        id=1 is hardcoded — sequence must be reset in changeset 0002
+            Without reset → next auto-INSERT gets id=1 → DUPLICATE KEY
+        ══════════════════════════════════════════════════════════════
+        -->
         <insert tableName="banks" schemaName="banking_service">
+
+            <!-- hardcoded primary key — sequence reset in changeset 0002 -->
             <column name="id" valueNumeric="1"/>
+
+            <!-- full registered name of the bank -->
             <column name="bank_name" value="Sonali Bank Ltd"/>
+
+            <!-- short unique bank code — used internally for routing -->
+            <!-- UNIQUE constraint on this column — no duplicates allowed -->
             <column name="bank_code" value="SONALI"/>
+
+            <!-- SWIFT/BIC code — used for international wire transfers -->
+            <!-- format: 4 bank code + 2 country + 2 location + optional 3 branch -->
+            <!-- BSONBDDH = BSON(Sonali) + BD(Bangladesh) + DH(Dhaka) -->
             <column name="swift_code" value="BSONBDDH"/>
+
+            <!-- country of registration -->
             <column name="country" value="Bangladesh"/>
+
+            <!-- total capital/assets — 1 Billion BDT -->
+            <!-- valueNumeric → stored as DECIMAL(18,2) = 1000000000.00 -->
             <column name="capital_amount" valueNumeric="1000000000.00"/>
+
+            <!-- starts at zero — increases as transactions generate revenue -->
             <column name="total_profit" valueNumeric="0.00"/>
+
+            <!-- starts at zero — increases as operational costs are recorded -->
             <column name="total_expense" valueNumeric="0.00"/>
+
+            <!-- who created this bank record — references users.id=1 (System Admin) -->
+            <!-- cross-service reference — no DB-level FK (different schema/service) -->
             <column name="created_by" value="1"/>
+
+            <!--
+            NOT SET — using table column defaults:
+              active     → defaultValueBoolean="true"  (bank is operational)
+              is_deleted → defaultValueBoolean="false" (not deleted)
+              created_at → defaultValueComputed="CURRENT_TIMESTAMP"
+            -->
+
         </insert>
 
+        <!--
+        ══════════════════════════════════════════════════════════════
+        INSERT 2 — Dutch Bangla Bank Ltd
+        One of Bangladesh's leading private commercial banks.
+        Capital: 1.5 Billion BDT (1,500,000,000.00)
+        ══════════════════════════════════════════════════════════════
+        -->
         <insert tableName="banks" schemaName="banking_service">
+
+            <!-- hardcoded primary key — sequence reset in changeset 0002 -->
             <column name="id" valueNumeric="2"/>
+
             <column name="bank_name" value="Dutch Bangla Bank Ltd"/>
+
+            <!-- DBBL — well-known short code for Dutch Bangla Bank -->
             <column name="bank_code" value="DBBL"/>
+
+            <!-- DBBLBDDH = DBBL(Dutch Bangla) + BD(Bangladesh) + DH(Dhaka) -->
             <column name="swift_code" value="DBBLBDDH"/>
+
             <column name="country" value="Bangladesh"/>
+
+            <!-- 1.5 Billion BDT starting capital -->
             <column name="capital_amount" valueNumeric="1500000000.00"/>
-            <column name="total_profit" valueNumeric="0.00"/>
+
+            <column name="total_profit"  valueNumeric="0.00"/>
             <column name="total_expense" valueNumeric="0.00"/>
+
+            <!-- System Admin (users.id=1) registered this bank -->
             <column name="created_by" value="1"/>
+
         </insert>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Executed on: mvn liquibase:rollback
+        Deletes both seeded banks by their hardcoded IDs.
+
+        WARNING — if bank_accounts exist with bank_id IN (1,2)
+            rollback will FAIL due to FK constraint:
+              fk_bank_accounts_bank → bank_accounts.bank_id → banks.id
+            Delete bank_accounts first, then rollback this changeset.
+        -->
         <rollback>
             <delete tableName="banks" schemaName="banking_service">
                 <where>id IN (1,2)</where>
@@ -40,11 +154,57 @@
 
     </changeSet>
 
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0002 — RESET BANKS SEQUENCE                           ║
+    ║                                                                  ║
+    ║  WHY THIS IS NEEDED:                                             ║
+    ║  When you manually set id=1, id=2 in INSERT statements,          ║
+    ║  PostgreSQL sequences (BIGSERIAL auto-increment) are NOT         ║
+    ║  updated automatically — they still start from 1.                ║
+    ║                                                                  ║
+    ║  Without this fix:                                               ║
+    ║    next INSERT without id → sequence gives id=1                  ║
+    ║    → DUPLICATE KEY ERROR (id=1 already exists)                   ║
+    ║                                                                  ║
+    ║  With this fix:                                                  ║
+    ║    sequence reset to MAX(id)=2 → next INSERT gets id=3           ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+    dbms="postgresql" → this SQL only runs on PostgreSQL
+                        safely skipped on H2 (used in unit tests)
+    -->
     <changeSet id="banks-reset-seq-0002" author="mdpolashossein">
+
         <sql dbms="postgresql">
+            <!--
+            setval(sequence_name, value) → manually set sequence position
+
+            Sequence name pattern: {schema}.{table}_id_seq
+            PostgreSQL auto-creates this for every BIGSERIAL / autoIncrement column
+
+            MAX(id) → finds the highest existing ID in the table
+            Next auto-generated id = MAX(id) + 1 = 3
+
+            Difference from user-service version:
+              user-service used COALESCE(..., 0) to handle empty table case
+              here MAX(id) is used — safe because we just inserted rows above
+              add COALESCE for extra safety:
+                 COALESCE((SELECT MAX(id) FROM banking_service.banks), 0)
+            -->
             SELECT setval('banking_service.banks_id_seq',
                           (SELECT MAX(id) FROM banking_service.banks));
         </sql>
+
+        <!--
+        No rollback needed — sequences are not transactional in PostgreSQL.
+        Rolling back changeset 0001 (DELETE banks) makes the sequence
+        value irrelevant — next insert will just skip unused IDs.
+        PostgreSQL sequences are intentionally non-transactional for
+        performance reasons (gaps in IDs are normal and expected).
+        -->
+
     </changeSet>
 
 </databaseChangeLog>

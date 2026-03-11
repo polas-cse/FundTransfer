@@ -17,6 +17,4 @@ public interface AuthRepository extends R2dbcRepository<LoginEntity, Long> {
     @Query(" INSERT INTO login_logs(user_id, access_token) VALUES (:userId, :accessToken)")
     Mono<Integer> saveLoginLogs(Long userId, String accessToken);
 
-
-
 }

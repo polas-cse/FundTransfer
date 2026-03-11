@@ -1,14 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║          LIQUIBASE MASTER CHANGELOG — API GATEWAY                    ║
+║                                                                      ║
+║  Purpose : Entry point for all api-gateway database migrations       ║
+║  Schema  : gateway_service                                           ║
+║                                                                      ║
+║  Execution Order:                                                    ║
+║  000 → create-schema          → CREATE SCHEMA + GRANT permissions    ║
+║  001 → security-audit-log     → CREATE TABLE + 7 indexes             ║
+║                                                                      ║
+║    ORDER MATTERS — never reorder includes                            ║
+║       schema must exist before tables can be created                 ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
+                        gives autocomplete + red underlines for typos
+    -->
 
-    <!-- Step 1 — create schema first -->
+    <!--
+    ════════════════════════════════════════════════════════════════════
+    STEP 1 — SCHEMA SETUP
+    ════════════════════════════════════════════════════════════════════
+    Must run FIRST — all tables depend on this schema existing.
+
+    What it does:
+      → CREATE SCHEMA IF NOT EXISTS gateway_service
+      → GRANT ALL PRIVILEGES ON SCHEMA    to fund-transfer
+      → ALTER DEFAULT PRIVILEGES ON TABLES     to fund-transfer
+      → ALTER DEFAULT PRIVILEGES ON SEQUENCES  to fund-transfer
+      → SET search_path TO gateway_service, public
+
+    Safe: preCondition MARK_RAN → skips if schema already exists
+    ════════════════════════════════════════════════════════════════════
+    -->
     <include file="db/changelog/000-create-schema.xml"/>
 
-    <!-- Step 2 — create tables -->
+    <!--
+    ════════════════════════════════════════════════════════════════════
+    STEP 2 — TABLE DEFINITIONS
+    ════════════════════════════════════════════════════════════════════
+    Must run AFTER schema (step 1) — table lives inside the schema.
+
+    What it does:
+      → CREATE TABLE security_audit_log (30+ columns)
+      → CREATE INDEX idx_sal_ip            (ip_address)
+      → CREATE INDEX idx_sal_threat        (threat_type)
+      → CREATE INDEX idx_sal_severity      (severity)
+      → CREATE INDEX idx_sal_username      (username)
+      → CREATE INDEX idx_sal_detected_at   (detected_at)
+      → CREATE INDEX idx_sal_blocked       (blocked)
+      → CREATE INDEX idx_sal_ip_threat_time(ip + threat_type + detected_at)
+
+    Safe: preCondition MARK_RAN → skips if table already exists
+    ════════════════════════════════════════════════════════════════════
+    -->
     <include file="db/changelog/001-create-security-audit-log.xml"/>
 
 </databaseChangeLog>

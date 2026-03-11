@@ -3,36 +3,38 @@ package com.fund.transfer.bank.service.global.filter.input;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * ╔══════════════════════════════════════════════════════════════════════════╗
- * ║                         @SafeInput Annotation                           ║
+ * ║                         @SafeInput Annotation                            ║
  * ╠══════════════════════════════════════════════════════════════════════════╣
- * ║ A centralized, all-in-one field validator that combines:                ║
- * ║  • Standard Bean Validation (NotNull, Size, Min, Max, Email, etc.)      ║
- * ║  • Security protection (XSS, SQL Injection, Path Traversal, etc.)       ║
- * ║  • Format validation (email, URL, regex, alphanumeric, etc.)            ║
- * ║  • Numeric, decimal, and date constraints                               ║
+ * ║ A centralized, all-in-one field validator that combines:                 ║
+ * ║  • Standard Bean Validation (NotNull, Size, Min, Max, Email, etc.)       ║
+ * ║  • Security protection (XSS, SQL Injection, Path Traversal, etc.)        ║
+ * ║  • Format validation (email, URL, regex, alphanumeric, phone, etc.)      ║
+ * ║  • Numeric, decimal, and date constraints                                ║
+ * ║  • Unicode homograph, null byte, and word count protection               ║
  * ╠══════════════════════════════════════════════════════════════════════════╣
- * ║ USAGE EXAMPLE:                                                          ║
- * ║                                                                         ║
- * ║  @SafeInput(required = true, minLength = 3, maxLength = 50)             ║
- * ║  private String userName;                                               ║
- * ║                                                                         ║
- * ║  @SafeInput(required = true, emailFormat = true, maxLength = 100)       ║
- * ║  private String email;                                                  ║
- * ║                                                                         ║
- * ║  @SafeInput(minValue = 1, maxValue = 100)                               ║
- * ║  private String age;                                                    ║
+ * ║ USAGE EXAMPLES:                                                          ║
+ * ║                                                                          ║
+ * ║  @SafeInput(required = true, minLength = 3, maxLength = 50)              ║
+ * ║  private String userName;                                                ║
+ * ║                                                                          ║
+ * ║  @SafeInput(required = true, emailFormat = true, maxLength = 100)        ║
+ * ║  private String email;                                                   ║
+ * ║                                                                          ║
+ * ║  @SafeInput(minValue = 1, maxValue = 100)                                ║
+ * ║  private String age;                                                     ║
+ * ║                                                                          ║
+ * ║  @SafeInput(required = true, phoneFormat = true)                         ║
+ * ║  private String phone;                                                   ║
  * ╚══════════════════════════════════════════════════════════════════════════╝
  */
+@Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = SafeInputValidator.class)
+@Constraint(validatedBy = {SafeInputValidator.class, SafeInputNumberValidator.class})
 public @interface SafeInput {
 
     // ══════════════════════════════════════════════════════════════════════
@@ -84,7 +86,7 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @NotNull — field must not be null but CAN be empty string.
-     * WHY: Use when empty string is valid but null is not (e.g. optional text fields).
+     * WHY: Use when empty string is valid but null is not.
      * HOW:
      *   @SafeInput(notNull = true)
      *   private String middleName; //  "" is ok,  null fails
@@ -93,7 +95,7 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @NotEmpty — field must not be null or empty string "".
-     * WHY: Use when you want to reject empty strings but allow whitespace strings.
+     * WHY: Use when you want to reject empty strings but allow whitespace.
      * HOW:
      *   @SafeInput(notEmpty = true)
      *   private String code; //  "  " ok,  "" and null fail
@@ -108,7 +110,7 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @Size(min = N) — minimum number of characters required.
-     * WHY: Prevent too-short inputs like single-character names or weak passwords.
+     * WHY: Prevent too-short inputs like single-char names or weak passwords.
      * HOW:
      *   @SafeInput(required = true, minLength = 8)
      *   private String password; //  "abc" fails,  "password1" passes
@@ -120,14 +122,24 @@ public @interface SafeInput {
      * WHY: Prevent database overflow and buffer overrun attacks.
      * HOW:
      *   @SafeInput(maxLength = 50)
-     *   private String userName; //  51+ chars fail,  50 chars or less pass
+     *   private String userName; //  51+ chars fail,  50 or less pass
      */
     int maxLength() default 255;
+
+    /**
+     * Maximum number of words allowed in the value.
+     * WHY: Prevents 10,000-word "description" field DoS attacks.
+     * HOW:
+     *   @SafeInput(maxWords = 100)
+     *   private String description; //  101+ words fail
+     * DEFAULT: 0 = no word limit
+     */
+    int maxWords() default 0;
 
 
     // ══════════════════════════════════════════════════════════════════════
     // NUMERIC CONSTRAINTS
-    // Controls numeric validation for string fields that hold numeric values
+    // Controls numeric validation for string fields holding numeric values
     // ══════════════════════════════════════════════════════════════════════
 
     /**
@@ -141,7 +153,7 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @Min — minimum numeric value (for numeric string fields).
-     * WHY: Validate age ranges, quantities, or IDs must be above a threshold.
+     * WHY: Validate age ranges, quantities, or IDs above a threshold.
      * HOW:
      *   @SafeInput(minValue = 18, maxValue = 100)
      *   private String age; //  "17" fails,  "25" passes
@@ -195,19 +207,19 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @Digits(integer = N) — max digits before decimal point.
-     * WHY: Prevent invalid account numbers or amounts with too many digits.
+     * WHY: Prevent DB overflow on DECIMAL(18,2) columns.
      * HOW:
-     *   @SafeInput(integerDigits = 5, fractionDigits = 2)
-     *   private String amount; //  "123.45",  "1234567.89" fails
+     *   @SafeInput(integerDigits = 16, fractionDigits = 2)
+     *   private String amount; //  "12345678901234567.89" fails (17 int digits)
      */
     int integerDigits() default 0;
 
     /**
      * Equivalent to @Digits(fraction = N) — max digits after decimal point.
-     * WHY: Enforce currency precision (e.g. max 2 decimal places).
+     * WHY: Enforce currency precision (max 2 decimal places for BDT).
      * HOW:
-     *   @SafeInput(integerDigits = 10, fractionDigits = 2)
-     *   private String price; //  "99.99",  "99.999" fails
+     *   @SafeInput(integerDigits = 16, fractionDigits = 2)
+     *   private String price; //  "99.999" fails,  "99.99" passes
      */
     int fractionDigits() default 0;
 
@@ -231,10 +243,9 @@ public @interface SafeInput {
 
     /**
      * Whether decimalMin/decimalMax boundaries are inclusive.
-     * WHY: Control if the boundary value itself is valid or not.
      * HOW:
-     *   decimalInclusive = true  → value >= decimalMin (default)
-     *   decimalInclusive = false → value > decimalMin (strict)
+     *   decimalInclusive = true  → value >= decimalMin (default, includes boundary)
+     *   decimalInclusive = false → value >  decimalMin (strict, excludes boundary)
      */
     boolean decimalInclusive() default true;
 
@@ -263,11 +274,11 @@ public @interface SafeInput {
     String pattern() default "";
 
     /**
-     * Validates that the value is a valid URL (http/https/ftp).
+     * Validates that the value is a syntactically valid URL (http/https/ftp).
      * WHY: Validate image URLs, download links, or webhook endpoints.
      * HOW:
      *   @SafeInput(url = true, maxLength = 500)
-     *   private String imageUrl; //  "https://cdn.example.com/img.jpg"
+     *   private String imageUrl;
      */
     boolean url() default false;
 
@@ -298,6 +309,16 @@ public @interface SafeInput {
      */
     boolean noSpecialChars() default false;
 
+    /**
+     * Validates international phone number format (E.164 standard).
+     * WHY: Ensure phone numbers are valid before saving or sending SMS.
+     * HOW:
+     *   @SafeInput(phoneFormat = true)
+     *   private String phone;
+     *   Accepts: +8801712345678, 01712345678, +1-555-123-4567
+     */
+    boolean phoneFormat() default false;
+
 
     // ══════════════════════════════════════════════════════════════════════
     // DATE CONSTRAINTS
@@ -306,7 +327,6 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @Past — date must be before today.
-     * WHY: Validate date of birth or historical event dates.
      * HOW:
      *   @SafeInput(past = true, dateFormat = "yyyy-MM-dd")
      *   private String dateOfBirth; //  future date fails,  "1990-01-01" passes
@@ -315,16 +335,14 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @PastOrPresent — date must be today or earlier.
-     * WHY: Validate transaction dates or activation dates.
      * HOW:
      *   @SafeInput(pastOrPresent = true)
-     *   private String activationDate; //  tomorrow's date fails
+     *   private String activationDate;
      */
     boolean pastOrPresent() default false;
 
     /**
      * Equivalent to @Future — date must be after today.
-     * WHY: Validate expiry dates, scheduled events, or card expiration.
      * HOW:
      *   @SafeInput(future = true)
      *   private String expiryDate; //  past date fails,  "2030-01-01" passes
@@ -333,20 +351,18 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @FutureOrPresent — date must be today or later.
-     * WHY: Validate scheduled payment dates or booking dates.
      * HOW:
      *   @SafeInput(futureOrPresent = true)
-     *   private String scheduledDate; //  yesterday fails,  today or future passes
+     *   private String scheduledDate;
      */
     boolean futureOrPresent() default false;
 
     /**
      * Expected date format for parsing string date values.
-     * WHY: Tell the validator how to parse the date string before checking constraints.
+     * DEFAULT: "yyyy-MM-dd" if not specified.
      * HOW:
      *   @SafeInput(past = true, dateFormat = "dd/MM/yyyy")
-     *   private String dob; //  "25/12/1990",  "1990-12-25" fails (wrong format)
-     * DEFAULT: "yyyy-MM-dd" if not specified
+     *   private String dob; //  "25/12/1990",  "1990-12-25" fails
      */
     String dateFormat() default "";
 
@@ -358,7 +374,7 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @AssertTrue — value must equal "true" (case-insensitive).
-     * WHY: Validate that terms & conditions or consent checkboxes are accepted.
+     * WHY: Validate terms & conditions or consent checkboxes are accepted.
      * HOW:
      *   @SafeInput(assertTrue = true)
      *   private String termsAccepted; //  "false" fails,  "true" passes
@@ -367,7 +383,7 @@ public @interface SafeInput {
 
     /**
      * Equivalent to @AssertFalse — value must equal "false" (case-insensitive).
-     * WHY: Validate that a flag is explicitly set to false (e.g. accountLocked).
+     * WHY: Validate a flag is explicitly set to false.
      * HOW:
      *   @SafeInput(assertFalse = true)
      *   private String accountLocked; //  "true" fails,  "false" passes
@@ -382,44 +398,59 @@ public @interface SafeInput {
     // ══════════════════════════════════════════════════════════════════════
 
     /**
-     * Allow or block HTML tags and JavaScript in input (XSS protection).
-     * WHY: Prevent Cross-Site Scripting attacks via <script>, onerror=, etc.
+     * Allow or block HTML/JavaScript in input (XSS protection).
+     * WHY: Prevent Cross-Site Scripting attacks.
      * HOW:
-     *   @SafeInput(allowHtml = false)  // default — blocks <script>alert(1)</script>
+     *   @SafeInput(allowHtml = false)  // default — blocks all HTML/JS
      *   @SafeInput(allowHtml = true)   // only for rich text editor fields
-     *   private String bio;
      */
     boolean allowHtml() default false;
 
     /**
-     * Block SQL injection patterns (SELECT, DROP, UNION, --, etc.).
-     * WHY: Prevent database destruction or data extraction via input fields.
-     * HOW:
-     *   @SafeInput(noSqlInjection = true) // default — blocks "1' OR '1'='1"
-     *   private String search;
-     * DISABLE ONLY IF: field will never reach a database query directly.
+     * Block SQL injection patterns.
+     * WHY: Prevent database destruction or data extraction.
+     * Catches: SELECT/UNION/DROP keywords, comment sequences,
+     *          time-based attacks (SLEEP/WAITFOR), schema enumeration,
+     *          hex encoding, stacked queries.
      */
     boolean noSqlInjection() default true;
 
     /**
-     * Block path traversal patterns (../, ..\, %2e%2e%2f, etc.).
-     * WHY: Prevent attackers from accessing files outside intended directories.
-     * HOW:
-     *   @SafeInput(noPathTraversal = true) // default — blocks "../../etc/passwd"
-     *   private String filePath;
-     * DISABLE ONLY IF: field is guaranteed never used in file system operations.
+     * Block path traversal patterns.
+     * WHY: Prevent attackers accessing files outside intended directories.
+     * Catches: ../, ..\, URL-encoded variants, double-encoded,
+     *          unicode separators, overlong UTF-8.
      */
     boolean noPathTraversal() default true;
 
     /**
-     * Block command injection characters (;, |, &&, `, $, etc.).
+     * Block command injection characters.
      * WHY: Prevent OS command execution via input fields.
-     * HOW:
-     *   @SafeInput(noCommandInjection = true) // default — blocks "hello; rm -rf /"
-     *   private String input;
-     * DISABLE ONLY IF: field is a known-safe technical field like a regex pattern.
+     * Catches: ;, |, &&, `, $(), shell metacharacters.
      */
     boolean noCommandInjection() default true;
+
+    /**
+     * Block null bytes in input.
+     * WHY: Null bytes (\x00) can truncate strings in C-based libs,
+     *      bypass filters, or corrupt log files.
+     * Catches: \x00, %00, \u0000 in input.
+     * HOW:
+     *   @SafeInput(noNullBytes = true)  // default — blocks null bytes
+     *   private String input;
+     */
+    boolean noNullBytes() default true;
+
+    /**
+     * Block unicode homograph characters that visually look like ASCII.
+     * WHY: Attackers use Cyrillic/Greek lookalikes to bypass filters.
+     *   e.g. аdmin (Cyrillic а = \u0430) looks identical to admin
+     *   e.g. раypal.com ≠ paypal.com (Cyrillic р = \u0440)
+     * HOW:
+     *   @SafeInput(noUnicodeHomograph = true)  // default
+     *   private String userName;
+     */
+    boolean noUnicodeHomograph() default true;
 
 
     // ══════════════════════════════════════════════════════════════════════
@@ -428,18 +459,17 @@ public @interface SafeInput {
     // ══════════════════════════════════════════════════════════════════════
 
     /**
-     * Trim leading and trailing whitespace before running all validations.
-     * WHY: Prevent accidental failures due to copy-paste spaces around values.
+     * Trim leading and trailing whitespace before all validations.
+     * WHY: Prevent accidental failures from copy-paste spaces.
      * HOW:
-     *   @SafeInput(trimmed = true)  // default — "  John  " treated as "John"
-     *   @SafeInput(trimmed = false) // spaces matter — "  John  " stays as-is
-     *   private String firstName;
+     *   @SafeInput(trimmed = true)   // default — "  John  " → "John"
+     *   @SafeInput(trimmed = false)  // spaces matter — stays as-is
      */
     boolean trimmed() default true;
 
     /**
-     * Reject any value that contains whitespace characters (spaces, tabs, etc.).
-     * WHY: Validate tokens, API keys, passwords, or codes that must have no spaces.
+     * Reject any value that contains whitespace (spaces, tabs, newlines).
+     * WHY: Validate tokens, API keys, passwords, codes without spaces.
      * HOW:
      *   @SafeInput(noWhitespace = true)
      *   private String apiKey; //  "my key" fails,  "mykey123" passes

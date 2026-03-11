@@ -1,15 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║          LIQUIBASE MASTER CHANGELOG — BANK SERVICE                   ║
+║                                                                      ║
+║  Purpose : Entry point for all bank service database migrations      ║
+║  Schema  : banking_service                                           ║
+║                                                                      ║
+║  Execution Order:                                                    ║
+║  001 → create-schema   → CREATE SCHEMA + GRANT permissions           ║
+║  002 → create-tables   → banks, bank_accounts, transactions etc      ║
+║  003 → bank-insert-data→ seed banks with initial data                ║
+║                                                                      ║
+║  ORDER MATTERS  never reorder includes                               ║
+║       schema must exist before tables                                ║
+║       tables must exist before seed data                             ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
+                        gives autocomplete + red underlines for typos
+    -->
 
+    <!--
+    ════════════════════════════════════════════════════════════════════
+    STEP 1 — SCHEMA SETUP
+    ════════════════════════════════════════════════════════════════════
+    Must run FIRST — all tables depend on this schema existing.
 
+    What it does:
+      → CREATE SCHEMA IF NOT EXISTS banking_service
+      → GRANT ALL PRIVILEGES ON SCHEMA to fund-transfer
+      → ALTER DEFAULT PRIVILEGES ON TABLES  to fund-transfer
+      → ALTER DEFAULT PRIVILEGES ON SEQUENCES to fund-transfer
+      → SET search_path TO banking_service, public
+
+    Safe: preCondition MARK_RAN → skips if schema already exists
+    ════════════════════════════════════════════════════════════════════
+    -->
     <include file="/db/changelog/001-create-schema.xml"/>
 
+    <!--
+    ════════════════════════════════════════════════════════════════════
+    STEP 2 — TABLE DEFINITIONS
+    ════════════════════════════════════════════════════════════════════
+    Must run AFTER schema (step 1) — tables live inside the schema.
+
+    What it does (in order):
+      → 0001: CREATE TABLE banks
+      → 0002: CREATE TABLE bank_accounts + FK → banks
+      → 0003: CREATE TABLE transactions
+      → 0004: CREATE TABLE bank_daily_summary
+      → 0005: CREATE TABLE transaction_logs
+
+    Safe: each changeSet has preCondition MARK_RAN
+          → skips if table already exists
+    ════════════════════════════════════════════════════════════════════
+    -->
     <include file="/db/changelog/002-create-tables.xml"/>
 
+    <!--
+    ════════════════════════════════════════════════════════════════════
+    STEP 3 — SEED / MASTER DATA
+    ════════════════════════════════════════════════════════════════════
+    Must run AFTER tables (step 2) — inserts rows into existing tables.
+
+    What it does:
+      → INSERT initial banks (Dutch Bangla, BRAC, EBL etc)
+      → INSERT default bank accounts if any
+      → RESET sequences after manual ID inserts
+
+    ⚠️  path has no leading slash — verify path is consistent
+        /db/changelog/... (absolute from classpath root) ← preferred
+        db/changelog/...  (relative) ← works but can cause issues
+    ════════════════════════════════════════════════════════════════════
+    -->
     <include file="db/changelog/master-data/bank-insert-data.xml"/>
 
 </databaseChangeLog>

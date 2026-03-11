@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         return Mono.just(ResponseEntity.badRequest().body(body));
     }
 
-    // ✅ handles @Valid failures on @RequestBody
+    // handles @Valid failures on @RequestBody
     @ExceptionHandler(WebExchangeBindException.class)
     public Mono<ResponseEntity<Map<String, Object>>> handleValidationErrors(WebExchangeBindException ex) {
         Map<String, String> errors = new LinkedHashMap<>();
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
         return Mono.just(ResponseEntity.badRequest().body(body));
     }
 
-    // ✅ handles malformed JSON / wrong types in request body
+    // handles malformed JSON / wrong types in request body
     @ExceptionHandler(ServerWebInputException.class)
     public Mono<ResponseEntity<Map<String, Object>>> handleInputError(ServerWebInputException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -65,9 +65,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Mono<ResponseEntity<Map<String, Object>>> handleGeneric(Exception ex) {
         System.err.println("========================================");
-        System.err.println("❌ EXCEPTION CAUGHT IN USER SERVICE");
-        System.err.println("❌ Type: " + ex.getClass().getName());
-        System.err.println("❌ Message: " + ex.getMessage());
+        System.err.println(" EXCEPTION CAUGHT IN USER SERVICE");
+        System.err.println(" Type: " + ex.getClass().getName());
+        System.err.println(" Message: " + ex.getMessage());
         System.err.println("========================================");
         ex.printStackTrace();
         System.err.println("========================================");
@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
                 .body(body));
     }
 
-    // ✅ reads from application.properties instead of hardcoded true
+    // reads from application.properties instead of hardcoded true
     private boolean isDevelopmentMode() {
         return "dev".equalsIgnoreCase(activeProfile) || "local".equalsIgnoreCase(activeProfile);
     }

@@ -1,14 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║         LIQUIBASE CHANGELOG — BANK SERVICE TABLE DEFINITIONS         ║
+║                                                                      ║
+║  Schema  : banking_service                                           ║
+║  Author  : mdpolashossein                                            ║
+║  Tables  : banks, bank_accounts, transactions,                       ║
+║            bank_daily_summary, transaction_logs                      ║
+║                                                                      ║
+║  Execution Order:                                                    ║
+║  0001 → banks             (parent — no FK)                           ║
+║  0002 → bank_accounts     (FK → banks)                               ║
+║  0003 → transactions      (FK → bank_accounts x2)                    ║
+║  0004 → bank_daily_summary(FK → banks)                               ║
+║  0005 → transaction_logs  (FK → transactions)                        ║
+║                                                                      ║
+║  Safe    : YES — preConditions prevent duplicate execution           ║
+║  Rollback: YES — each changeSet has rollback defined                 ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
             http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <!--
+        xmlns         → declares this is a Liquibase changelog XML file
+        xmlns:xsi     → enables xsi:schemaLocation attribute below
+        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
+                        gives autocomplete + red underlines for typos
+    -->
 
-    <!-- ================= BANKS ================= -->
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0001 — BANKS TABLE                                    ║
+    ║  Master list of all registered banks in the system               ║
+    ║  Parent table — bank_accounts and bank_daily_summary FK here     ║
+    ║  Tracks financial health: capital, profit, expenses              ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+    id         → unique key — NEVER change after first run
+                 Liquibase stores id + author + filename in databasechangelog
+    author     → who created this changeset — for auditing only
+    runAlways  → not set = defaults to false — runs only once
+    failOnError→ not set = defaults to true — stops on error
+    -->
     <changeSet id="banks-table-0001" author="mdpolashossein">
 
+        <!--
+        ── PRECONDITION ─────────────────────────────────────────────────
+        Checks if the table already exists BEFORE trying to create it.
+        Prevents "relation already exists" error on app restart.
+
+        onFail options:
+        ┌─────────────┬────────────────────────────────────────────────┐
+        │ MARK_RAN    │ skip silently — record as ran in changelog     │
+        │ HALT        │ stop entire migration with error               │
+        │ WARN        │ log a warning but continue migration           │
+        │ CONTINUE    │ skip this changeset, keep going silently       │
+        └─────────────┴────────────────────────────────────────────────┘
+
+        <not> → inverts the check
+          tableExists → true if table exists
+          <not><tableExists> → true if table does NOT exist → run changeset
+          if table EXISTS → preCondition fails → MARK_RAN → skip
+        -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="banks"
@@ -16,57 +75,124 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: banks ───────────────────────────────────────────
+        Master registry of all banks in the fund transfer system.
+        Each bank can have many bank_accounts under it.
+        Tracks overall bank financials for reporting and audit.
+        -->
         <createTable tableName="banks" schemaName="banking_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
+            <!-- autoIncrement → uses PostgreSQL BIGSERIAL (sequence) -->
+            <!--  no primaryKeyName set — add for better debugging -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+
+            <!-- official registered name of the bank -->
+            <!-- e.g. "Dutch Bangla Bank Limited" -->
             <column name="bank_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- short unique code identifying the bank -->
+            <!-- e.g. "DBBL", "BRAC", "EBL" -->
+            <!-- UNIQUE → no two banks can share the same code -->
             <column name="bank_code" type="VARCHAR(20)">
                 <constraints nullable="false" unique="true"/>
             </column>
+
+            <!-- optional SWIFT/BIC code for international wire transfers -->
+            <!-- e.g. "DBBLBDDH" — 8 or 11 character ISO 9362 code -->
+            <!-- null if bank is domestic only -->
             <column name="swift_code" type="VARCHAR(20)"/>
+
+            <!-- country where the bank is registered -->
+            <!-- e.g. "Bangladesh", "USA" -->
             <column name="country" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- total capital/assets the bank holds -->
+            <!-- DECIMAL(18,2) → max 9,999,999,999,999,999.99 -->
+            <!-- defaultValueNumeric="0.00" → starts at zero on creation -->
             <column name="capital_amount" type="DECIMAL(18,2)"
                     defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- cumulative profit earned by the bank -->
+            <!-- increases as transactions generate fee revenue -->
             <column name="total_profit" type="DECIMAL(18,2)"
                     defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- cumulative operational expenses of the bank -->
+            <!-- tracked for financial reporting and P&L calculations -->
             <column name="total_expense" type="DECIMAL(18,2)"
                     defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- soft enable/disable — false = bank suspended, no transactions -->
+            <!-- true = bank is operational and accepting transactions -->
             <column name="active" type="BOOLEAN"
                     defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- soft delete flag — true = logically deleted, hidden from queries -->
+            <!-- false = bank is visible and active in the system -->
+            <!-- use soft delete to preserve historical transaction references -->
             <column name="is_deleted" type="BOOLEAN"
                     defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- AUDIT FIELDS — who created/modified and when -->
+            <!-- created_by → FK to users.id (admin who registered the bank) -->
+            <!-- nullable → null means system-created during seeding -->
             <column name="created_by" type="BIGINT"/>
+
+            <!-- defaultValueComputed="CURRENT_TIMESTAMP" → auto-set by DB -->
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- updated_by → user who last modified this bank record -->
             <column name="updated_by" type="BIGINT"/>
+
+            <!-- null until first update — application sets on every save -->
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Executed on: mvn liquibase:rollback
+          Must rollback bank_accounts FIRST before banks
+            due to FK constraint (bank_accounts.bank_id → banks.id)
+        -->
         <rollback>
             <dropTable tableName="banks" schemaName="banking_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= BANK ACCOUNTS ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0002 — BANK ACCOUNTS TABLE                            ║
+    ║  Individual bank accounts owned by users                         ║
+    ║  Each user can have multiple accounts across different banks     ║
+    ║  FK → banks.id (which bank this account belongs to)              ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="bank-accounts-table-0002" author="mdpolashossein">
 
+        <!-- skip if bank_accounts table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="bank_accounts"
@@ -74,38 +200,84 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: bank_accounts ───────────────────────────────────
+        Stores individual bank accounts linked to users and banks.
+        user_id links to user_service.users (cross-service reference).
+        bank_id links to banks table in the same schema.
+
+        One user can have:
+          - multiple accounts at the same bank (savings + current)
+          - accounts at different banks
+          - one primary account (is_primary=true) for default transactions
+        -->
         <createTable tableName="bank_accounts"
                      schemaName="banking_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+
+            <!-- reference to user who owns this account -->
+            <!-- cross-service FK — points to user_service.users.id -->
+            <!--  no DB-level FK here (cross-schema) — enforced at app level -->
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- which bank this account belongs to -->
+            <!-- DB-level FK added below → bank_accounts.bank_id → banks.id -->
             <column name="bank_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- unique account number issued by the bank -->
+            <!-- e.g. "1234567890123" or "ACC-2024-00012345" -->
+            <!-- VARCHAR(50) → supports various national account formats -->
             <column name="account_number" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- type of bank account -->
+            <!-- values: SAVINGS | CURRENT | FIXED_DEPOSIT | SALARY -->
             <column name="account_type" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- full legal name of the account holder -->
+            <!-- may differ from user's profile name (joint accounts etc) -->
             <column name="account_holder_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- current available balance in this account -->
+            <!-- DECIMAL(18,2) → supports large banking amounts -->
+            <!-- defaultValueNumeric="0.00" → new accounts start empty -->
             <column name="balance" type="DECIMAL(18,2)"
                     defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- ISO 4217 currency code — e.g. BDT, USD, EUR, GBP -->
+            <!-- defaultValue="BDT" → Bangladesh Taka as default currency -->
             <column name="currency" type="VARCHAR(10)"
                     defaultValue="BDT"/>
+
+            <!-- true = this is the user's default/primary account -->
+            <!-- used to auto-select account when user doesn't specify one -->
+            <!-- only ONE account per user should have is_primary=true -->
             <column name="is_primary" type="BOOLEAN"
                     defaultValueBoolean="false"/>
+
+            <!-- false = account is frozen/closed, no transactions allowed -->
+            <!-- true  = account is open and operational -->
             <column name="active" type="BOOLEAN"
                     defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- AUDIT FIELDS -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -113,8 +285,19 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── FOREIGN KEY: bank_accounts → banks ────────────────────────────
+        Ensures every bank account references a valid bank.
+        No onDelete specified → defaults to RESTRICT
+          RESTRICT → cannot delete a bank that has accounts
+          Use this to protect bank data integrity
+
+        Note: No FK to users table (cross-service — user_service schema)
+              user_id integrity enforced at application layer instead
+        -->
         <addForeignKeyConstraint
                 constraintName="fk_bank_accounts_bank"
                 baseTableSchemaName="banking_service"
@@ -124,15 +307,29 @@
                 referencedTableName="banks"
                 referencedColumnNames="id"/>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Drop bank_accounts — must happen before banks rollback
+        due to FK constraint (bank_accounts references banks)
+        -->
         <rollback>
             <dropTable tableName="bank_accounts"
                        schemaName="banking_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= TRANSACTIONS ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0003 — TRANSACTIONS TABLE                             ║
+    ║  Records every fund transfer between accounts                    ║
+    ║  Immutable after creation — status updated, never deleted        ║
+    ║  from_account_id and to_account_id reference bank_accounts       ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="transactions-table-0003" author="mdpolashossein">
 
+        <!-- skip if transactions table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="transactions"
@@ -140,27 +337,76 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: transactions ────────────────────────────────────
+        Core financial record of every money movement in the system.
+        Each row = one transaction event (deposit, withdrawal, transfer).
+        Status transitions: PENDING → PROCESSING → COMPLETED / FAILED
+
+        Flow:
+          user initiates transfer → INSERT (status=PENDING)
+          system processes        → UPDATE (status=PROCESSING)
+          bank confirms           → UPDATE (status=COMPLETED or FAILED)
+          every status change     → INSERT into transaction_logs
+        -->
         <createTable tableName="transactions"
                      schemaName="banking_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
+
+            <!-- globally unique reference number for this transaction -->
+            <!-- used by users and support to track/reference a transfer -->
+            <!-- e.g. "TXN-20240310-00012345" or UUID -->
+            <!-- UNIQUE → no two transactions can share the same ref -->
             <column name="transaction_ref" type="VARCHAR(100)">
                 <constraints nullable="false" unique="true"/>
             </column>
+
+            <!-- source account — which account money is debited FROM -->
+            <!-- nullable → null for DEPOSIT (money comes from outside) -->
+            <!-- FK enforced at application level (to avoid complex joins) -->
             <column name="from_account_id" type="BIGINT"/>
+
+            <!-- destination account — which account money is credited TO -->
+            <!-- nullable → null for WITHDRAWAL (money goes to external) -->
             <column name="to_account_id" type="BIGINT"/>
+
+            <!-- amount of money being transferred -->
+            <!-- DECIMAL(18,2) → supports large transfer amounts -->
+            <!-- always positive — direction determined by type + accounts -->
             <column name="amount" type="DECIMAL(18,2)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- bank service charge for processing this transaction -->
+            <!-- DECIMAL(10,2) → max 99,999,999.99 (fee won't exceed amount) -->
+            <!-- defaultValueNumeric="0.00" → some transactions are fee-free -->
             <column name="bank_fee" type="DECIMAL(10,2)"
                     defaultValueNumeric="0.00"/>
+
+            <!-- category of transaction -->
+            <!-- values: TRANSFER | DEPOSIT | WITHDRAWAL | PAYMENT -->
+            <!--          REFUND  | FEE     | INTEREST              -->
             <column name="transaction_type" type="VARCHAR(30)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- current state in the transaction lifecycle -->
+            <!-- values:  PENDING → PROCESSING → COMPLETED          -->
+            <!--                              └→ FAILED             -->
+            <!--                              └→ CANCELLED          -->
+            <!-- defaultValue="PENDING" → all new transactions start pending -->
             <column name="transaction_status" type="VARCHAR(20)"
                     defaultValue="PENDING"/>
+
+            <!-- when the transaction was actually executed by the bank -->
+            <!-- null until status reaches COMPLETED or FAILED -->
             <column name="processed_at" type="TIMESTAMP"/>
+
+            <!-- AUDIT FIELDS -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -168,17 +414,32 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Drop transactions — must happen before bank_accounts rollback
+        transaction_logs must be dropped first (FK → transactions.id)
+        -->
         <rollback>
             <dropTable tableName="transactions"
                        schemaName="banking_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= DAILY BANK SUMMARY ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0004 — BANK DAILY SUMMARY TABLE                       ║
+    ║  Aggregated daily financial snapshot per bank                    ║
+    ║  Pre-computed report data — avoids expensive real-time queries   ║
+    ║  FK → banks.id (which bank this summary belongs to)              ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="bank-daily-summary-0004" author="mdpolashossein">
 
+        <!-- skip if bank_daily_summary table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="bank_daily_summary"
@@ -186,21 +447,58 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: bank_daily_summary ──────────────────────────────
+        Stores pre-aggregated daily statistics per bank.
+        One row per bank per day — computed by a scheduled job.
+        Eliminates need to SUM millions of transactions for reports.
+
+        Populated by: @Scheduled daily batch job at midnight
+        Used by: Management dashboards, financial reports, analytics
+
+        Example row:
+          bank_id=1, date=2024-03-10,
+          total_deposit=5000000.00, total_withdraw=3000000.00,
+          total_fee_earned=15000.00, total_transactions=1250
+        -->
         <createTable tableName="bank_daily_summary"
                      schemaName="banking_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
+
+            <!-- which bank this daily summary belongs to -->
+            <!-- FK → banks.id added at application level -->
             <column name="bank_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- the calendar date this summary covers -->
+            <!-- DATE only — no time component (covers full day 00:00-23:59) -->
+            <!-- UNIQUE with bank_id → one summary per bank per day -->
             <column name="summary_date" type="DATE">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- total money deposited into all accounts of this bank today -->
+            <!-- sum of all DEPOSIT transactions for the day -->
             <column name="total_deposit" type="DECIMAL(18,2)"/>
+
+            <!-- total money withdrawn from all accounts of this bank today -->
+            <!-- sum of all WITHDRAWAL transactions for the day -->
             <column name="total_withdraw" type="DECIMAL(18,2)"/>
+
+            <!-- total bank fees collected from all transactions today -->
+            <!-- sum of bank_fee column from transactions table for the day -->
             <column name="total_fee_earned" type="DECIMAL(18,2)"/>
+
+            <!-- count of all transactions processed by this bank today -->
+            <!-- BIGINT → handles very high volume banks -->
             <column name="total_transactions" type="BIGINT"/>
+
+            <!-- AUDIT FIELDS -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -208,17 +506,32 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Drop bank_daily_summary — safe to drop, data is re-computable
+        from transactions table by running the batch job again
+        -->
         <rollback>
             <dropTable tableName="bank_daily_summary"
                        schemaName="banking_service"/>
         </rollback>
     </changeSet>
 
-    <!-- ================= TRANSACTION LOGS ================= -->
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  CHANGESET 0005 — TRANSACTION LOGS TABLE                         ║
+    ║  Audit trail of every status change for each transaction         ║
+    ║  Immutable — rows only inserted, never updated or deleted        ║
+    ║  FK → transactions.id (which transaction this log belongs to)    ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
     <changeSet id="transaction-logs-table-0005" author="mdpolashossein">
 
+        <!-- skip if transaction_logs table already exists — safe restart -->
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="transaction_logs"
@@ -226,19 +539,53 @@
             </not>
         </preConditions>
 
+        <!--
+        ── CREATE TABLE: transaction_logs ────────────────────────────────
+        Immutable audit trail of all status transitions per transaction.
+        One row per event — never updated, only inserted.
+        Used for debugging, dispute resolution, and compliance.
+
+        Flow example for one transaction:
+          INSERT (PENDING,   "Transaction initiated")
+          INSERT (PROCESSING,"Sent to bank gateway")
+          INSERT (COMPLETED, "Bank confirmed transfer")   ← success
+          - OR -
+          INSERT (FAILED,    "Insufficient balance", "ERR_BALANCE_001")
+        -->
         <createTable tableName="transaction_logs"
                      schemaName="banking_service">
+
+            <!-- PRIMARY KEY — auto-incrementing surrogate key -->
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
+
+            <!-- which transaction this log entry belongs to -->
+            <!-- FK → transactions.id — enforced at application level -->
             <column name="transaction_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- the status at the time of this log entry -->
+            <!-- values: PENDING | PROCESSING | COMPLETED | FAILED | CANCELLED -->
+            <!-- each status change = new row in this table -->
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- human-readable description of what happened -->
+            <!-- e.g. "Payment processed successfully" -->
+            <!-- e.g. "Transaction failed: account frozen" -->
+            <!-- TEXT → no length limit, allows detailed messages -->
             <column name="message" type="TEXT"/>
+
+            <!-- machine-readable error code for failed transactions -->
+            <!-- null on success, populated on failure -->
+            <!-- e.g. "ERR_INSUFFICIENT_BALANCE", "ERR_ACCOUNT_FROZEN" -->
+            <!-- used by support team and monitoring systems -->
             <column name="error_code" type="VARCHAR(50)"/>
+
+            <!-- AUDIT FIELDS — no updated_at (this table is immutable) -->
             <column name="created_by" type="BIGINT"/>
             <column name="created_at" type="TIMESTAMP"
                     defaultValueComputed="CURRENT_TIMESTAMP">
@@ -246,8 +593,15 @@
             </column>
             <column name="updated_by" type="BIGINT"/>
             <column name="updated_at" type="TIMESTAMP"/>
+
         </createTable>
 
+        <!--
+        ── ROLLBACK ──────────────────────────────────────────────────────
+        Drop transaction_logs FIRST in rollback sequence
+        Must come before transactions rollback (references transactions.id)
+        Safe to drop — data is audit trail only, not business critical
+        -->
         <rollback>
             <dropTable tableName="transaction_logs"
                        schemaName="banking_service"/>
