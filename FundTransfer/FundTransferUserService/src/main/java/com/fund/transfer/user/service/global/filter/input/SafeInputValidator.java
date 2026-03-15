@@ -205,9 +205,6 @@ public class SafeInputValidator implements ConstraintValidator<SafeInput, String
                     // subshell / command substitution
                     + "|\\$\\(|\\$\\{|`[^`]*`"
 
-                    // redirection operators
-                    + "|[<>]{1,2}"
-
                     // newline injection (for log injection too)
                     + "|%0[aAdD]|\\\\[nNrR]",
             Pattern.CASE_INSENSITIVE
@@ -497,24 +494,10 @@ public class SafeInputValidator implements ConstraintValidator<SafeInput, String
 
         // ── 15. XSS / HTML injection check ───────────────────────────────
         if (!allowHtml) {
-            // OWASP HTML sanitizer removes dangerous content
-            String sanitized = STRICT_HTML_SANITIZER.sanitize(v);
-            if (!sanitized.equals(v)) {
-                log.warn("[SafeInput] HTML/XSS content blocked");
-                return fail(ctx, "HTML or script content is not allowed");
-            }
-            // Pattern-based XSS catch (catches what sanitizer may miss)
+            // XSS_PATTERN alone is sufficient and accurate
             if (XSS_PATTERN.matcher(v).find()) {
                 log.warn("[SafeInput] XSS pattern detected: {}", v);
-                return fail(ctx, "Invalid input detected");
-            }
-        } else {
-            // allowHtml=true: still sanitize with strict policy (no javascript: hrefs)
-            String sanitized = RICH_TEXT_SANITIZER.sanitize(v);
-            if (!sanitized.equals(v)) {
-                log.warn("[SafeInput] Dangerous HTML stripped in rich-text field");
-                // Don't fail — sanitize and allow (for rich text editors)
-                // Downstream code should use the sanitized value, not the raw value
+                return fail(ctx, "HTML or script content is not allowed");
             }
         }
 

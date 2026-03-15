@@ -227,13 +227,13 @@ public class UserServiceImpl implements UserService {
                                         .then(Mono.defer(() -> {
                                             List<BankAccountDto> bankAccounts = requestDto.getBankAccounts();
 
-                                            // ✅ no bank accounts → skip gRPC, return entity directly
+                                            //  no bank accounts → skip gRPC, return entity directly
                                             if (bankAccounts == null || bankAccounts.isEmpty()) {
                                                 logger.warn("No bank accounts provided for update, userId: {}", entity.getId());
                                                 return Mono.just(entity);
                                             }
 
-                                            // ✅ build batch request from list
+                                            //  build batch request from list
                                             List<BankAccountMessage> messages = bankAccounts.stream()
                                                     .map(bankAccount -> BankAccountMessage.builder()
                                                             .id(bankAccount.getId())             // bank account row ID
@@ -253,7 +253,7 @@ public class UserServiceImpl implements UserService {
                                             logger.info("Sending batch gRPC update for {} bank accounts, userId: {}",
                                                     messages.size(), entity.getId());
 
-                                            // ✅ batch gRPC call
+                                            //  batch gRPC call
                                             return bankAccountGrpcClient.batchUpdateBankAccount(messages)
                                                     .doOnSuccess(grpcResponse ->
                                                             logger.info("gRPC batch bank account updated for userId: {}, count: {}",
@@ -263,7 +263,7 @@ public class UserServiceImpl implements UserService {
                                                         logger.error("gRPC batch update failed for userId: {}, publishing {} to RabbitMQ: {}",
                                                                 entity.getId(), messages.size(), grpcEx.getMessage());
 
-                                                        // ✅ publish each to RabbitMQ individually on gRPC failure
+                                                        //  publish each to RabbitMQ individually on gRPC failure
                                                         return Flux.fromIterable(messages)
                                                                 .flatMap(msg ->
                                                                         bankAccountEventPublisher.publishUpdateBankAccount(msg)
