@@ -2,19 +2,12 @@
 
 <!--
 ╔══════════════════════════════════════════════════════════════════════╗
-║       LIQUIBASE CHANGELOG — API GATEWAY SECURITY AUDIT LOG TABLE    ║
+║         LIQUIBASE CHANGELOG — API GATEWAY SCHEMA SETUP               ║
 ║                                                                      ║
-║  Purpose : Store all security threat events detected by             ║
-║            ThreatDetectionFilter (XSS, SQLi, SSRF, etc.)           ║
-║  Schema  : gateway_service                                          ║
-║  Author  : fund-transfer-gateway                                    ║
-║                                                                      ║
-║  Table   : security_audit_log                                       ║
-║  Indexes : 7 indexes for fast threat analysis queries               ║
-║                                                                      ║
-║  Written by  : ThreatDetectionFilter  → SecurityAuditService       ║
-║  Read by     : Security dashboards, monitoring, compliance reports  ║
-║  Immutable   : YES — rows inserted only, never updated              ║
+║  Purpose : Create gateway_service schema in fund-transfer database   ║
+║  Schema  : gateway_service                                           ║
+║  User    : fund-transfer                                             ║
+║  Safe    : YES — preConditions prevent duplicate execution           ║
 ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
@@ -23,426 +16,45 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
-    <!--
-        xmlns         → declares this is a Liquibase changelog XML file
-        xmlns:xsi     → enables xsi:schemaLocation attribute below
-        schemaLocation→ points to Liquibase 4.20 XSD for IDE validation
-                        gives autocomplete + red underlines for typos
-    -->
 
-    <!--
-    ════════════════════════════════════════════════════════════════════
-    CHANGESET — 001
-    Runs only ONCE — tracked in databasechangelog table
-    Safe to restart app — preCondition skips if table already exists
+    <changeSet id="001-create-gateway-service-schema"
+               author="fund-transfer-api-gateway"
+               runAlways="false"
+               failOnError="false">
 
-    id         → unique identifier — NEVER change after first run
-                 Liquibase uses id + author + filename as a unique key
-    author     → who wrote this changeset — for auditing only
-    runAlways  → not set = defaults to false — runs only once
-    failOnError→ not set = defaults to true — stops on error
-    ════════════════════════════════════════════════════════════════════
-    -->
-    <changeSet id="001-create-security-audit-log"
-               author="fund-transfer-gateway">
-
-        <!--
-        ── PRECONDITION ─────────────────────────────────────────────────
-        Checks if the table already exists BEFORE trying to create it.
-        Prevents "relation already exists" error on app restart.
-
-        onFail options:
-        ┌─────────────┬────────────────────────────────────────────────┐
-        │ MARK_RAN    │ skip silently — record as ran in changelog ✅  │
-        │ HALT        │ stop entire migration with error ❌            │
-        │ WARN        │ log a warning but continue migration           │
-        │ CONTINUE    │ skip this changeset, keep going silently       │
-        └─────────────┴────────────────────────────────────────────────┘
-
-        <not> → inverts the check
-          tableExists → true if table exists
-          <not><tableExists> → true if table does NOT exist → run changeset
-          if table EXISTS → preCondition fails → MARK_RAN → skip ✅
-        -->
         <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="security_audit_log"
-                             schemaName="gateway_service"/>
-            </not>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.schemata
+                WHERE schema_name = 'gateway_service'
+            </sqlCheck>
         </preConditions>
 
-        <!--
-        ── CREATE TABLE: security_audit_log ─────────────────────────────
-        Central audit table for all security threat events.
-        Every row = one threat detection event from ThreatDetectionFilter.
+        <sql>CREATE SCHEMA IF NOT EXISTS gateway_service;</sql>
 
-        Insert flow:
-          HTTP request arrives
-              │
-              ▼
-          ThreatDetectionFilter detects threat
-              │
-              ▼
-          SecurityAuditService.recordAsync(event)
-              │
-              ▼
-          INSERT INTO security_audit_log ← this table
+        <sql>
+            GRANT ALL PRIVILEGES ON SCHEMA gateway_service
+            TO "fund-transfer";
+        </sql>
 
-        This table is intentionally IMMUTABLE:
-          → rows are only INSERTed, never UPDATEd or DELETEd
-          → provides tamper-proof audit trail for compliance
-          → preserves complete history of all attack attempts
-        -->
-        <createTable tableName="security_audit_log"
-                     schemaName="gateway_service">
+        <sql>
+            ALTER DEFAULT PRIVILEGES IN SCHEMA gateway_service
+            GRANT ALL PRIVILEGES ON TABLES
+            TO "fund-transfer";
+        </sql>
 
-            <!--
-            ════════════════════════════════════════════════════════════
-            PRIMARY KEY
-            ════════════════════════════════════════════════════════════
-            -->
+        <sql>
+            ALTER DEFAULT PRIVILEGES IN SCHEMA gateway_service
+            GRANT ALL PRIVILEGES ON SEQUENCES
+            TO "fund-transfer";
+        </sql>
 
-            <!-- BIGSERIAL → PostgreSQL auto-increment (sequence-backed) -->
-            <!-- equivalent to BIGINT + autoIncrement="true" -->
-            <!-- generates unique ID for each audit event -->
-            <column name="id" type="BIGSERIAL">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
+        <sql>
+            ALTER ROLE "fund-transfer"
+            SET search_path TO gateway_service, public;
+        </sql>
 
-            <!--
-            ════════════════════════════════════════════════════════════
-            REQUEST INFO — details of the incoming HTTP request
-            Captured by ThreatDetectionFilter before routing
-            ════════════════════════════════════════════════════════════
-            -->
-
-            <!-- optional UUID per request for correlation across logs -->
-            <!-- links this audit event to other logs for the same request -->
-            <!-- e.g. "d2a88608-1" matches gateway + downstream service logs -->
-            <column name="request_id" type="VARCHAR(100)"/>
-
-            <!-- IP address of the attacker/client -->
-            <!-- resolved via: X-Forwarded-For → X-Real-IP → RemoteAddress -->
-            <!-- VARCHAR(45) → supports both IPv4 (15) and IPv6 (39) + mapped IPv4 (45) -->
-            <column name="ip_address" type="VARCHAR(45)">
-                <constraints nullable="false"/>
-            </column>
-
-            <!-- browser/tool User-Agent string -->
-            <!-- e.g. "sqlmap/1.0", "Mozilla/5.0 Chrome/120", "nikto/2.1.6" -->
-            <!-- VARCHAR(1000) → scanner tools can have very long UA strings -->
-            <column name="user_agent" type="VARCHAR(1000)"/>
-
-            <!-- URL path that was requested -->
-            <!-- e.g. "/user-service/auth/login", "/bank-service/api/transfer" -->
-            <!-- VARCHAR(500) → covers long REST API paths -->
-            <column name="request_path" type="VARCHAR(500)"/>
-
-            <!-- HTTP method — GET, POST, PUT, DELETE, PATCH etc -->
-            <!-- VARCHAR(20) → longest standard method is 7 chars, 20 is safe -->
-            <column name="request_method" type="VARCHAR(20)"/>
-
-            <!-- raw query string from URL — e.g. "id=1 OR 1=1&page=2" -->
-            <!-- VARCHAR(2000) → query strings with attack payloads can be long -->
-            <column name="query_string" type="VARCHAR(2000)"/>
-
-            <!-- captured request body — stored when threat found in body -->
-            <!-- TEXT → no length limit — bodies can be large JSON payloads -->
-            <!-- ⚠️  sanitize before storing — don't store raw malicious payloads -->
-            <column name="request_body" type="TEXT"/>
-
-            <!-- HTTP Referer header — where the request came from -->
-            <!-- useful for detecting click-jacking and CSRF attempts -->
-            <!-- VARCHAR(500) → URLs can be long -->
-            <column name="referer" type="VARCHAR(500)"/>
-
-            <!-- HTTP Origin header — used in CORS checks -->
-            <!-- e.g. "https://evil.com", "null" (Postman/file://) -->
-            <!-- VARCHAR(200) → origin is always a base URL, not a full path -->
-            <column name="origin" type="VARCHAR(200)"/>
-
-            <!-- Content-Length header value — size of request body in bytes -->
-            <!-- BIGINT → supports very large payload sizes -->
-            <!-- used to detect LARGE_PAYLOAD threats (>10MB) -->
-            <column name="content_length" type="BIGINT"/>
-
-            <!-- HTTP protocol — "http" or "https" -->
-            <!-- VARCHAR(20) → covers "http", "https", "h2", "h3" -->
-            <column name="protocol" type="VARCHAR(20)"/>
-
-            <!--
-            ════════════════════════════════════════════════════════════
-            USER INFO — identity of the requester (if authenticated)
-            Null for unauthenticated requests (login, register)
-            Populated from JWT claims via X-User-* headers
-            ════════════════════════════════════════════════════════════
-            -->
-
-            <!-- authenticated user's ID from JWT claims -->
-            <!-- null = unauthenticated request (no valid JWT) -->
-            <!-- VARCHAR(50) → supports both numeric and UUID user IDs -->
-            <column name="user_id" type="VARCHAR(50)"/>
-
-            <!-- authenticated user's username from JWT claims -->
-            <!-- null = unauthenticated | indexed for fast user attack history -->
-            <column name="username" type="VARCHAR(100)"/>
-
-            <!-- authenticated user's role — e.g. "ROLE_USER", "ROLE_ADMIN" -->
-            <!-- null = unauthenticated | useful for privilege escalation detection -->
-            <column name="user_role" type="VARCHAR(50)"/>
-
-            <!-- session identifier if session management is implemented -->
-            <!-- null if stateless JWT-only authentication (current setup) -->
-            <column name="session_id" type="VARCHAR(200)"/>
-
-            <!--
-            ════════════════════════════════════════════════════════════
-            THREAT INFO — what was detected and how severe
-            Core data for security analysis and incident response
-            ════════════════════════════════════════════════════════════
-            -->
-
-            <!-- type of threat detected by ThreatDetectionFilter -->
-            <!-- values from ThreatType enum:                        -->
-            <!--   Input    : XSS_ATTEMPT, SQL_INJECTION, NOSQL_INJECTION,   -->
-            <!--              PATH_TRAVERSAL, COMMAND_INJECTION, LDAP_INJECTION,  -->
-            <!--              XML_INJECTION, JSON_INJECTION, TEMPLATE_INJECTION,  -->
-            <!--              HEADER_INJECTION, LOG4J_INJECTION,               -->
-            <!--              DESERIALIZATION_ATTACK                           -->
-            <!--   Auth     : BRUTE_FORCE, CREDENTIAL_STUFFING, INVALID_JWT,  -->
-            <!--              EXPIRED_JWT, TAMPERED_JWT, UNAUTHORIZED_ACCESS   -->
-            <!--   Traffic  : RATE_LIMIT_EXCEEDED, DDOS_SUSPECTED,            -->
-            <!--              LARGE_PAYLOAD, SLOW_LORIS                        -->
-            <!--   Recon    : SCANNER_DETECTED, PATH_ENUMERATION              -->
-            <!--   Protocol : HTTP_METHOD_TAMPERING, HTTP_SMUGGLING,           -->
-            <!--              HOST_HEADER_INJECTION, CORS_VIOLATION            -->
-            <column name="threat_type" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-
-            <!-- how dangerous this threat is -->
-            <!-- values from Severity enum:                           -->
-            <!--   INFO     → informational, no immediate risk        -->
-            <!--   LOW      → minor issue, log and monitor            -->
-            <!--   MEDIUM   → moderate risk, investigate              -->
-            <!--   HIGH     → serious threat, alert security team     -->
-            <!--   CRITICAL → active attack, block immediately        -->
-            <column name="severity" type="VARCHAR(20)">
-                <constraints nullable="false"/>
-            </column>
-
-            <!-- current disposition of this threat -->
-            <!-- values from AttackStatus enum:                       -->
-            <!--   DETECTED  → logged only, request was forwarded     -->
-            <!--   BLOCKED   → request was rejected with 403          -->
-            <!--   MONITORED → watching pattern, not blocked yet      -->
-            <column name="status" type="VARCHAR(20)"/>
-
-            <!-- which field/header/param contained the threat -->
-            <!-- e.g. "userName", "Host", "q", "Authorization"       -->
-            <!-- helps developers fix vulnerable input points         -->
-            <column name="field_name" type="VARCHAR(200)"/>
-
-            <!-- the actual malicious value that triggered detection  -->
-            <!-- e.g. "1=1or1=1", "<script>alert(1)</script>"        -->
-            <!-- TEXT → attack payloads have no predictable max length -->
-            <!-- ⚠️  stored for forensics — handle carefully in reports -->
-            <column name="suspicious_value" type="TEXT"/>
-
-            <!-- human-readable description of what was detected      -->
-            <!-- e.g. "SQL injection in: userName"                   -->
-            <!-- e.g. "Scanner tool detected: sqlmap"                 -->
-            <column name="message" type="TEXT"/>
-
-            <!-- which specific regex pattern/rule was triggered      -->
-            <!-- e.g. "SQL_TAUTOLOGY", "XSS_SCRIPT_TAG"              -->
-            <!-- useful for tuning false positive rates               -->
-            <column name="rule_triggered" type="VARCHAR(200)"/>
-
-            <!-- true  = request was blocked (returned 403)           -->
-            <!-- false = request was logged but forwarded             -->
-            <!-- defaultValueBoolean="false" → detection mode default -->
-            <!-- indexed below for fast "show blocked requests" queries -->
-            <column name="blocked" type="BOOLEAN"
-                    defaultValueBoolean="false"/>
-
-            <!-- why the request was blocked — populated when blocked=true -->
-            <!-- e.g. "SQL injection detected in request body"        -->
-            <!-- null when blocked=false (not blocked)                -->
-            <column name="block_reason" type="VARCHAR(500)"/>
-
-            <!--
-            ════════════════════════════════════════════════════════════
-            META — additional context about the detection event
-            ════════════════════════════════════════════════════════════
-            -->
-
-            <!-- which microservice the request was destined for      -->
-            <!-- always "api-gateway" (set in ThreatDetectionFilter)  -->
-            <!-- useful if multiple gateways write to same audit table -->
-            <column name="service_id" type="VARCHAR(100)"/>
-
-            <!-- how long the request took to process (milliseconds)  -->
-            <!-- null for normal requests                             -->
-            <!-- populated only for SLOW_LORIS detection (>30 seconds) -->
-            <!-- set via overloaded publish(event, responseTimeMs)    -->
-            <column name="response_time_ms" type="BIGINT"/>
-
-            <!-- exact timestamp when the threat was detected         -->
-            <!-- set by ThreatDetectionFilter at detection time       -->
-            <!-- NOT defaultValueComputed — explicitly set by app     -->
-            <!-- indexed below for time-range threat analysis queries  -->
-            <column name="detected_at" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-
-            <!-- when this row was inserted into the database          -->
-            <!-- defaultValueComputed="NOW()" → auto-set by PostgreSQL -->
-            <!-- may differ slightly from detected_at due to async save -->
-            <!-- SecurityAuditService.recordAsync() saves on boundedElastic -->
-            <column name="created_at" type="TIMESTAMP"
-                    defaultValueComputed="NOW()"/>
-
-        </createTable>
-
-        <!--
-        ════════════════════════════════════════════════════════════════
-        INDEXES — 7 indexes for fast security analysis queries
-        ════════════════════════════════════════════════════════════════
-
-        This table can grow extremely fast in production:
-          → every request with a threat = 1 new row
-          → high traffic + active attackers = millions of rows
-        Indexes are critical for dashboard and analysis performance.
-        ════════════════════════════════════════════════════════════════
-        -->
-
-        <!--
-        ── INDEX 1: ip_address ───────────────────────────────────────────
-        Most common query: "show all attacks from this IP"
-        Used for: IP reputation, auto-block decisions, attacker profiling
-        Query: SELECT * FROM security_audit_log WHERE ip_address = '1.2.3.4'
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_ip">
-            <column name="ip_address"/>
-        </createIndex>
-
-        <!--
-        ── INDEX 2: threat_type ──────────────────────────────────────────
-        Query: "show all SQL injection attempts today"
-        Used for: threat type dashboards, pattern analysis, rule tuning
-        Query: SELECT * FROM security_audit_log WHERE threat_type = 'SQL_INJECTION'
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_threat">
-            <column name="threat_type"/>
-        </createIndex>
-
-        <!--
-        ── INDEX 3: severity ─────────────────────────────────────────────
-        Query: "show all CRITICAL events in the last hour"
-        Used for: security alerts, on-call escalation, SLA reporting
-        Query: SELECT * FROM security_audit_log WHERE severity = 'CRITICAL'
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_severity">
-            <column name="severity"/>
-        </createIndex>
-
-        <!--
-        ── INDEX 4: username ─────────────────────────────────────────────
-        Query: "show all threats associated with this user account"
-        Used for: compromised account detection, insider threat analysis
-        Query: SELECT * FROM security_audit_log WHERE username = 'john_doe'
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_username">
-            <column name="username"/>
-        </createIndex>
-
-        <!--
-        ── INDEX 5: detected_at ──────────────────────────────────────────
-        Query: "show all threats between 2 timestamps"
-        Used for: time-range reports, incident timeline, trend analysis
-        Query: SELECT * FROM security_audit_log
-               WHERE detected_at BETWEEN '2024-03-10' AND '2024-03-11'
-        Critical for this table — time-series queries are most common
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_detected_at">
-            <column name="detected_at"/>
-        </createIndex>
-
-        <!--
-        ── INDEX 6: blocked ──────────────────────────────────────────────
-        Query: "show all requests that were blocked"
-        Used for: blocked request dashboard, WAF effectiveness reporting
-        Query: SELECT * FROM security_audit_log WHERE blocked = true
-
-        Note: low cardinality index (only true/false values)
-              PostgreSQL may skip this index for large result sets
-              Still useful for "WHERE blocked = true AND ..." queries
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_blocked">
-            <column name="blocked"/>
-        </createIndex>
-
-        <!--
-        ── INDEX 7: COMPOSITE — ip_address + threat_type + detected_at ───
-        Most powerful index — covers the most common complex query:
-        "show all SQL injections from this IP in the last 24 hours"
-
-        Used for:
-          → DDoS detection (many threats from same IP in short time)
-          → Attack campaign analysis (same IP, multiple threat types)
-          → Rate limiting decisions (IP + threat count in time window)
-          → Auto-block threshold checks
-
-        Query:
-          SELECT COUNT(*) FROM security_audit_log
-          WHERE ip_address   = '1.2.3.4'
-          AND   threat_type  = 'SQL_INJECTION'
-          AND   detected_at >= NOW() - INTERVAL '1 hour'
-
-        Composite index column order matters:
-          ip_address   → highest cardinality first (most selective)
-          threat_type  → second filter
-          detected_at  → range scan last (always last in composite)
-        -->
-        <createIndex tableName="security_audit_log"
-                     schemaName="gateway_service"
-                     indexName="idx_sal_ip_threat_time">
-            <column name="ip_address"/>
-            <column name="threat_type"/>
-            <column name="detected_at"/>
-        </createIndex>
-
-        <!--
-        ── ROLLBACK ──────────────────────────────────────────────────────
-        Executed on: mvn liquibase:rollback
-        Drops the table AND all 7 indexes (CASCADE handles indexes).
-
-        IF EXISTS → no error if table was already dropped manually
-        CASCADE   → drops all dependent objects:
-                    → all 7 indexes created above
-                    → security_audit_log_id_seq sequence
-
-        ⚠️  WARNING — drops ALL security audit history permanently
-            ALL threat detection records will be lost
-            ONLY use rollback in local development
-            NEVER run rollback in production
-        -->
         <rollback>
-            DROP TABLE IF EXISTS
-            gateway_service.security_audit_log CASCADE;
+            DROP SCHEMA IF EXISTS gateway_service CASCADE;
         </rollback>
 
     </changeSet>

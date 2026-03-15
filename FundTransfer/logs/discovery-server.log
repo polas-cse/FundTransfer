@@ -988,3 +988,135 @@ java.lang.IllegalStateException: Client instance has been closed.
 2026-03-15 12:20:11.272 INFO  [http-nio-8761-exec-7] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status UP (replication=false)
 2026-03-15 12:20:11.795 INFO  [http-nio-8761-exec-2] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status UP (replication=true)
 2026-03-15 12:20:15.762 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 13ms
+2026-03-15 12:20:30.771 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 8ms
+2026-03-15 12:20:45.772 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 12:21:00.772 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 12:21:14.275 INFO  [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl : Current renewal threshold is : 0
+2026-03-15 12:21:15.781 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 9ms
+2026-03-15 12:21:30.781 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 12:21:45.793 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 11ms
+2026-03-15 12:22:00.800 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 7ms
+2026-03-15 12:22:15.804 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 4ms
+2026-03-15 12:22:30.809 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 4ms
+2026-03-15 12:22:45.811 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 2ms
+2026-03-15 12:23:00.821 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 10ms
+2026-03-15 12:23:15.825 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 3ms
+2026-03-15 12:23:30.838 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 12ms
+2026-03-15 12:23:45.839 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 12:24:00.839 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 12:24:14.124 INFO  [http-nio-8761-exec-2] c.n.e.r.AbstractInstanceRegistry : Registered instance USER-SERVICE/user-service:9090 with status DOWN (replication=false)
+2026-03-15 12:24:14.132 INFO  [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServiceRegistry : Unregistering application DISCOVERY-SERVER with eureka with status DOWN
+2026-03-15 12:24:14.140 INFO  [http-nio-8761-exec-9] c.n.e.r.AbstractInstanceRegistry : Registered instance BANK-SERVICE/bank-service:9091 with status DOWN (replication=false)
+2026-03-15 12:24:14.140 INFO  [http-nio-8761-exec-7] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status DOWN (replication=false)
+2026-03-15 12:24:14.153 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown : Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-15 12:24:14.161 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown : Graceful shutdown complete
+2026-03-15 12:24:14.168 INFO  [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServerBootstrap : Shutting down Eureka Server..
+2026-03-15 12:24:14.169 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shutting down ...
+2026-03-15 12:24:14.176 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shut down
+2026-03-15 12:24:14.176 INFO  [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServerBootstrap : Eureka Service is now shutdown...
+2026-03-15 12:24:14.170 ERROR [Eureka-Jersey3Client-Conn-Cleaner2] c.n.d.s.t.j.EurekaJersey3ClientImpl : Cannot clean connections
+java.lang.IllegalStateException: Client instance has been closed.
+	at org.glassfish.jersey.internal.guava.Preconditions.checkState(Preconditions.java:169)
+	at org.glassfish.jersey.client.JerseyClient.checkNotClosed(JerseyClient.java:248)
+	at org.glassfish.jersey.client.JerseyClient.getConfiguration(JerseyClient.java:363)
+	at org.glassfish.jersey.client.JerseyClient.getConfiguration(JerseyClient.java:54)
+	at com.netflix.discovery.shared.transport.jersey3.EurekaJersey3ClientImpl$ConnectionCleanerTask.run(EurekaJersey3ClientImpl.java:338)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-03-15 12:24:14.177 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shutting down ...
+2026-03-15 12:24:14.177 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shut down
+2026-03-15 12:24:14.184 INFO  [SpringApplicationShutdownHook] c.netflix.discovery.DiscoveryClient : Shutting down DiscoveryClient ...
+2026-03-15 12:24:14.184 INFO  [SpringApplicationShutdownHook] c.netflix.discovery.DiscoveryClient : Completed shut down of DiscoveryClient
+2026-03-15 13:05:06.797 INFO  [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : Starting FundTransferDiscoveryServerApplication using Java 21.0.9 with PID 24428 (D:\Learning\FundTransfer\FundTransfer\FundTransferDiscoveryServer\target\classes started by CRYSTAL TECHNOLOGY in D:\Learning\FundTransfer\FundTransfer)
+2026-03-15 13:05:06.798 DEBUG [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : Running with Spring Boot v3.4.1, Spring v6.2.1
+2026-03-15 13:05:06.799 INFO  [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : The following 1 profile is active: "dev"
+2026-03-15 13:05:07.616 INFO  [main] o.s.cloud.context.scope.GenericScope : BeanFactory id=feb490a3-1cfc-3266-8b42-8c2b0ef81825
+2026-03-15 13:05:07.876 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer : Tomcat initialized with port 8761 (http)
+2026-03-15 13:05:07.958 INFO  [main] o.s.b.w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1123 ms
+2026-03-15 13:05:08.905 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON encoding codec LegacyJacksonJson
+2026-03-15 13:05:08.907 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON decoding codec LegacyJacksonJson
+2026-03-15 13:05:09.075 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML encoding codec XStreamXml
+2026-03-15 13:05:09.075 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML decoding codec XStreamXml
+2026-03-15 13:05:09.223 INFO  [main] o.s.v.b.OptionalValidatorFactoryBean : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2026-03-15 13:05:09.881 WARN  [main] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-15 13:05:09.904 INFO  [main] o.s.c.n.eureka.InstanceInfoFactory : Setting initial instance status as: STARTING
+2026-03-15 13:05:09.920 INFO  [main] c.netflix.discovery.DiscoveryClient : Initializing Eureka in region us-east-1
+2026-03-15 13:05:09.920 INFO  [main] c.netflix.discovery.DiscoveryClient : Client configured to neither register nor query for data.
+2026-03-15 13:05:09.922 INFO  [main] c.netflix.discovery.DiscoveryClient : Discovery Client initialized at timestamp 1773558309921 with initial instances count: 0
+2026-03-15 13:05:09.957 INFO  [main] c.n.e.DefaultEurekaServerContext : Initializing ...
+2026-03-15 13:05:09.958 INFO  [main] c.n.eureka.cluster.PeerEurekaNodes : Adding new peer nodes [http://localhost:8761/eureka/]
+2026-03-15 13:05:10.051 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON encoding codec LegacyJacksonJson
+2026-03-15 13:05:10.051 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using JSON decoding codec LegacyJacksonJson
+2026-03-15 13:05:10.051 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML encoding codec XStreamXml
+2026-03-15 13:05:10.051 INFO  [main] c.n.d.p.DiscoveryJerseyProvider : Using XML decoding codec XStreamXml
+2026-03-15 13:05:10.075 INFO  [main] c.n.eureka.cluster.PeerEurekaNodes : Replica node URL:  http://localhost:8761/eureka/
+2026-03-15 13:05:10.084 INFO  [main] c.n.e.r.AbstractInstanceRegistry : Finished initializing remote region registries. All known remote regions: []
+2026-03-15 13:05:10.084 INFO  [main] c.n.e.DefaultEurekaServerContext : Initialized
+2026-03-15 13:05:10.092 INFO  [main] o.s.b.a.e.web.EndpointLinksResolver : Exposing 4 endpoints beneath base path '/internal/actuator'
+2026-03-15 13:05:10.141 INFO  [main] o.s.c.n.e.s.EurekaServiceRegistry : Registering application DISCOVERY-SERVER with eureka with status UP
+2026-03-15 13:05:10.147 INFO  [Thread-9] o.s.c.n.e.s.EurekaServerBootstrap : isAws returned false
+2026-03-15 13:05:10.148 INFO  [Thread-9] o.s.c.n.e.s.EurekaServerBootstrap : Initialized server context
+2026-03-15 13:05:10.148 INFO  [Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl : Got 1 instances from neighboring DS node
+2026-03-15 13:05:10.148 INFO  [Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl : Renew threshold is: 0
+2026-03-15 13:05:10.148 INFO  [Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl : Changing status to UP
+2026-03-15 13:05:10.149 INFO  [Thread-9] o.s.c.n.e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2026-03-15 13:05:10.154 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer : Tomcat started on port 8761 (http) with context path '/'
+2026-03-15 13:05:10.154 INFO  [main] o.s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8761
+2026-03-15 13:05:10.167 INFO  [main] c.f.t.d.s.FundTransferDiscoveryServerApplication : Started FundTransferDiscoveryServerApplication in 3.685 seconds (process running for 6.022)
+2026-03-15 13:05:10.172 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╔══════════════════════════════════════════╗
+2026-03-15 13:05:10.172 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ║    Database Initialization Starting...   ║
+2026-03-15 13:05:10.172 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╚══════════════════════════════════════════╝
+2026-03-15 13:05:10.172 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Checking database 'fund-transfer'...
+2026-03-15 13:05:10.287 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Database 'fund-transfer' already exists — skipping
+2026-03-15 13:05:10.287 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Checking user 'fund-transfer'...
+2026-03-15 13:05:10.323 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : User 'fund-transfer' already exists — skipping
+2026-03-15 13:05:10.323 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Granting privileges to user 'fund-transfer'...
+2026-03-15 13:05:10.362 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : Privileges granted to 'fund-transfer'
+2026-03-15 13:05:10.363 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╔══════════════════════════════════════════╗
+2026-03-15 13:05:10.363 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ║    Database Initialization Complete      ║
+2026-03-15 13:05:10.363 INFO  [main] c.f.t.d.s.config.DatabaseInitializer : ╚══════════════════════════════════════════╝
+2026-03-15 13:05:13.709 INFO  [http-nio-8761-exec-2] o.s.web.servlet.DispatcherServlet : Initializing Servlet 'dispatcherServlet'
+2026-03-15 13:05:13.711 INFO  [http-nio-8761-exec-2] o.s.web.servlet.DispatcherServlet : Completed initialization in 2 ms
+2026-03-15 13:05:14.049 INFO  [http-nio-8761-exec-1] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status UP (replication=false)
+2026-03-15 13:05:14.765 INFO  [http-nio-8761-exec-3] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status UP (replication=true)
+2026-03-15 13:05:25.149 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 13:05:40.150 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 13:05:46.414 INFO  [http-nio-8761-exec-2] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status DOWN (replication=false)
+2026-03-15 13:05:46.920 INFO  [http-nio-8761-exec-1] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status DOWN (replication=true)
+2026-03-15 13:05:51.511 INFO  [http-nio-8761-exec-3] c.n.e.r.AbstractInstanceRegistry : Cancelled instance API-GATEWAY/api-gateway:8080 (replication=false)
+2026-03-15 13:05:52.021 WARN  [http-nio-8761-exec-6] c.n.e.r.AbstractInstanceRegistry : DS: Registry: cancel failed because Lease is not registered for: API-GATEWAY/api-gateway:8080
+2026-03-15 13:05:52.021 INFO  [http-nio-8761-exec-6] c.n.e.resources.InstanceResource : Not Found (Cancel): API-GATEWAY - api-gateway:8080
+2026-03-15 13:05:52.023 WARN  [TaskBatchingWorker-target_localhost-10] c.n.eureka.cluster.ReplicationTask : The replication of task API-GATEWAY/api-gateway:8080:Cancel@localhost failed with response code 404
+2026-03-15 13:05:52.023 WARN  [TaskBatchingWorker-target_localhost-10] c.n.eureka.cluster.PeerEurekaNode : API-GATEWAY/api-gateway:8080:Cancel@localhost: missing entry.
+2026-03-15 13:05:55.150 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 13:05:57.475 INFO  [http-nio-8761-exec-9] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status UP (replication=false)
+2026-03-15 13:05:57.981 INFO  [http-nio-8761-exec-10] c.n.e.r.AbstractInstanceRegistry : Registered instance API-GATEWAY/api-gateway:8080 with status UP (replication=true)
+2026-03-15 13:06:10.150 INFO  [Eureka-EvictionTimer] c.n.e.r.AbstractInstanceRegistry : Running the evict task with compensationTime 0ms
+2026-03-15 13:06:12.271 INFO  [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServiceRegistry : Unregistering application DISCOVERY-SERVER with eureka with status DOWN
+2026-03-15 13:06:12.275 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown : Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-15 13:06:12.280 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown : Graceful shutdown complete
+2026-03-15 13:06:12.282 INFO  [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServerBootstrap : Shutting down Eureka Server..
+2026-03-15 13:06:12.282 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shutting down ...
+2026-03-15 13:06:12.285 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shut down
+2026-03-15 13:06:12.285 INFO  [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServerBootstrap : Eureka Service is now shutdown...
+2026-03-15 13:06:12.285 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shutting down ...
+2026-03-15 13:06:12.285 INFO  [SpringApplicationShutdownHook] c.n.e.DefaultEurekaServerContext : Shut down
+2026-03-15 13:06:12.283 ERROR [Eureka-Jersey3Client-Conn-Cleaner2] c.n.d.s.t.j.EurekaJersey3ClientImpl : Cannot clean connections
+java.lang.IllegalStateException: Client instance has been closed.
+	at org.glassfish.jersey.internal.guava.Preconditions.checkState(Preconditions.java:169)
+	at org.glassfish.jersey.client.JerseyClient.checkNotClosed(JerseyClient.java:248)
+	at org.glassfish.jersey.client.JerseyClient.getConfiguration(JerseyClient.java:363)
+	at org.glassfish.jersey.client.JerseyClient.getConfiguration(JerseyClient.java:54)
+	at com.netflix.discovery.shared.transport.jersey3.EurekaJersey3ClientImpl$ConnectionCleanerTask.run(EurekaJersey3ClientImpl.java:338)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-03-15 13:06:12.289 INFO  [SpringApplicationShutdownHook] c.netflix.discovery.DiscoveryClient : Shutting down DiscoveryClient ...
+2026-03-15 13:06:12.289 INFO  [SpringApplicationShutdownHook] c.netflix.discovery.DiscoveryClient : Completed shut down of DiscoveryClient
