@@ -12,43 +12,24 @@ public class SecurityResponseFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        return chain.filter(exchange)
-                .doFinally(signal ->  
-                        exchange.getResponse().getHeaders().addAll(buildSecurityHeaders())
-                );
+        addSecurityHeaders(exchange.getResponse().getHeaders());
+        return chain.filter(exchange);
     }
 
-    private HttpHeaders buildSecurityHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-
-        // Prevent MIME type sniffing
-        headers.add("X-Content-Type-Options", "nosniff");
-
-        // Prevent clickjacking
-        headers.add("X-Frame-Options", "DENY");
-
-        // Enable browser XSS filter
-        headers.add("X-XSS-Protection", "1; mode=block");
-
-        // Control what data can be loaded
-        headers.add("Content-Security-Policy",
-                "default-src 'self'; script-src 'self'; object-src 'none'");
-
-        // Prevent caching of sensitive responses
-        headers.add("Cache-Control", "no-store, no-cache, must-revalidate");
-        headers.add("Pragma", "no-cache");
-
-        // Force HTTPS
-        headers.add("Strict-Transport-Security",
-                "max-age=31536000; includeSubDomains; preload");
-
-        // Control referrer info sent to other sites
-        headers.add("Referrer-Policy", "strict-origin-when-cross-origin");
-
-        // Restrict browser features
-        headers.add("Permissions-Policy",
-                "geolocation=(), microphone=(), camera=()");
-
-        return headers;
+    private void addSecurityHeaders(HttpHeaders headers) {
+        if (!headers.containsKey("X-Content-Type-Options")) {
+            headers.add("X-Content-Type-Options", "nosniff");
+            headers.add("X-Frame-Options", "DENY");
+            headers.add("X-XSS-Protection", "1; mode=block");
+            headers.add("Content-Security-Policy",
+                    "default-src 'self'; script-src 'self'; object-src 'none'");
+            headers.add("Cache-Control", "no-store, no-cache, must-revalidate");
+            headers.add("Pragma", "no-cache");
+            headers.add("Strict-Transport-Security",
+                    "max-age=31536000; includeSubDomains; preload");
+            headers.add("Referrer-Policy", "strict-origin-when-cross-origin");
+            headers.add("Permissions-Policy",
+                    "geolocation=(), microphone=(), camera=()");
+        }
     }
 }

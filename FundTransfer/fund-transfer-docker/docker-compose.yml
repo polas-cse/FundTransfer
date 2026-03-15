@@ -1,0 +1,46 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "3001:9090"       # host:3001 → container:9090
+      # 9090 is taken by user-service on your host
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      # lets Prometheus reach your Spring Boot services running on the host
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=fundtransfer
+      - RABBITMQ_DEFAULT_PASS=fundtransfer
+      - RABBITMQ_DEFAULT_VHOST=fundtransfer
+    restart: unless-stopped
+
+volumes:
+  grafana-storage:
