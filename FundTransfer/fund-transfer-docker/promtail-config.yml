@@ -1,0 +1,79 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+
+  - job_name: api-gateway
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+(?P<level>\w+)\s+\[(?P<thread>[^\]]+)\]'
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          service: api-gateway
+          env: dev
+          __path__: /logs/api-gateway*.log
+
+  - job_name: user-service
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+(?P<level>\w+)\s+\[(?P<thread>[^\]]+)\]'
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          service: user-service
+          env: dev
+          __path__: /logs/user-service*.log
+
+  - job_name: bank-service
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+(?P<level>\w+)\s+\[(?P<thread>[^\]]+)\]'
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          service: bank-service
+          env: dev
+          __path__: /logs/bank-service*.log
+
+  - job_name: discovery-service
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+(?P<level>\w+)\s+\[(?P<thread>[^\]]+)\]'
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          service: discovery-service
+          env: dev
+          __path__: /logs/discovery-server*.log
