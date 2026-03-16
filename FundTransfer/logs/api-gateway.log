@@ -3529,3 +3529,36 @@ Using generated security password: 92f0bedf-e898-4b27-a265-d63316e8749e
 2026-03-16 11:08:58.743 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [c942f504-121, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Headers are not sent before onComplete().
 2026-03-16 11:08:58.743 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [c942f504-121, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Decreasing pending responses count: 0
 2026-03-16 11:08:58.744 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [c942f504-121, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:09:10.257 DEBUG [scheduling-1] c.f.t.a.g.c.audit.RateLimitTracker : [RATE-LIMIT] Counters reset — cleared 0 IPs, 0 users
+2026-03-16 11:09:12.373 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition gateway-actuator applying {_genkey_0=/internal/actuator/**} to Path
+2026-03-16 11:09:12.375 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition gateway-actuator applying filter {_genkey_0=200} to SetStatus
+2026-03-16 11:09:12.376 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: gateway-actuator
+2026-03-16 11:09:12.376 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying {_genkey_0=/user-service/auth/login} to Path
+2026-03-16 11:09:12.376 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-login applying filter {_genkey_0=1} to StripPrefix
+2026-03-16 11:09:12.376 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-login
+2026-03-16 11:09:12.376 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying {_genkey_0=/user-service/auth/register} to Path
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-register applying filter {_genkey_0=1} to StripPrefix
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-register
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying {_genkey_0=/user-service/**} to Path
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition user-service applying filter {} to AuthorizationHeaderFilter
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: user-service
+2026-03-16 11:09:12.377 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying {_genkey_0=/bank-service/**} to Path
+2026-03-16 11:09:12.378 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {_genkey_0=1} to StripPrefix
+2026-03-16 11:09:12.378 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition bank-service applying filter {} to AuthorizationHeaderFilter
+2026-03-16 11:09:12.378 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.r.RouteDefinitionRouteLocator : RouteDefinition matched: bank-service
+2026-03-16 11:09:12.378 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter : New routes count: 5
+2026-03-16 11:09:12.525 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [c942f504, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Increasing pending responses count: 1
+2026-03-16 11:09:12.525 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [c942f504-122, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@b2ec42f
+2026-03-16 11:09:12.525 DEBUG [parallel-8] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:09:12.526 DEBUG [parallel-8] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:09:12.526 DEBUG [parallel-8] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:09:12.526 DEBUG [parallel-8] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001a12e7b0f00@189eacdc
+2026-03-16 11:09:12.526 DEBUG [parallel-8] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:09:12.526 DEBUG [parallel-8] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@108dcc9b'
+2026-03-16 11:09:12.560 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [c942f504-150] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:09:12.560 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [c942f504-150] 0..1 [byte[]]
+2026-03-16 11:09:12.560 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [c942f504-122, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Last HTTP response frame
+2026-03-16 11:09:12.560 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [c942f504-122, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Headers are not sent before onComplete().
+2026-03-16 11:09:12.560 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [c942f504-122, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Decreasing pending responses count: 0
+2026-03-16 11:09:12.560 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [c942f504-122, L:/127.0.0.1:8080 - R:/127.0.0.1:40857] Last HTTP packet was sent, terminating the channel

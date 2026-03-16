@@ -3483,3 +3483,212 @@
 2026-03-16 11:09:06.358 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-149] Completed 200 OK
 2026-03-16 11:09:06.358 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-121, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
 2026-03-16 11:09:06.358 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-121, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:09:11.934 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : HTTP GET http://localhost:8761/eureka/apps/delta
+2026-03-16 11:09:11.934 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:09:11.950 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:09:11.950 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2026-03-16 11:09:13.597 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:09:13.597 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:09:13.613 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:09:20.201 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:09:20.201 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-122, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:09:20.201 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-150] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:09:20.201 DEBUG [parallel-8] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:09:20.201 DEBUG [parallel-8] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:09:20.201 DEBUG [parallel-8] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:09:20.201 DEBUG [parallel-8] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:09:20.201 DEBUG [parallel-8] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:09:20.201 DEBUG [parallel-8] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:09:20.202 DEBUG [parallel-8] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@66591fbd'
+2026-03-16 11:09:20.231 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-150] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:09:20.231 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-150] 0..1 [byte[]]
+2026-03-16 11:09:20.231 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-150] Writing 35617 bytes
+2026-03-16 11:09:20.232 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-122, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:09:20.232 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-122, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:09:20.232 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-150] Completed 200 OK
+2026-03-16 11:09:20.232 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-122, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:09:20.232 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-122, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:09:28.624 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:09:28.624 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:09:28.639 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:09:34.319 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:09:34.319 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-123, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:09:34.320 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-151] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:09:34.320 DEBUG [parallel-9] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:09:34.320 DEBUG [parallel-9] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:09:34.320 DEBUG [parallel-9] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:09:34.320 DEBUG [parallel-9] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:09:34.320 DEBUG [parallel-9] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:09:34.320 DEBUG [parallel-9] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:09:34.321 DEBUG [parallel-9] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@2df3dfdc'
+2026-03-16 11:09:34.357 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-151] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:09:34.357 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-151] 0..1 [byte[]]
+2026-03-16 11:09:34.357 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-151] Writing 35616 bytes
+2026-03-16 11:09:34.357 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-123, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:09:34.357 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-123, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:09:34.357 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-151] Completed 200 OK
+2026-03-16 11:09:34.357 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-123, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:09:34.357 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-123, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:09:41.955 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : HTTP GET http://localhost:8761/eureka/apps/delta
+2026-03-16 11:09:41.955 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:09:41.973 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:09:41.973 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2026-03-16 11:09:43.643 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:09:43.643 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:09:43.660 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:09:48.557 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:09:48.557 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-124, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:09:48.558 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-152] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:09:48.559 DEBUG [parallel-10] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:09:48.560 DEBUG [parallel-10] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:09:48.560 DEBUG [parallel-10] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:09:48.561 DEBUG [parallel-10] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:09:48.561 DEBUG [parallel-10] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:09:48.561 DEBUG [parallel-10] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:09:48.563 DEBUG [parallel-10] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@49d1ef10'
+2026-03-16 11:09:48.591 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-152] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:09:48.591 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-152] 0..1 [byte[]]
+2026-03-16 11:09:48.592 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-152] Writing 35619 bytes
+2026-03-16 11:09:48.592 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-124, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:09:48.592 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-124, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:09:48.592 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-152] Completed 200 OK
+2026-03-16 11:09:48.592 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-124, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:09:48.593 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-124, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:09:58.670 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:09:58.670 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:09:58.685 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:10:02.529 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:10:02.529 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-125, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:10:02.529 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-153] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:10:02.529 DEBUG [parallel-11] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:10:02.529 DEBUG [parallel-11] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:10:02.529 DEBUG [parallel-11] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:10:02.529 DEBUG [parallel-11] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:10:02.529 DEBUG [parallel-11] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:10:02.529 DEBUG [parallel-11] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:10:02.530 DEBUG [parallel-11] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@4f0eaf9'
+2026-03-16 11:10:02.569 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-153] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:10:02.569 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-153] 0..1 [byte[]]
+2026-03-16 11:10:02.569 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-153] Writing 35620 bytes
+2026-03-16 11:10:02.569 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-125, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:10:02.569 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-125, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:10:02.569 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-153] Completed 200 OK
+2026-03-16 11:10:02.570 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-125, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:10:02.570 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-125, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:10:11.983 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : HTTP GET http://localhost:8761/eureka/apps/delta
+2026-03-16 11:10:11.983 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:10:12.000 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:10:12.000 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2026-03-16 11:10:13.689 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:10:13.689 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:10:13.707 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:10:16.546 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:10:16.546 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-126, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:10:16.547 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-154] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:10:16.547 DEBUG [parallel-12] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:10:16.547 DEBUG [parallel-12] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:10:16.547 DEBUG [parallel-12] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:10:16.547 DEBUG [parallel-12] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:10:16.547 DEBUG [parallel-12] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:10:16.547 DEBUG [parallel-12] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:10:16.548 DEBUG [parallel-12] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@15966aeb'
+2026-03-16 11:10:16.578 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-154] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:10:16.578 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-154] 0..1 [byte[]]
+2026-03-16 11:10:16.578 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-154] Writing 35621 bytes
+2026-03-16 11:10:16.579 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-126, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:10:16.579 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-126, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:10:16.579 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-154] Completed 200 OK
+2026-03-16 11:10:16.579 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-126, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:10:16.579 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-126, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:10:28.709 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:10:28.710 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:10:28.725 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:10:30.607 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:10:30.607 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-127, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:10:30.608 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-155] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:10:30.609 DEBUG [parallel-13] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:10:30.609 DEBUG [parallel-13] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:10:30.609 DEBUG [parallel-13] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:10:30.609 DEBUG [parallel-13] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:10:30.609 DEBUG [parallel-13] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:10:30.609 DEBUG [parallel-13] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:10:30.610 DEBUG [parallel-13] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@13a74701'
+2026-03-16 11:10:30.659 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-155] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:10:30.660 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-155] 0..1 [byte[]]
+2026-03-16 11:10:30.660 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-155] Writing 35622 bytes
+2026-03-16 11:10:30.660 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-127, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:10:30.660 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-127, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:10:30.660 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-155] Completed 200 OK
+2026-03-16 11:10:30.660 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-127, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:10:30.660 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-127, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:10:42.011 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : HTTP GET http://localhost:8761/eureka/apps/delta
+2026-03-16 11:10:42.011 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:10:42.028 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:10:42.028 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2026-03-16 11:10:43.736 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:10:43.736 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:10:43.752 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:10:44.603 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:10:44.603 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-128, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:10:44.604 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-156] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:10:44.604 DEBUG [parallel-14] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:10:44.604 DEBUG [parallel-14] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:10:44.604 DEBUG [parallel-14] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:10:44.604 DEBUG [parallel-14] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:10:44.604 DEBUG [parallel-14] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:10:44.604 DEBUG [parallel-14] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:10:44.605 DEBUG [parallel-14] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@2bd18704'
+2026-03-16 11:10:44.633 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-156] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:10:44.633 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-156] 0..1 [byte[]]
+2026-03-16 11:10:44.633 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-156] Writing 35619 bytes
+2026-03-16 11:10:44.633 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-128, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:10:44.633 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-128, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:10:44.633 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-156] Completed 200 OK
+2026-03-16 11:10:44.633 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-128, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:10:44.633 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-128, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:10:58.651 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:10:58.651 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-129, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:10:58.652 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-157] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:10:58.652 DEBUG [parallel-15] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:10:58.652 DEBUG [parallel-15] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:10:58.652 DEBUG [parallel-15] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:10:58.652 DEBUG [parallel-15] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:10:58.652 DEBUG [parallel-15] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:10:58.652 DEBUG [parallel-15] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:10:58.653 DEBUG [parallel-15] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@4bf845a8'
+2026-03-16 11:10:58.691 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-157] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:10:58.691 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-157] 0..1 [byte[]]
+2026-03-16 11:10:58.691 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-157] Writing 35618 bytes
+2026-03-16 11:10:58.691 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-129, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:10:58.691 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-129, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:10:58.691 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-157] Completed 200 OK
+2026-03-16 11:10:58.692 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-129, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:10:58.692 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-129, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:10:58.759 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:10:58.759 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:10:58.776 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:11:12.029 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : HTTP GET http://localhost:8761/eureka/apps/delta
+2026-03-16 11:11:12.029 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:11:12.045 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
+2026-03-16 11:11:12.045 DEBUG [DiscoveryClient-CacheRefreshExecutor-%d] o.s.web.client.RestTemplate : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2026-03-16 11:11:12.650 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Increasing pending responses count: 1
+2026-03-16 11:11:12.650 DEBUG [reactor-http-nio-4] r.netty.http.server.HttpServer : [3302d3de-130, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Handler is being applied: org.springframework.http.server.reactive.ReactorHttpHandlerAdapter@918c031
+2026-03-16 11:11:12.651 DEBUG [reactor-http-nio-4] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-158] HTTP GET "/internal/actuator/prometheus"
+2026-03-16 11:11:12.651 DEBUG [parallel-16] o.s.w.s.s.DefaultWebSessionManager : Created new WebSession.
+2026-03-16 11:11:12.651 DEBUG [parallel-16] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-03-16 11:11:12.651 DEBUG [parallel-16] o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher : Request 'GET /internal/actuator/prometheus' doesn't match 'POST /logout'
+2026-03-16 11:11:12.651 DEBUG [parallel-16] o.s.s.w.s.u.m.OrServerWebExchangeMatcher : No matches found
+2026-03-16 11:11:12.651 DEBUG [parallel-16] o.s.s.w.s.a.DelegatingReactiveAuthorizationManager : Checking authorization on '/internal/actuator/prometheus' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e83694e368@3ffc1492
+2026-03-16 11:11:12.651 DEBUG [parallel-16] o.s.s.w.s.a.AuthorizationWebFilter : Authorization successful
+2026-03-16 11:11:12.652 DEBUG [parallel-16] o.s.s.w.s.c.WebSessionServerSecurityContextRepository : No SecurityContext found in WebSession: 'org.springframework.web.server.session.InMemoryWebSessionStore$InMemoryWebSession@64083bfd'
+2026-03-16 11:11:12.684 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-158] Found 'Content-Type:application/openmetrics-text;version=1.0.0;charset=utf-8' in response
+2026-03-16 11:11:12.684 DEBUG [boundedElastic-1] o.s.w.r.r.m.a.ResponseEntityResultHandler : [3302d3de-158] 0..1 [byte[]]
+2026-03-16 11:11:12.684 DEBUG [boundedElastic-1] org.springframework.web.HttpLogging : [3302d3de-158] Writing 35620 bytes
+2026-03-16 11:11:12.684 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-130, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP response frame
+2026-03-16 11:11:12.684 DEBUG [boundedElastic-1] r.n.http.server.HttpServerOperations : [3302d3de-130, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Headers are not sent before onComplete().
+2026-03-16 11:11:12.684 DEBUG [boundedElastic-1] o.s.w.s.a.HttpWebHandlerAdapter : [3302d3de-158] Completed 200 OK
+2026-03-16 11:11:12.684 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-130, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Decreasing pending responses count: 0
+2026-03-16 11:11:12.685 DEBUG [reactor-http-nio-4] r.n.http.server.HttpServerOperations : [3302d3de-130, L:/127.0.0.1:9090 - R:/127.0.0.1:40864] Last HTTP packet was sent, terminating the channel
+2026-03-16 11:11:13.785 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : HTTP PUT http://localhost:8761/eureka/apps/USER-SERVICE/user-service:9090?status=UP&lastDirtyTimestamp=1773635590062
+2026-03-16 11:11:13.785 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Accept=[application/json, application/*+json]
+2026-03-16 11:11:13.801 DEBUG [DiscoveryClient-HeartbeatExecutor-%d] o.s.web.client.RestTemplate : Response 200 OK
